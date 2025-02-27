@@ -91,6 +91,12 @@ services:
       - xpack.security.transport.ssl.verification_mode=certificate
       - xpack.license.self_generated.type=${LICENSE}
       - xpack.ml.use_auto_machine_memory_percent=true
+      - http.cors.allow-origin="*" # Only use unrestricted value for local development
+      # Use a specific origin value in production, like `http.cors.allow-origin: "https://<my-website-domain.example>"`
+      - http.cors.enabled=true
+      - http.cors.allow-credentials=true
+      - http.cors.allow-methods= OPTIONS, POST
+      - http.cors.allow-headers= X-Requested-With, X-Auth-Token, Content-Type, Content-Length, Authorization, Access-Control-Allow-Headers, Accept
     mem_limit: ${MEM_LIMIT}
     ulimits:
       memlock:
