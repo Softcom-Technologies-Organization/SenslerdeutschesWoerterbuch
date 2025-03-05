@@ -18,6 +18,7 @@ class DictionaryParser:
             last_size = None
             last_word_was_keyword = False
             for page in pdf.pages[self.start_page : self.end_page : 2]:
+                # The content of each page seems to be duplicated over two pages, but simply with the words at different coordinates. We can skip every second page.
                 words = page.extract_words(
                     extra_attrs=["fontname", "size"],
                     keep_blank_chars=True,
@@ -33,11 +34,20 @@ class DictionaryParser:
                     if word["top"] < 80:
                         continue
 
+                    # special rules for starting page where words are starting further down in first column
+                    if (
+                        page.page_number == 21
+                        and self._is_keyword(word, font)
+                        and word["x0"] < 550
+                        and word["top"] < 375
+                    ):
+                        continue
+
                     # Is new keyword ?
                     if self._is_keyword(word, font):
                         if current_text_block:  # Save previous entry
                             entries[current_keyword] = {
-                                "fortmatted-text": current_text_block,
+                                "formatted-text": current_text_block,
                                 "text": " ".join(
                                     [block["text"] for block in current_text_block]
                                 ),
@@ -75,7 +85,8 @@ class DictionaryParser:
 
         return entries
 
-    def _is_keyword(self, word, font):
+    @staticmethod
+    def _is_keyword(word, font):
         """
         Determine if a bold word is likely to be a headword rather than
         a bold word inside a description.
@@ -92,13 +103,14 @@ class DictionaryParser:
 
         return False
 
-    def save_json(self, output_path, entries):
+    @staticmethod
+    def save_json(output_path, entries):
         with open(output_path, "w", encoding="utf-8") as f:
             json.dump(entries, f, ensure_ascii=False, indent=2)
 
 
 def main():
-    parser = DictionaryParser("./resources/Wb4 CRIC Nur Neues.pdf", start_page=22)
+    parser = DictionaryParser("./resources/neue-woerter-auflage-4.pdf", start_page=20)
     entries = parser.parse_pdf()
     parser.save_json("./resources/dictionary_entries.json", entries)
 
