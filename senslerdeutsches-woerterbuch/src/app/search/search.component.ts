@@ -4,10 +4,11 @@ import { CommonModule } from '@angular/common';
 import { NavigationEnd, Router, RouterModule } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
+import { MatAutocomplete, MatAutocompleteModule } from '@angular/material/autocomplete';
 
 @Component({
   selector: 'app-search',
-  imports: [CommonModule, RouterModule, FormsModule],
+  imports: [CommonModule, RouterModule, FormsModule, MatAutocompleteModule],
   templateUrl: './search.component.html',
   styleUrl: './search.component.scss',
 })

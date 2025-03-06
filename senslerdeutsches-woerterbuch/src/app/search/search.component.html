@@ -1,9 +1,18 @@
-<input [(ngModel)]="searchTerm" name="searchField" type="text" placeholder="Search..." (keyup.enter)="onSearch($event)" />
+<form>
+  <input
+    matInput
+    type="text"
+    [(ngModel)]="searchTerm"
+    [matAutocomplete]="auto"
+    name="searchField"
+    type="text"
+    placeholder="Search..."
+    (keyup.enter)="onSearch($event)"
+  />
 
-<div *ngIf="searchResults">
-  <ul>
+  <mat-autocomplete #auto="matAutocomplete">
     @for (item of searchResults.hits.hits; track searchResults.hits.hits) {
-      <li>{{ item._id }}</li>
+      <mat-option [value]="item._id">{{ item._id }}</mat-option>
     }
-  </ul>
-</div>
+  </mat-autocomplete>
+</form>
