@@ -1,9 +1,9 @@
-<input type="text" (input)="onSearch($event)" placeholder="Search..." />
+<input type="text" (input)="onSearchPreview($event)" placeholder="Search..." (keyup.enter)="onSearch($event)" />
 
 <div *ngIf="searchResults">
-  @for (item of searchResults.hits.hits; track searchResults.hits.hits) {
-    <p>{{ item._id }}</p>
-    <p>{{ item._source.text }}</p>
-    <p>============================</p>
-  }
+  <ul>
+    @for (item of searchResults.hits.hits; track searchResults.hits.hits) {
+      <li>{{ item._id }}</li>
+    }
+  </ul>
 </div>

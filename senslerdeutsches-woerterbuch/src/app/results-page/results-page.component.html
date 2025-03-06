@@ -1,0 +1,8 @@
+<div *ngIf="searchResults">
+    @for (item of searchResults.hits.hits; track searchResults.hits.hits) {
+      <a [routerLink]="['/', 'word', item._id]">{{ item._id }}</a>
+      <p>{{ item._source.text }}</p>
+      <p>============================</p>
+    }
+</div>
+  
