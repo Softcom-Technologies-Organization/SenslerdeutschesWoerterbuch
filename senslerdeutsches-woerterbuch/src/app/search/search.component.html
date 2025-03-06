@@ -2,8 +2,8 @@
 
 <div *ngIf="searchResults">
   @for (item of searchResults.hits.hits; track searchResults.hits.hits) {
-    <p>{{ item._id }}</p>
-    <p>{{ item._source.text }}</p>
+    <p>{{ item._source.term }}</p>
+    <p>{{ item._source.description }}</p>
     <p>============================</p>
   }
 </div>
