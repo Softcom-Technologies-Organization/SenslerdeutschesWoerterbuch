@@ -49,8 +49,9 @@ class DictionaryParser:
                     if self._is_keyword(word, font):
                         if current_text_block:  # Save previous entry
                             entries[current_keyword] = {
-                                "formatted-text": current_text_block,
-                                "text": " ".join(
+                                "term": current_keyword,
+                                "formatted-description": current_text_block,
+                                "description": " ".join(
                                     [block["text"] for block in current_text_block]
                                 ),
                             }
@@ -122,21 +123,111 @@ class ElasticHelper:
             verify_certs=False,
         )
 
-    def insert_into_elasticsearch(self, entries):
+    # TODO: Create this index directly when starting the elasic container
+    def create_index(self, index_name="dictionary"):
+        """
+        Create an Elasticsearch index with custom settings and mappings to:
+        - Support autocomplete with edge n-grams.
+        - Apply ascii-folding and lowercasing for normalization.
+        - Allow fuzzy matching and exact-match boosting.
+        """
+        mapping = {
+            "settings": {
+                "analysis": {
+                    "filter": {
+                        "autocomplete_filter": {
+                            "type": "edge_ngram",
+                            "min_gram": 1,
+                            "max_gram": 20,
+                        }
+                    },
+                    "analyzer": {
+                        "autocomplete_analyzer": {
+                            "type": "custom",
+                            "tokenizer": "standard",
+                            "filter": [
+                                "lowercase",
+                                "asciifolding",
+                                "autocomplete_filter",
+                            ],
+                        },
+                        "autocomplete_search": {
+                            "type": "custom",
+                            "tokenizer": "standard",
+                            "filter": ["lowercase", "asciifolding"],
+                        },
+                    },
+                    "normalizer": {
+                        "lowercase_normalizer": {
+                            "type": "custom",
+                            "filter": ["lowercase", "asciifolding"],
+                        }
+                    },
+                }
+            },
+            "mappings": {
+                "properties": {
+                    "term": {
+                        "type": "text",
+                        "analyzer": "autocomplete_analyzer",
+                        "search_analyzer": "autocomplete_search",
+                        "fields": {
+                            "keyword": {
+                                "type": "keyword",
+                                "normalizer": "lowercase_normalizer",
+                            }
+                        },
+                    },
+                    "description": {"type": "text", "analyzer": "standard"},
+                }
+            },
+        }
+
+        if self.es.indices.exists(index=index_name):
+            print(f"Index '{index_name}' already exists.")
+        else:
+            self.es.indices.create(index=index_name, body=mapping)
+            print(f"Index '{index_name}' created.")
+
+    def insert_into_elasticsearch(self, entries, index_name="dictionary"):
+        """
+        Inserts dictionary entries into Elasticsearch.
+
+        Assumes that the 'entries' parameter is a dict where the key is the term
+        and the value is a dictionary containing at least the "text" field.
+
+        Each document is transformed into a structure with:
+          - 'term': the key from the dictionary.
+          - 'description': the original "text" value.
+          - 'formatted-description': the original "formatted-description" value.
+        """
         actions = [
             {
-                "_index": "dictionary",
-                "_id": keyword,
-                "_source": entry,
+                "_index": index_name,
+                "_source": {
+                    "term": entry["term"],
+                    "description": entry["description"],
+                    "formatted-description": entry["formatted-description"],
+                },
             }
-            for keyword, entry in entries.items()
+            for entry in entries.values()
         ]
         try:
             helpers.bulk(self.es, actions)
+            print("Bulk indexing successful.")
         except helpers.BulkIndexError as e:
             print("Bulk indexing error:", e)
             for error in e.errors:
                 print(error)
+
+    def delete_index(self, index_name="dictionary"):
+        """
+        Deletes the specified Elasticsearch index.
+        """
+        resp = self.es.indices.delete(
+            index=index_name,
+        )
+        print(resp)
 
 
 def main():
@@ -147,6 +238,8 @@ def main():
     parser.save_json("./resources/dictionary_entries.json", entries)
 
     elasticHelper = ElasticHelper("./docker/.env")
+    elasticHelper.delete_index()
+    elasticHelper.create_index()
     elasticHelper.insert_into_elasticsearch(entries)
 
 
