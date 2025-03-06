@@ -4,7 +4,10 @@ import { CommonModule } from '@angular/common';
 import { NavigationEnd, Router, RouterModule } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
-import { MatAutocomplete, MatAutocompleteModule } from '@angular/material/autocomplete';
+import {
+  MatAutocomplete,
+  MatAutocompleteModule,
+} from '@angular/material/autocomplete';
 
 @Component({
   selector: 'app-search',
@@ -13,7 +16,6 @@ import { MatAutocomplete, MatAutocompleteModule } from '@angular/material/autoco
   styleUrl: './search.component.scss',
 })
 export class SearchComponent {
-
   private _searchTerm: string = '';
 
   public get searchTerm(): string {
@@ -30,20 +32,27 @@ export class SearchComponent {
   constructor(
     private readonly searchService: SearchService,
     private readonly router: Router,
-    readonly destroyRef: DestroyRef) {
-
-    this.router.events.pipe(takeUntilDestroyed(destroyRef)).subscribe((event: any) => {
-      if(event instanceof NavigationEnd) {
-
-        let urlSegments = (event as NavigationEnd).url.split('/');
-        this.searchTerm = urlSegments[urlSegments.length-1];
-      }
-    });
+    readonly destroyRef: DestroyRef,
+  ) {
+    this.router.events
+      .pipe(takeUntilDestroyed(destroyRef))
+      .subscribe((event: any) => {
+        if (event instanceof NavigationEnd) {
+          let urlSegments = (event as NavigationEnd).url.split('/');
+          
+          if (
+            urlSegments.length > 1 &&
+            urlSegments[urlSegments.length - 2] === 'search'
+          ) {
+            this.searchTerm = urlSegments[urlSegments.length - 1];
+          }
+        }
+      });
   }
 
   protected searchResults: any = undefined;
 
-  onSearch(event: Event){
+  onSearch(event: Event) {
     const inputElement = event.target as HTMLInputElement;
     const query = inputElement.value;
 

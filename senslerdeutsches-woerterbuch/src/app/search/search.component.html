@@ -11,8 +11,12 @@
   />
 
   <mat-autocomplete #auto="matAutocomplete">
-    @for (item of searchResults.hits.hits; track searchResults.hits.hits) {
-      <mat-option [value]="item._id">{{ item._id }}</mat-option>
+    @if (!searchResults || searchResults.hits.hits.total === 0) {
+      <mat-option disabled>No results found</mat-option>
+    } @else {
+      @for (item of searchResults.hits.hits; track searchResults.hits.hits) {
+        <mat-option [value]="item._id">{{ item._id }}</mat-option>
+      }
     }
   </mat-autocomplete>
 </form>
