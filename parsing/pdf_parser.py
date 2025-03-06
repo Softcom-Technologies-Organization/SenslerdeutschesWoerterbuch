@@ -1,5 +1,8 @@
 import pdfplumber
 import json
+from elasticsearch import Elasticsearch, helpers
+from dotenv import load_dotenv
+import os
 
 
 class DictionaryParser:
@@ -109,10 +112,42 @@ class DictionaryParser:
             json.dump(entries, f, ensure_ascii=False, indent=2)
 
 
+class ElasticHelper:
+    def __init__(self, dotenv_path=None):
+        if dotenv_path:
+            load_dotenv(dotenv_path=dotenv_path)
+        self.es = Elasticsearch(
+            [{"host": "localhost", "port": 9200, "scheme": "https"}],
+            basic_auth=("elastic", os.getenv("ELASTIC_PASSWORD")),
+            verify_certs=False,
+        )
+
+    def insert_into_elasticsearch(self, entries):
+        actions = [
+            {
+                "_index": "dictionary",
+                "_id": keyword,
+                "_source": entry,
+            }
+            for keyword, entry in entries.items()
+        ]
+        try:
+            helpers.bulk(self.es, actions)
+        except helpers.BulkIndexError as e:
+            print("Bulk indexing error:", e)
+            for error in e.errors:
+                print(error)
+
+
 def main():
-    parser = DictionaryParser("./resources/neue-woerter-auflage-4.pdf", start_page=20)
+    parser = DictionaryParser(
+        "./resources/neue-woerter-auflage-4.pdf", start_page=20, end_page=58
+    )
     entries = parser.parse_pdf()
     parser.save_json("./resources/dictionary_entries.json", entries)
+
+    elasticHelper = ElasticHelper("./docker/.env")
+    elasticHelper.insert_into_elasticsearch(entries)
 
 
 if __name__ == "__main__":
