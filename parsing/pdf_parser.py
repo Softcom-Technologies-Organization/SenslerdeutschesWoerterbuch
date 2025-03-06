@@ -48,7 +48,7 @@ class DictionaryParser:
                     # Is new keyword ?
                     if self._is_keyword(word, font):
                         if current_text_block:  # Save previous entry
-                            self.add_entry_to_dict(
+                            self._add_entry_to_dict(
                                 entries, current_keyword, current_text_block
                             )
 
@@ -81,16 +81,24 @@ class DictionaryParser:
 
             # Add final entry
             if current_keyword and current_text_block:
-                self.add_entry_to_dict(entries, current_keyword, current_text_block)
+                self._add_entry_to_dict(entries, current_keyword, current_text_block)
 
         return entries
 
-    def add_entry_to_dict(self, entries, current_keyword, current_text_block):
-        entries[current_keyword] = {
-            "term": current_keyword,
+    def _add_entry_to_dict(self, entries, current_keyword, current_text_block):
+        cleaned_keyword = self._clean_keyword(current_keyword)
+        entries[cleaned_keyword] = {
+            "term": cleaned_keyword,
             "formatted-description": current_text_block,
             "description": "".join([block["text"] for block in current_text_block]),
         }
+
+    @staticmethod
+    def _clean_keyword(keyword):
+        """
+        Clean up a keyword by removing unwanted characters.
+        """
+        return keyword.replace("*", "").replace("∙", "").strip()
 
     @staticmethod
     def _is_keyword(word, font):
