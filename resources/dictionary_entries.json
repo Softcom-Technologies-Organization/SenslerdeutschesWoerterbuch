@@ -2475,9 +2475,14 @@
         "text": " ♦ Id 5,945: nur FR]",
         "font": "XRNKSS+Garamond",
         "size": 9.404600000000073
+      },
+      {
+        "text": " ",
+        "font": "XRNKSS+Garamond-Bold",
+        "size": 12.98739999999998
       }
     ],
-    "description": "(n, -eni): ganz kl. Ku-chen, die vor 1848 von den Augustinermönchen ausgeteilt u. denen Heilkräfte zugeschrieben wurden (Id). [✝ ♦ Id 5,945: nur FR]"
+    "description": "(n, -eni): ganz kl. Ku-chen, die vor 1848 von den Augustinermönchen ausgeteilt u. denen Heilkräfte zugeschrieben wurden (Id). [✝ ♦ Id 5,945: nur FR] "
   },
   "Bäärgggaffi": {
     "term": "Bäärgggaffi",
@@ -9877,9 +9882,14 @@
         "text": " s. exe.",
         "font": "WJDEEU+Garamond",
         "size": 11.19599999999997
+      },
+      {
+        "text": " ",
+        "font": "WJDEEU+Garamond-Bold",
+        "size": 13.435200000000009
       }
     ],
-    "description": " s. exe."
+    "description": " s. exe. "
   },
   "Fään": {
     "term": "Fään",
@@ -12578,9 +12588,14 @@
         "text": "schen/reiben']",
         "font": "VBTYQW+Garamond",
         "size": 9.404600000000016
+      },
+      {
+        "text": " ",
+        "font": "VBTYQW+Garamond-Bold",
+        "size": 12.98739999999998
       }
     ],
-    "description": " (g-et): winseln, jaulen eines Hundes (We2). SYN: ggüüne. [lautmalend ♦ hochdt fiepen 'höhe Pfeiftöne aus-stossen, winseln' (Wahrig); Id 1,878 u. SI-Wb nur fyppe, fieppe 'beständig hin u. her gehen/rut-schen/reiben']"
+    "description": " (g-et): winseln, jaulen eines Hundes (We2). SYN: ggüüne. [lautmalend ♦ hochdt fiepen 'höhe Pfeiftöne aus-stossen, winseln' (Wahrig); Id 1,878 u. SI-Wb nur fyppe, fieppe 'beständig hin u. her gehen/rut-schen/reiben'] "
   },
   "gäär:": {
     "term": "gäär:",
@@ -22279,9 +22294,14 @@
         "text": "das auf Person übertr. wurde]",
         "font": "UTJSCY+Garamond",
         "size": 9.404600000000016
+      },
+      {
+        "text": " ",
+        "font": "UTJSCY+Garamond-Bold",
+        "size": 12.98739999999998
       }
     ],
-    "description": "(f, -eni): Pfarrköchin, Pfarrhelferin (abschätzig / Gi1). SYN: Kuurchöchi. [wohl ✝ od. indiv.? ♦ wohl zu Gäscher 'Scheuerwisch', das auf Person übertr. wurde]"
+    "description": "(f, -eni): Pfarrköchin, Pfarrhelferin (abschätzig / Gi1). SYN: Kuurchöchi. [wohl ✝ od. indiv.? ♦ wohl zu Gäscher 'Scheuerwisch', das auf Person übertr. wurde] "
   },
   "laago": {
     "term": "laago",
@@ -23590,9 +23610,14 @@
         "text": ").",
         "font": "UTJSCY+Garamond",
         "size": 11.195999999999998
+      },
+      {
+        "text": " ",
+        "font": "UTJSCY+Garamond-Bold",
+        "size": 12.987400000000008
       }
     ],
-    "description": " (f, -e): a) Linie. SYN: Gredi. b) Zeile. SYN: Zyla. c) Bahnlinie: ùf de Linya Frybùrg Bäärn (Dü2)."
+    "description": " (f, -e): a) Linie. SYN: Gredi. b) Zeile. SYN: Zyla. c) Bahnlinie: ùf de Linya Frybùrg Bäärn (Dü2). "
   },
   "maale2": {
     "term": "maale2",
@@ -26775,20 +26800,14 @@
         "text": " ",
         "font": "TLZMOA+Garamond",
         "size": 9.85250000000002
-      }
-    ],
-    "description": " (n, -eni/-ini): Entstellung des Namens Maria. SYN: Maria.  "
-  },
-  "N": {
-    "term": "N",
-    "formatted-description": [
+      },
       {
         "text": " ",
         "font": "TLZMOA+TimesNewRomanPSMT",
         "size": 11.195999999999998
       }
     ],
-    "description": " "
+    "description": " (n, -eni/-ini): Entstellung des Namens Maria. SYN: Maria.   "
   },
   "Naadla:": {
     "term": "Naadla:",
@@ -31639,9 +31658,14 @@
         "text": "'zechen') ♦ fehlt in Ma-Wbb]",
         "font": "SDPGAC+Garamond",
         "size": 9.404600000000016
+      },
+      {
+        "text": " ",
+        "font": "SDPGAC+Garamond-Bold",
+        "size": 12.98739999999998
       }
     ],
-    "description": " (unveränd.): mit Daumen u. Zeig- oder Mittelfinger schnippen (indiv.? / Ta1).  [wohl von frz picoter 'schnippen' mit lautl. Missver-ständis (picoler 'zechen') ♦ fehlt in Ma-Wbb]"
+    "description": " (unveränd.): mit Daumen u. Zeig- oder Mittelfinger schnippen (indiv.? / Ta1).  [wohl von frz picoter 'schnippen' mit lautl. Missver-ständis (picoler 'zechen') ♦ fehlt in Ma-Wbb] "
   },
   "Räche:": {
     "term": "Räche:",
@@ -33148,9 +33172,14 @@
         "text": " (BE)]",
         "font": "SDPGAC+Garamond",
         "size": 9.404600000000016
+      },
+      {
+        "text": " ",
+        "font": "SDPGAC+Garamond-Bold",
+        "size": 12.98739999999998
       }
     ],
-    "description": " (f, -e): Seilschaukel (Gi1); SYN: Ryttigampfa. [Id 5,100: ds Ritiplampi (BE)]"
+    "description": " (f, -e): Seilschaukel (Gi1); SYN: Ryttigampfa. [Id 5,100: ds Ritiplampi (BE)] "
   },
   "Saapi": {
     "term": "Saapi",
@@ -40093,9 +40122,14 @@
         "text": "veschter.",
         "font": "RVFAME+Garamond",
         "size": 11.19599999999997
+      },
+      {
+        "text": " ",
+        "font": "RVFAME+Garamond-Bold",
+        "size": 12.98739999999998
       }
     ],
-    "description": ": s. Siḷveschter."
+    "description": ": s. Siḷveschter. "
   },
   "Tach:": {
     "term": "Tach:",
@@ -45352,20 +45386,14 @@
         "text": " ",
         "font": "QNVUYG+Garamond",
         "size": 11.19599999999997
-      }
-    ],
-    "description": " (-gstige): aussteigen. ● Ra.: z Pǜmp-liz/Bösinge uusstyge coitus interruptus, Ge-schlechtsverkehr abbrechen (Wü1, Ta); ↑böbere.[Ra. fehlt in Ma-Wbb]  "
-  },
-  "V": {
-    "term": "V",
-    "formatted-description": [
+      },
       {
         "text": " ",
         "font": "QNVUYG+TimesNewRomanPSMT",
         "size": 11.19599999999997
       }
     ],
-    "description": " "
+    "description": " (-gstige): aussteigen. ● Ra.: z Pǜmp-liz/Bösinge uusstyge coitus interruptus, Ge-schlechtsverkehr abbrechen (Wü1, Ta); ↑böbere.[Ra. fehlt in Ma-Wbb]   "
   },
   "Väschperglütt": {
     "term": "Väschperglütt",
@@ -46643,20 +46671,19 @@
         "text": " ",
         "font": "QNVUYG+TimesNewRomanPSMT",
         "size": 11.195999999999998
-      }
-    ],
-    "description": " (k. Steig.): unsorgfältig ver-arbeitet, bes. bei Stoff (Ta); ↑schnùùrpfe.  [Id 9,1324: CH] "
-  },
-  "W": {
-    "term": "W",
-    "formatted-description": [
+      },
+      {
+        "text": " ",
+        "font": "QNVUYG+Garamond-Bold",
+        "size": 12.987400000000008
+      },
       {
         "text": " ",
         "font": "QNVUYG+TimesNewRomanPSMT",
         "size": 11.195999999999998
       }
     ],
-    "description": " "
+    "description": " (k. Steig.): unsorgfältig ver-arbeitet, bes. bei Stoff (Ta); ↑schnùùrpfe.  [Id 9,1324: CH]   "
   },
   "Waaḷ3": {
     "term": "Waaḷ3",

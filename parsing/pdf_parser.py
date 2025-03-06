@@ -1,3 +1,4 @@
+import math
 import pdfplumber
 import json
 from elasticsearch import Elasticsearch, helpers
@@ -62,6 +63,10 @@ class DictionaryParser:
                         current_keyword += text
                         continue
 
+                    # skip big letter at the beginning of a new letter
+                    if math.isclose(size, 18.58, abs_tol=0.1):
+                        continue
+
                     # process normal word
                     if current_keyword:
                         if (
@@ -108,6 +113,13 @@ class DictionaryParser:
         """
         # all keywords are bold
         if not "Bold" in font:
+            return False
+
+        # all keywords are in font size 11.19 or 9.40 or 10.30
+        font_sizes = [11.19, 9.40, 10.30]
+        if not any(
+            math.isclose(word["size"], size, abs_tol=0.1) for size in font_sizes
+        ):
             return False
 
         # Check if coordinate of beginning of word x0 is at the start of a column
