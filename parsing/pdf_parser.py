@@ -1,8 +1,7 @@
 import pdfplumber
 import json
 from elasticsearch import Elasticsearch, helpers
-from dotenv import load_dotenv
-import os
+from dotenv import dotenv_values
 
 
 class DictionaryParser:
@@ -113,12 +112,13 @@ class DictionaryParser:
 
 
 class ElasticHelper:
-    def __init__(self, dotenv_path=None):
-        if dotenv_path:
-            load_dotenv(dotenv_path=dotenv_path)
+    def __init__(self, dotenv_path):
         self.es = Elasticsearch(
             [{"host": "localhost", "port": 9200, "scheme": "https"}],
-            basic_auth=("elastic", os.getenv("ELASTIC_PASSWORD")),
+            basic_auth=(
+                "elastic",
+                dotenv_values(dotenv_path=dotenv_path)["ELASTIC_PASSWORD"],
+            ),
             verify_certs=False,
         )
 
