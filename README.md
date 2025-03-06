@@ -1,15 +1,63 @@
 # Introduction
 
-TODO: Give a short introduction of your project. Let this section explain the objectives or the motivation behind this project.
+This project aims to parse the Senslerdeutsches Wörterbuch, generate JSON data, and make it searchable using Elasticsearch. The frontend is built with Angular, and the backend uses Elasticsearch running in Docker containers.
 
 # Getting Started
 
 1. Installation process
-   - run docker-compuse up -d in the docker folder to start Elasticsearch
-   - Go to kibana at http://localhost:5601/app/enterprise_search/elasticsearch to genreate an api key
-   - Paste the "encoded" version of the api_key in the apiKey variable of the search.service.ts
+
+   - Clone the repository:
+     ```sh
+     git clone https://github.com/your-repo/senslerdeutsches-woerterbuch.git
+     cd senslerdeutsches-woerterbuch
+     ```
+   - Start Elasticsearch and Kibana using Docker Compose:
+
+     ```sh
+     cd docker
+     docker-compose up -d
+     cd ..
+     ```
+
+   - Create a Python virtual environment and activate it:
+     ```sh
+     python -m venv venv
+     # Windows
+     .\venv\Scripts\activate
+     # macOS/Linux
+     source venv/bin/activate
+     ```
+   - Install the required Python packages:
+     ```sh
+     pip install -r requirements.txt
+     ```
+   - Populate elastic search with data using the python script
+     ```sh
+     python .\parsing\pdf_parser.py
+     ```
+   - Generate an API key in Kibana:
+
+     - Go to Kibana at [http://localhost:5601/app/enterprise_search/elasticsearch](http://localhost:5601/app/enterprise_search/elasticsearch)
+     - login with username "elastic" and password from KIBANA_PASSWORD in `.env` file in the `.\docker` folder
+     - Generate an API key and copy the "encoded" version.
+     - Paste the "encoded" version of the API key in the `apiKey` variable of `search.service.ts`.
+
+   - Start the frontend application
+
+     ```sh
+     cd .\senslerdeutsches-woerterbuch\
+     ng serve
+     ```
+
+   - Frontend running at [http://localhost:4200/](http://localhost:4200)
+
 2. Software dependencies
-   - Todo
+
+   - Python 3.x
+   - Docker and Docker Compose
+   - Elasticsearch and Kibana
+   - Angular CLI
+
 3. Latest releases
    - Todo
 4. API references

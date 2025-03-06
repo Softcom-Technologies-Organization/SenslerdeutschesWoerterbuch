@@ -12,9 +12,14 @@ import { CommonModule } from '@angular/common';
 export class SearchComponent {
   constructor(private searchService: SearchService) {}
 
-  protected info: Observable<any> | undefined;
+  protected searchResults: any = undefined;
 
-  ngOnInit() {
-    this.info = this.searchService.getInfo();
+  onSearch(event: Event) {
+    const inputElement = event.target as HTMLInputElement;
+    const query = inputElement.value;
+
+    this.searchService.search(query).subscribe((data) => {
+      this.searchResults = data;
+    });
   }
 }

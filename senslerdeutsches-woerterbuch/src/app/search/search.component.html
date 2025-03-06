@@ -1,6 +1,9 @@
-<p>search works!</p>
+<input type="text" (input)="onSearch($event)" placeholder="Search..." />
 
-<h1>Info</h1>
-<p>
-  {{ info | async | json }}
-</p>
+<div *ngIf="searchResults">
+  @for (item of searchResults.hits.hits; track searchResults.hits.hits) {
+    <p>{{ item._id }}</p>
+    <p>{{ item._source.text }}</p>
+    <p>============================</p>
+  }
+</div>
