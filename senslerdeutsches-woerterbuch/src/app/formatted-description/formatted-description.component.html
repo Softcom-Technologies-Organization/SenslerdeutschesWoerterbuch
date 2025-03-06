@@ -1,0 +1,10 @@
+<div class="formatted-text">
+  @for (block of textBlocks; track block.id) {
+    <span
+      [class]="block.sizeClass"
+      [class.font-italic]="block.isItalic"
+      [class.font-bold]="block.isBold"
+      >{{ block.text }}</span
+    >
+  }
+</div>

@@ -1,9 +1,14 @@
 <input type="text" (input)="onSearch($event)" placeholder="Search..." />
 
 <div *ngIf="searchResults">
-  @for (item of searchResults.hits.hits; track searchResults.hits.hits) {
+  @for (item of searchResults.hits.hits; track item._source.term) {
     <p>{{ item._source.term }}</p>
     <p>{{ item._source.description }}</p>
+    <app-formatted-description
+      [formattedDescription]="item._source['formatted-description']"
+    >
+    </app-formatted-description>
+
     <p>============================</p>
   }
 </div>
