@@ -1,4 +1,4 @@
-<input type="text" (input)="onSearchPreview($event)" placeholder="Search..." (keyup.enter)="onSearch($event)" />
+<input [(ngModel)]="searchTerm" name="searchField" type="text" placeholder="Search..." (keyup.enter)="onSearch($event)" />
 
 <div *ngIf="searchResults">
   <ul>
