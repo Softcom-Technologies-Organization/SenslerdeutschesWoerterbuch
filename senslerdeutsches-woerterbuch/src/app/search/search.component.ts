@@ -4,9 +4,7 @@ import { CommonModule } from '@angular/common';
 import { NavigationEnd, Router, RouterModule } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
-import {
-  MatAutocompleteModule,
-} from '@angular/material/autocomplete';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
 
 @Component({
   selector: 'app-search',
@@ -38,12 +36,14 @@ export class SearchComponent {
       .subscribe((event: any) => {
         if (event instanceof NavigationEnd) {
           let urlSegments = (event as NavigationEnd).url.split('/');
-          
+
           if (
             urlSegments.length > 1 &&
             urlSegments[urlSegments.length - 2] === 'search'
           ) {
-            this.searchTerm = urlSegments[urlSegments.length - 1];
+            this.searchTerm = decodeURIComponent(
+              urlSegments[urlSegments.length - 1],
+            );
           }
         }
       });
