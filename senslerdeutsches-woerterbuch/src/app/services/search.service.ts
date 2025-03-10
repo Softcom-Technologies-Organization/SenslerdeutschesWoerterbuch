@@ -62,7 +62,7 @@ export class SearchService {
     });
   }
 
-  public search(query: string, size = 5) {
+  public search(query: string) {
     const body = {
       query: {
         bool: {
@@ -89,7 +89,6 @@ export class SearchService {
           ],
         },
       },
-      size: size,
     };
     this.http
       .post(`${this.apiUrl}/dictionary/_search`, body, {

@@ -1,10 +1,13 @@
-import { Component, DestroyRef } from '@angular/core';
+import { Component, DestroyRef, ViewChild } from '@angular/core';
 import { SearchService } from '../services/search.service';
 import { CommonModule } from '@angular/common';
 import { NavigationEnd, Router, RouterModule } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
-import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import {
+  MatAutocompleteModule,
+  MatAutocompleteTrigger,
+} from '@angular/material/autocomplete';
 
 @Component({
   selector: 'app-search',
@@ -13,6 +16,10 @@ import { MatAutocompleteModule } from '@angular/material/autocomplete';
   styleUrl: './search.component.scss',
 })
 export class SearchComponent {
+  @ViewChild(MatAutocompleteTrigger) autocomplete:
+    | MatAutocompleteTrigger
+    | undefined;
+
   private _searchTerm: string = '';
 
   public get searchTerm(): string {
@@ -54,6 +61,8 @@ export class SearchComponent {
   onSearch(event: Event) {
     const inputElement = event.target as HTMLInputElement;
     const query = inputElement.value;
+
+    this.autocomplete?.closePanel();
 
     this.router.navigate(['/', 'search', query]);
   }
