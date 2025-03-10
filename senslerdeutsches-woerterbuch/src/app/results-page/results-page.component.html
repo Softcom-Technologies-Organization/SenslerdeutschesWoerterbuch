@@ -1,0 +1,12 @@
+<div class="results" *ngIf="searchResults">
+  @if (!searchResults || searchResults.hits.hits.total === 0) {
+    <p>No results found</p>
+  } @else {
+    @for (item of searchResults.hits.hits; track searchResults.hits.hits) {
+      <a [routerLink]="['/', 'word', item._id]">{{ item._source.term }}</a>
+      <app-formatted-description [formattedDescription]="item._source['formatted-description']"></app-formatted-description>
+      <p>============================</p>
+    }
+  }
+</div>
+  

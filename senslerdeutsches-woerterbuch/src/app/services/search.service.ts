@@ -8,10 +8,14 @@ import { Observable } from 'rxjs';
 export class SearchService {
   private apiUrl = '/api'; // Elasticsearch endpoint --> Todo: move to a config file
   private apiKey =
-    'RWVUamFwVUJhdXJLLVJXUGJrRkg6a0xEdVpPaWRTckdSaFBnVU9sY1RBUQ=='; // Replace with your actual API key --> Todo: Move to a config file
+    'ZnJxa1pwVUJnT3VWU1JzRlJ3QTQ6QzB3ZUx0QXRSRFdBV1RWNE1nVzduUQ=='; // Replace with your actual API key --> Todo: Move to a config file
 
   // go to http://localhost:5601/app/enterprise_search/elasticsearch to genreate an api key
   // the generation of the api key should be automated in the docker-compose setup at a future step
+
+  private _searchResults: any;
+
+  public get searchResults(): any {return this._searchResults;}
 
   constructor(private http: HttpClient) {}
 
@@ -22,7 +26,7 @@ export class SearchService {
     });
   }
 
-  public search(query: string, size = 5): Observable<any> {
+  public autoComplete(query: string, size = 5): Observable<any> {
     const body = {
       query: {
         bool: {
@@ -53,6 +57,42 @@ export class SearchService {
     };
     return this.http.post(`${this.apiUrl}/dictionary/_search`, body, {
       headers: this.getHeaders(),
+    });
+  }
+
+  public search(query: string, size = 5) {
+    const body = {
+      query: {
+        bool: {
+          should: [
+            { match: { term: { query: query, operator: 'and' } } },
+            {
+              term: {
+                'term.keyword': {
+                  value: query.toLowerCase(),
+                  boost: 10,
+                },
+              },
+            },
+            {
+              match: {
+                term: {
+                  query: query,
+                  fuzziness: 'AUTO',
+                  prefix_length: 0,
+                  boost: 1,
+                },
+              },
+            },
+          ],
+        },
+      },
+      size: size,
+    };
+    this.http.post(`${this.apiUrl}/dictionary/_search`, body, {
+      headers: this.getHeaders(),
+    }).subscribe((data) => {
+      this._searchResults = data;
     });
   }
 }
