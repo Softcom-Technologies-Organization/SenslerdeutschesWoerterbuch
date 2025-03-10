@@ -3,8 +3,8 @@
     <p>No results found</p>
   } @else {
     @for (item of searchResults.hits.hits; track searchResults.hits.hits) {
-      <a [routerLink]="['/', 'word', item._id]">{{ item._id }}</a>
-      <p>{{ item._source.text }}</p>
+      <a [routerLink]="['/', 'word', item._id]">{{ item._source.term }}</a>
+      <p>{{ item._source.description }}</p>
       <p>============================</p>
     }
   }

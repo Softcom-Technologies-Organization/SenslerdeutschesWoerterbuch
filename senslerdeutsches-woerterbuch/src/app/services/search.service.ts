@@ -60,7 +60,7 @@ export class SearchService {
     });
   }
 
-  public search(query: string, size = 5): Observable<any> {
+  public search(query: string, size = 5) {
     const body = {
       query: {
         bool: {

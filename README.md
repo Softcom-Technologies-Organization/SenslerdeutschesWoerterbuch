@@ -11,6 +11,14 @@ This project aims to parse the Senslerdeutsches Wörterbuch, generate JSON data,
      git clone https://github.com/your-repo/senslerdeutsches-woerterbuch.git
      cd senslerdeutsches-woerterbuch
      ```
+   - Start Elasticsearch and Kibana using Docker Compose:
+
+     ```sh
+     cd docker
+     docker-compose up -d
+     cd ..
+     ```
+
    - Create a Python virtual environment and activate it:
      ```sh
      python -m venv venv
