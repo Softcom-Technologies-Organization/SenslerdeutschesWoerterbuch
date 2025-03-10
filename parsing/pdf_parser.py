@@ -1,3 +1,5 @@
+import math
+import re
 import pdfplumber
 import json
 from elasticsearch import Elasticsearch, helpers
@@ -47,14 +49,12 @@ class DictionaryParser:
 
                     # Is new keyword ?
                     if self._is_keyword(word, font):
+                        # the word cheere is not recognized properly and seems to get lost TODO: improve parsing and make it more robust
                         if current_text_block:  # Save previous entry
-                            entries[current_keyword] = {
-                                "term": current_keyword,
-                                "formatted-description": current_text_block,
-                                "description": " ".join(
-                                    [block["text"] for block in current_text_block]
-                                ),
-                            }
+                            self._add_entry_to_dict(
+                                entries, current_keyword, current_text_block
+                            )
+
                         current_text_block = []
                         current_keyword = text
                         last_word_was_keyword = True
@@ -63,6 +63,10 @@ class DictionaryParser:
                     # is still current keyword as it is a continuation of the previous word
                     if last_word_was_keyword and "Bold" in font:
                         current_keyword += text
+                        continue
+
+                    # skip big letter at the beginning of a new letter
+                    if math.isclose(size, 18.58, abs_tol=0.1):
                         continue
 
                     # process normal word
@@ -84,9 +88,56 @@ class DictionaryParser:
 
             # Add final entry
             if current_keyword and current_text_block:
-                entries[current_keyword] = current_text_block
+                self._add_entry_to_dict(entries, current_keyword, current_text_block)
 
         return entries
+
+    def _add_entry_to_dict(self, entries, current_keyword, current_text_block):
+        cleaned_keyword = self._clean_keyword(current_keyword)
+        self.clean_text_block(current_text_block)
+        entries[cleaned_keyword] = {
+            "term": cleaned_keyword,
+            "formatted-description": current_text_block,
+            "description": "".join([block["text"] for block in current_text_block]),
+        }
+
+    @staticmethod
+    def clean_text_block(text_block):
+        """
+        Clean up a text block by removing unwanted characters.
+        """
+        if not text_block:
+            return
+
+        # Swap multiple spaces to single space
+        for block in text_block:
+            block["text"] = re.sub(r" {2,}", " ", block["text"])
+
+        # Strip leading spaces
+        while text_block and (
+            text_block[0]["text"].startswith(" ") or not text_block[0]["text"]
+        ):
+            text_block[0]["text"] = text_block[0]["text"].lstrip()
+            if not text_block[0]["text"]:
+                text_block.pop(0)
+
+        # Strip trailing spaces
+        while text_block and (
+            text_block[-1]["text"].endswith(" ") or not text_block[-1]["text"]
+        ):
+            text_block[-1]["text"] = text_block[-1]["text"].rstrip()
+            if not text_block[-1]["text"]:
+                text_block.pop(-1)
+
+        if not text_block:
+            print("Warning! Cleanup removed all text blocks.")
+
+    @staticmethod
+    def _clean_keyword(keyword):
+        """
+        Clean up a keyword by removing unwanted characters.
+        """
+        return keyword.replace("*", "").replace("∙", "").strip()
 
     @staticmethod
     def _is_keyword(word, font):
@@ -98,13 +149,23 @@ class DictionaryParser:
         if not "Bold" in font:
             return False
 
+        # all keywords are in font size 11.19 or 9.40 or 10.30
+        font_sizes = [11.19, 9.40, 10.30]
+        if not any(
+            math.isclose(word["size"], size, abs_tol=0.1) for size in font_sizes
+        ):
+            return False
+
         # Check if coordinate of beginning of word x0 is at the start of a column
         column_start_coordinates = [59, 265, 549, 756]
-        for column_start in column_start_coordinates:
-            if word["x0"] > column_start and word["x0"] < column_start + 1:
-                return True
+        if not any(
+            math.isclose(word["x0"], column_start, abs_tol=1)
+            for column_start in column_start_coordinates
+        ):
+            return False
 
-        return False
+        # All criteria met
+        return True
 
     @staticmethod
     def save_json(output_path, entries):
