@@ -11,7 +11,10 @@
     class="search-input"
   />
 
-  <mat-autocomplete #auto="matAutocomplete">
+  <mat-autocomplete
+    #auto="matAutocomplete"
+    (optionSelected)="onOptionSelected($event)"
+  >
     @if (!searchResults || searchResults.hits.hits.total === 0) {
       <mat-option disabled>No results found</mat-option>
     } @else {

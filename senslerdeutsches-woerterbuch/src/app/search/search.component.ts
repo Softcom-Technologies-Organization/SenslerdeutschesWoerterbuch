@@ -6,6 +6,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import {
   MatAutocompleteModule,
+  MatAutocompleteSelectedEvent,
   MatAutocompleteTrigger,
 } from '@angular/material/autocomplete';
 
@@ -64,6 +65,10 @@ export class SearchComponent {
 
     this.autocomplete?.closePanel();
 
+    this.router.navigate(['/', 'search', query]);
+  }
+  onOptionSelected(event: MatAutocompleteSelectedEvent) {
+    const query = event.option.value;
     this.router.navigate(['/', 'search', query]);
   }
 }
