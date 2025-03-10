@@ -26,30 +26,68 @@ export class SearchService {
     });
   }
 
-  public autoComplete(query: string): Observable<any> {
+  public autoComplete(query: string, size = 5): Observable<any> {
     const body = {
       query: {
-        multi_match: {
-          query: query,
-          fields: ['text', 'formatted-text.text'],
-          fuzziness: 'AUTO',
+        bool: {
+          should: [
+            { match: { term: { query: query, operator: 'and' } } },
+            {
+              term: {
+                'term.keyword': {
+                  value: query.toLowerCase(),
+                  boost: 10,
+                },
+              },
+            },
+            {
+              match: {
+                term: {
+                  query: query,
+                  fuzziness: 'AUTO',
+                  prefix_length: 0,
+                  boost: 1,
+                },
+              },
+            },
+          ],
         },
       },
+      size: size,
     };
     return this.http.post(`${this.apiUrl}/dictionary/_search`, body, {
       headers: this.getHeaders(),
     });
   }
 
-  public search(query: string): void {
+  public search(query: string, size = 5): Observable<any> {
     const body = {
       query: {
-        multi_match: {
-          query: query,
-          fields: ['text', 'formatted-text.text'],
-          fuzziness: 'AUTO',
+        bool: {
+          should: [
+            { match: { term: { query: query, operator: 'and' } } },
+            {
+              term: {
+                'term.keyword': {
+                  value: query.toLowerCase(),
+                  boost: 10,
+                },
+              },
+            },
+            {
+              match: {
+                term: {
+                  query: query,
+                  fuzziness: 'AUTO',
+                  prefix_length: 0,
+                  boost: 1,
+                },
+              },
+            },
+          ],
         },
       },
+      size: size,
     };
     this.http.post(`${this.apiUrl}/dictionary/_search`, body, {
       headers: this.getHeaders(),

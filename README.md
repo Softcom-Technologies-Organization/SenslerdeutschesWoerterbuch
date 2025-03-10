@@ -23,16 +23,25 @@ This project aims to parse the Senslerdeutsches Wörterbuch, generate JSON data,
      ```sh
      pip install -r requirements.txt
      ```
-   - Start Elasticsearch and Kibana using Docker Compose:
+   - Populate elastic search with data using the python script
      ```sh
-     cd docker
-     docker-compose up -d
+     python .\parsing\pdf_parser.py
      ```
    - Generate an API key in Kibana:
+
      - Go to Kibana at [http://localhost:5601/app/enterprise_search/elasticsearch](http://localhost:5601/app/enterprise_search/elasticsearch)
-     - login with username "elastic", password at KIBANA_PASSWORD in .env file in the docker folder
+     - login with username "elastic" and password from KIBANA_PASSWORD in `.env` file in the `.\docker` folder
      - Generate an API key and copy the "encoded" version.
      - Paste the "encoded" version of the API key in the `apiKey` variable of `search.service.ts`.
+
+   - Start the frontend application
+
+     ```sh
+     cd .\senslerdeutsches-woerterbuch\
+     ng serve
+     ```
+
+   - Frontend running at [http://localhost:4200/](http://localhost:4200)
 
 2. Software dependencies
 
