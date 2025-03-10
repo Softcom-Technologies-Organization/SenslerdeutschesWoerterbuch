@@ -3,10 +3,22 @@
     <p>No results found</p>
   } @else {
     @for (item of searchResults.hits.hits; track searchResults.hits.hits) {
-      <a [routerLink]="['/', 'word', item._id]">{{ item._source.term }}</a>
-      <app-formatted-description [formattedDescription]="item._source['formatted-description']"></app-formatted-description>
-      <p>============================</p>
+      <div class="result-card">
+        <mat-card>
+          <mat-card-header>
+            <mat-card-title>
+              <a [routerLink]="['/', 'word', item._id]" class="result-link">{{
+                item._source.term
+              }}</a>
+            </mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <app-formatted-description
+              [formattedDescription]="item._source['formatted-description']"
+            ></app-formatted-description>
+          </mat-card-content>
+        </mat-card>
+      </div>
     }
   }
 </div>
-  

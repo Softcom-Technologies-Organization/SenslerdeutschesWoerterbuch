@@ -1,6 +1,14 @@
+<mat-toolbar color="primary">
+  <span routerLink="/" style="cursor: pointer">
+    Senslerdeutsches Wörterbuch
+  </span>
+</mat-toolbar>
 <div class="content">
-    <h1>Senslerdeutsches Wörterbuch</h1>
-    <app-header></app-header>
-    <mat-divider></mat-divider>
-    <router-outlet />
+  <mat-card>
+    <mat-card-content>
+      <app-header></app-header>
+      <mat-divider></mat-divider>
+      <router-outlet></router-outlet>
+    </mat-card-content>
+  </mat-card>
 </div>
