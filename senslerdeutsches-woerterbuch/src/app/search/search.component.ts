@@ -1,11 +1,11 @@
 import { Component } from '@angular/core';
 import { SearchService } from '../services/search.service';
-import { Observable } from 'rxjs';
 import { CommonModule } from '@angular/common';
+import { FormattedDescriptionComponent } from '../formatted-description/formatted-description.component';
 
 @Component({
   selector: 'app-search',
-  imports: [CommonModule],
+  imports: [CommonModule, FormattedDescriptionComponent],
   templateUrl: './search.component.html',
   styleUrl: './search.component.scss',
 })
