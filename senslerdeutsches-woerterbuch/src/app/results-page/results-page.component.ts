@@ -10,6 +10,7 @@ import {
   MatCardHeader,
   MatCardTitle,
 } from '@angular/material/card';
+import { MatDivider } from '@angular/material/divider';
 
 @Component({
   selector: 'app-results-page',
@@ -21,6 +22,7 @@ import {
     MatCardHeader,
     MatCardTitle,
     MatCardContent,
+    MatDivider,
   ],
   templateUrl: './results-page.component.html',
   styleUrl: './results-page.component.scss',
