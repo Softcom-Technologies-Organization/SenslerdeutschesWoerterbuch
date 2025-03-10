@@ -151,7 +151,7 @@ class DictionaryParser:
         """
         Clean up a keyword by removing unwanted characters.
         """
-        return keyword.replace("*", "").replace("∙", "").strip()
+        return keyword.replace("*", "").replace("∙", "").replace(":", "").strip()
 
     @staticmethod
     def _is_keyword(word, font):
