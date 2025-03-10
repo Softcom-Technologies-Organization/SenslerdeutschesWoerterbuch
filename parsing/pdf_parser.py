@@ -61,7 +61,7 @@ class DictionaryParser:
                         continue
 
                     # is still current keyword as it is a continuation of the previous word
-                    if last_word_was_keyword and "Bold" in font:
+                    if self._is_continuation_of_keyword(word, last_word_was_keyword):
                         current_keyword += text
                         continue
 
@@ -92,8 +92,22 @@ class DictionaryParser:
 
         return entries
 
+    @staticmethod
+    def _is_continuation_of_keyword(word, last_word_was_keyword):
+        if last_word_was_keyword and "Bold" in word.get("fontname", ""):
+            return True
+
+        # if word is whitespace only and last word was a keyword, it is likely a continuation of the keyword
+        if last_word_was_keyword and word["text"].isspace():
+            return True
+
+        return False
+
     def _add_entry_to_dict(self, entries, current_keyword, current_text_block):
+
         cleaned_keyword = self._clean_keyword(current_keyword)
+        if cleaned_keyword in entries:
+            print(f"Warning! Duplicate keyword: {cleaned_keyword}")
         self.clean_text_block(current_text_block)
         entries[cleaned_keyword] = {
             "term": cleaned_keyword,
@@ -162,6 +176,10 @@ class DictionaryParser:
             math.isclose(word["x0"], column_start, abs_tol=1)
             for column_start in column_start_coordinates
         ):
+            return False
+
+        # if word is whitespace only, it is not a keyword
+        if word["text"].isspace():
             return False
 
         # All criteria met

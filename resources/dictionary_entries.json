@@ -3391,26 +3391,46 @@
     ],
     "description": "neu ➐ Stirnfransen, Pony: heschù de Bock gschnitte? (He1), oft Dim. Böckli. [ahd/mhd boc 'Bock' kam in versch. Bedd in die roman. Dialekte (frz bouc, pat bok 'Bock; Spitzbart; Haarsträhne' in GPSR); als 'Stirnfranse' kam es ins Ssdt zurück ♦ nicht in Ma-Wbb]"
   },
-  "": {
-    "term": "",
+  "bocke:": {
+    "term": "bocke:",
     "formatted-description": [
       {
-        "text": "[Ra. fehlt in Ma-Wbb; vgl. hochdt ",
-        "font": "QNVUYG+Garamond",
-        "size": 9.404600000000073
+        "text": "neu ",
+        "font": "XRNKSS+Garamond",
+        "size": 11.19599999999997
       },
       {
-        "text": "endlich ist der Groschen gefallen",
-        "font": "QNVUYG+Garamond-Italic",
-        "size": 9.40459999999996
+        "text": "➌",
+        "font": "XRNKSS+SegoeUISymbol",
+        "size": 10.300299999999993
       },
       {
-        "text": " (Röhrich)]",
-        "font": "QNVUYG+Garamond",
-        "size": 9.404600000000073
+        "text": " ",
+        "font": "XRNKSS+Garamond",
+        "size": 10.30030000000005
+      },
+      {
+        "text": "Geschlechtsverkehr haben",
+        "font": "XRNKSS+Garamond-Italic",
+        "size": 11.196000000000026
+      },
+      {
+        "text": " ",
+        "font": "XRNKSS+Garamond",
+        "size": 11.19599999999997
+      },
+      {
+        "text": "(vulg.). SYN: chutte. ",
+        "font": "XRNKSS+Garamond",
+        "size": 11.195999999999998
+      },
+      {
+        "text": "[SI-Wb: 'von Ziegenbock besprungen werden'; BE-Wb 'sich begatten']",
+        "font": "XRNKSS+Garamond",
+        "size": 9.404599999999988
       }
     ],
-    "description": "[Ra. fehlt in Ma-Wbb; vgl. hochdt endlich ist der Groschen gefallen (Röhrich)]"
+    "description": "neu ➌ Geschlechtsverkehr haben (vulg.). SYN: chutte. [SI-Wb: 'von Ziegenbock besprungen werden'; BE-Wb 'sich begatten']"
   },
   "bögele": {
     "term": "bögele",
@@ -5665,6 +5685,177 @@
       }
     ],
     "description": "neu ● Ra.: dasch fùr d Chatz verge-bens (allg.); SYN: vùrgääbe, (fùr ds) Büüssi. [Ra. auch hochdt]"
+  },
+  "cheere:": {
+    "term": "cheere:",
+    "formatted-description": [
+      {
+        "text": "neu ",
+        "font": "WJDEEU+Garamond",
+        "size": 11.19599999999997
+      },
+      {
+        "text": "● ",
+        "font": "WJDEEU+Garamond-Bold",
+        "size": 10.300299999999993
+      },
+      {
+        "text": "Raa.:",
+        "font": "WJDEEU+Garamond-Bold",
+        "size": 11.196000000000026
+      },
+      {
+        "text": " ",
+        "font": "WJDEEU+Garamond-Italic",
+        "size": 11.196000000000026
+      },
+      {
+        "text": "Braate cheere (Ta",
+        "font": "WJDEEU+Garamond",
+        "size": 11.19599999999997
+      },
+      {
+        "text": "1",
+        "font": "WJDEEU+Garamond",
+        "size": 8.508999999999958
+      },
+      {
+        "text": " Ss",
+        "font": "WJDEEU+Garamond",
+        "size": 11.19599999999997
+      },
+      {
+        "text": "1",
+        "font": "WJDEEU+Garamond",
+        "size": 8.508999999999958
+      },
+      {
+        "text": "), Chees ~ (Ss",
+        "font": "WJDEEU+Garamond",
+        "size": 11.19599999999997
+      },
+      {
+        "text": "1",
+        "font": "WJDEEU+Garamond",
+        "size": 8.508999999999958
+      },
+      {
+        "text": "), Chratte ~ (Ta",
+        "font": "WJDEEU+Garamond",
+        "size": 11.19599999999997
+      },
+      {
+        "text": "1",
+        "font": "WJDEEU+Garamond",
+        "size": 8.508999999999958
+      },
+      {
+        "text": "), Chöörbli ~ (Si",
+        "font": "WJDEEU+Garamond",
+        "size": 11.19599999999997
+      },
+      {
+        "text": "1",
+        "font": "WJDEEU+Garamond",
+        "size": 8.508999999999958
+      },
+      {
+        "text": "): ",
+        "font": "WJDEEU+Garamond",
+        "size": 11.19599999999997
+      },
+      {
+        "text": "Erwachsenen-Kind-Spiel, bei dem das Kind zwischen den Beinen an den Händen gepackt, gehoben u. um die eig. Achse gedreht wird.",
+        "font": "WJDEEU+Garamond-Italic",
+        "size": 11.196000000000026
+      },
+      {
+        "text": " ",
+        "font": "WJDEEU+Garamond",
+        "size": 11.19599999999997
+      },
+      {
+        "text": "↑",
+        "font": "WJDEEU+Garamond",
+        "size": 9.404600000000016
+      },
+      {
+        "text": "spiile. ",
+        "font": "WJDEEU+Garamond",
+        "size": 11.19599999999997
+      },
+      {
+        "text": "● ",
+        "font": "WJDEEU+Garamond-Bold",
+        "size": 10.300299999999993
+      },
+      {
+        "text": "i wott dem scho leere Chappe cheere ",
+        "font": "WJDEEU+Garamond",
+        "size": 11.19599999999997
+      },
+      {
+        "text": "ihn senkeln, zurechtweisen",
+        "font": "WJDEEU+Garamond-Italic",
+        "size": 11.196000000000026
+      },
+      {
+        "text": " (Fr",
+        "font": "WJDEEU+Garamond",
+        "size": 11.19599999999997
+      },
+      {
+        "text": "1",
+        "font": "WJDEEU+Garamond",
+        "size": 8.508999999999958
+      },
+      {
+        "text": "); ",
+        "font": "WJDEEU+Garamond",
+        "size": 11.19599999999997
+      },
+      {
+        "text": "↑",
+        "font": "WJDEEU+Garamond",
+        "size": 9.404600000000016
+      },
+      {
+        "text": "chriege. ",
+        "font": "WJDEEU+Garamond",
+        "size": 11.19599999999997
+      },
+      {
+        "text": " ",
+        "font": "WJDEEU+Garamond-Italic",
+        "size": 11.196000000000026
+      },
+      {
+        "text": "[Id 5,872: ",
+        "font": "WJDEEU+Garamond",
+        "size": 9.404600000000016
+      },
+      {
+        "text": "Braate ~",
+        "font": "WJDEEU+Garamond-Italic",
+        "size": 9.404600000000016
+      },
+      {
+        "text": " (BE, AG); ",
+        "font": "WJDEEU+Garamond",
+        "size": 9.404600000000016
+      },
+      {
+        "text": "Chees ~ ",
+        "font": "WJDEEU+Garamond-Italic",
+        "size": 9.404600000000016
+      },
+      {
+        "text": "(BE-ML)]",
+        "font": "WJDEEU+Garamond",
+        "size": 9.404600000000016
+      }
+    ],
+    "description": "neu ● Raa.: Braate cheere (Ta1 Ss1), Chees ~ (Ss1), Chratte ~ (Ta1), Chöörbli ~ (Si1): Erwachsenen-Kind-Spiel, bei dem das Kind zwischen den Beinen an den Händen gepackt, gehoben u. um die eig. Achse gedreht wird. ↑spiile. ● i wott dem scho leere Chappe cheere ihn senkeln, zurechtweisen (Fr1); ↑chriege.  [Id 5,872: Braate ~ (BE, AG); Chees ~ (BE-ML)]"
   },
   "chees·fuuḷ": {
     "term": "chees·fuuḷ",
@@ -8267,6 +8458,42 @@
       }
     ],
     "description": "(t-et): sich unterhalten, plaudern, Klatsch austauschen: ga doorfe (Gi2). ⍋⍋rede. [wohl Grundbed. ‘ins Dorf gehen u. sich dort unterhalten‘ (Id) ♦ Id 13,1502: BE, WS]"
+  },
+  "Dräck:": {
+    "term": "Dräck:",
+    "formatted-description": [
+      {
+        "text": "neu ",
+        "font": "WJDEEU+Garamond",
+        "size": 11.19599999999997
+      },
+      {
+        "text": "●",
+        "font": "WJDEEU+Garamond-Bold",
+        "size": 10.300299999999993
+      },
+      {
+        "text": " Ra.:",
+        "font": "WJDEEU+Garamond-Bold",
+        "size": 11.196000000000026
+      },
+      {
+        "text": " itz heschù de Dräck ",
+        "font": "WJDEEU+Garamond",
+        "size": 11.19599999999997
+      },
+      {
+        "text": "schadenfreudiger Ausspruch. ",
+        "font": "WJDEEU+Garamond-Italic",
+        "size": 11.196000000000026
+      },
+      {
+        "text": "[Id 14,725; BE-Wb]",
+        "font": "WJDEEU+Garamond",
+        "size": 9.404600000000016
+      }
+    ],
+    "description": "neu ● Ra.: itz heschù de Dräck schadenfreudiger Ausspruch. [Id 14,725; BE-Wb]"
   },
   "Draguuner·wyy": {
     "term": "Draguuner·wyy",
@@ -12391,6 +12618,37 @@
       }
     ],
     "description": "(g-et): winseln, jaulen eines Hundes (We2). SYN: ggüüne. [lautmalend ♦ hochdt fiepen 'höhe Pfeiftöne aus-stossen, winseln' (Wahrig); Id 1,878 u. SI-Wb nur fyppe, fieppe 'beständig hin u. her gehen/rut-schen/reiben']"
+  },
+  "gaa:": {
+    "term": "gaa:",
+    "formatted-description": [
+      {
+        "text": "neu ",
+        "font": "VBTYQW+Garamond",
+        "size": 11.19599999999997
+      },
+      {
+        "text": "➐",
+        "font": "VBTYQW+SegoeUISymbol",
+        "size": 10.300299999999993
+      },
+      {
+        "text": " ",
+        "font": "VBTYQW+Garamond-Bold",
+        "size": 9.404600000000016
+      },
+      {
+        "text": "als Beruf lernen:",
+        "font": "VBTYQW+Garamond-Italic",
+        "size": 11.196000000000026
+      },
+      {
+        "text": " är weli ga fùr Apeteegger (fa Religion); Lautung: wenn gaa mer? / wenn göö mer? (jung) – är geengi / är geengti (jünger).",
+        "font": "VBTYQW+Garamond",
+        "size": 11.19599999999997
+      }
+    ],
+    "description": "neu ➐ als Beruf lernen: är weli ga fùr Apeteegger (fa Religion); Lautung: wenn gaa mer? / wenn göö mer? (jung) – är geengi / är geengti (jünger)."
   },
   "gäär:": {
     "term": "gäär:",
@@ -19515,6 +19773,62 @@
     ],
     "description": "(n, -eni): gestärkter, fester Hemdkragen (Id). SYN: Schiidi. ↑Hemm-lis∙chraage. [hier Hemḷ, Hemel noch ohne die längst fixe -li-Verkleinerung ♦ Id 4,1413: nur FR]"
   },
+  "Hemmli:": {
+    "term": "Hemmli:",
+    "formatted-description": [
+      {
+        "text": "neu ",
+        "font": "UTJSCY+Garamond",
+        "size": 11.195999999999998
+      },
+      {
+        "text": "●",
+        "font": "UTJSCY+Garamond",
+        "size": 10.300299999999993
+      },
+      {
+        "text": " Ra.:",
+        "font": "UTJSCY+Garamond-Bold",
+        "size": 11.195999999999998
+      },
+      {
+        "text": " da isch iim haut ds Hemmli nööcher aus de Tschoope ",
+        "font": "UTJSCY+Garamond",
+        "size": 11.195999999999998
+      },
+      {
+        "text": "man bevorzugt, was dem eigenen Nutzen am besten dient ",
+        "font": "UTJSCY+Garamond-Italic",
+        "size": 11.195999999999998
+      },
+      {
+        "text": "(Wü",
+        "font": "UTJSCY+Garamond",
+        "size": 11.195999999999998
+      },
+      {
+        "text": "1",
+        "font": "UTJSCY+Garamond",
+        "size": 8.509000000000015
+      },
+      {
+        "text": "). ",
+        "font": "UTJSCY+Garamond",
+        "size": 11.195999999999998
+      },
+      {
+        "text": "[ds Hemmli isch näher weder d Chutte / ~als s ",
+        "font": "UTJSCY+Garamond",
+        "size": 9.404599999999988
+      },
+      {
+        "text": "Röckli (Id) ♦ Id 2,1297: BE, ZH]",
+        "font": "UTJSCY+Garamond",
+        "size": 9.404600000000002
+      }
+    ],
+    "description": "neu ● Ra.: da isch iim haut ds Hemmli nööcher aus de Tschoope man bevorzugt, was dem eigenen Nutzen am besten dient (Wü1). [ds Hemmli isch näher weder d Chutte / ~als s Röckli (Id) ♦ Id 2,1297: BE, ZH]"
+  },
   "Here·frümmli": {
     "term": "Here·frümmli",
     "formatted-description": [
@@ -21501,6 +21815,37 @@
       }
     ],
     "description": "(n, unveränd.): Eigentor (CH). SYN: Säḷbschtgooḷ. [Varianten-Wb führt Eigengoal in CH, A auf, Selbsttor in D.]"
+  },
+  "Kanoona:": {
+    "term": "Kanoona:",
+    "formatted-description": [
+      {
+        "text": "neu ",
+        "font": "UTJSCY+Garamond",
+        "size": 11.196000000000026
+      },
+      {
+        "text": "➌",
+        "font": "UTJSCY+SegoeUISymbol",
+        "size": 10.300299999999993
+      },
+      {
+        "text": " toller Kerl, eher bewundernd.",
+        "font": "UTJSCY+Garamond-Italic",
+        "size": 11.196000000000026
+      },
+      {
+        "text": " vgl. Anhang 1. ",
+        "font": "UTJSCY+Garamond",
+        "size": 11.196000000000026
+      },
+      {
+        "text": "[OW-Wb: 'meisterlicher Könner']",
+        "font": "UTJSCY+Garamond",
+        "size": 9.404600000000073
+      }
+    ],
+    "description": "neu ➌ toller Kerl, eher bewundernd. vgl. Anhang 1. [OW-Wb: 'meisterlicher Könner']"
   },
   "Kantoon": {
     "term": "Kantoon",
@@ -48578,12 +48923,47 @@
         "size": 9.404599999999988
       },
       {
-        "text": "arlicke.",
+        "text": "arlicke. ",
         "font": "QNVUYG+Garamond",
         "size": 11.195999999999998
+      },
+      {
+        "text": " ",
+        "font": "QNVUYG+Garamond-Italic",
+        "size": 11.195999999999998
+      },
+      {
+        "text": " ",
+        "font": "QNVUYG+Garamond-Italic",
+        "size": 11.196000000000012
+      },
+      {
+        "text": " ",
+        "font": "QNVUYG+Garamond-Italic",
+        "size": 11.195999999999998
+      },
+      {
+        "text": " ",
+        "font": "QNVUYG+Garamond-Bold",
+        "size": 11.195999999999998
+      },
+      {
+        "text": " [Ra. fehlt in Ma-Wbb; vgl. hochdt ",
+        "font": "QNVUYG+Garamond",
+        "size": 9.404600000000073
+      },
+      {
+        "text": "endlich ist der Groschen gefallen",
+        "font": "QNVUYG+Garamond-Italic",
+        "size": 9.40459999999996
+      },
+      {
+        "text": " (Röhrich)]",
+        "font": "QNVUYG+Garamond",
+        "size": 9.404600000000073
       }
     ],
-    "description": "(n, -eni/-ini): Zwanzigrappen-Stück. ● Ra.: itz isch ds Zwenzggi kyyt ein Licht aufgegangen (Ta); ↑arlicke."
+    "description": "(n, -eni/-ini): Zwanzigrappen-Stück. ● Ra.: itz isch ds Zwenzggi kyyt ein Licht aufgegangen (Ta); ↑arlicke.      [Ra. fehlt in Ma-Wbb; vgl. hochdt endlich ist der Groschen gefallen (Röhrich)]"
   },
   "Zwicktuttḷ": {
     "term": "Zwicktuttḷ",
