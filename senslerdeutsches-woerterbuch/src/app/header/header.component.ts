@@ -1,4 +1,4 @@
-import { Component, Output } from '@angular/core';
+import { Component } from '@angular/core';
 import { SearchComponent } from '../search/search.component';
 
 @Component({

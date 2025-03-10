@@ -4,7 +4,7 @@
   } @else {
     @for (item of searchResults.hits.hits; track searchResults.hits.hits) {
       <a [routerLink]="['/', 'word', item._id]">{{ item._source.term }}</a>
-      <p>{{ item._source.description }}</p>
+      <app-formatted-description [formattedDescription]="item._source['formatted-description']"></app-formatted-description>
       <p>============================</p>
     }
   }

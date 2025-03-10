@@ -1,12 +1,13 @@
 import { Component, DestroyRef } from '@angular/core';
 import { SearchService } from '../services/search.service';
 import { CommonModule } from '@angular/common';
-import { ActivatedRoute, NavigationEnd, Router, RouterModule } from '@angular/router';
+import { NavigationEnd, Router, RouterModule } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { FormattedDescriptionComponent } from '../formatted-description/formatted-description.component';
 
 @Component({
   selector: 'app-results-page',
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, FormattedDescriptionComponent],
   templateUrl: './results-page.component.html',
   styleUrl: './results-page.component.scss'
 })
