@@ -67,6 +67,7 @@ export class SearchComponent {
 
     this.router.navigate(['/', 'search', query]);
   }
+
   onOptionSelected(event: MatAutocompleteSelectedEvent) {
     const query = event.option.value;
     this.router.navigate(['/', 'search', query]);

@@ -11,15 +11,16 @@
     <div class="word-details">
       <h1 class="word-term">{{ wordEntry.term }}</h1>
 
-      @if (wordEntry["formatted-description"]) {
-        <div class="word-section">
-          <h2>Definition</h2>
+      <div class="word-section">
+        <h2>Definition</h2>
+        @if (wordEntry["formatted-description"]) {
           <app-formatted-description
             [formattedDescription]="wordEntry['formatted-description']"
           ></app-formatted-description>
-          <p>{{ wordEntry.definition }}</p>
-        </div>
-      }
+        } @else {
+          <p>No definition</p>
+        }
+      </div>
     </div>
   }
 </div>

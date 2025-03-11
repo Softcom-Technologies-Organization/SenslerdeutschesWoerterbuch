@@ -1,5 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, DestroyRef } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { SearchService } from '../services/search.service';
 import { FormattedDescriptionComponent } from '../formatted-description/formatted-description.component';
 
@@ -17,15 +18,18 @@ export class WordPageComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private searchService: SearchService,
+    readonly destroyRef: DestroyRef,
   ) {}
 
   ngOnInit(): void {
-    this.route.params.subscribe((params) => {
-      const wordId = params['id'];
-      if (wordId) {
-        this.fetchWordById(wordId);
-      }
-    });
+    this.route.params
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((params) => {
+        const wordId = params['id'];
+        if (wordId) {
+          this.fetchWordById(wordId);
+        }
+      });
   }
 
   fetchWordById(id: string): void {

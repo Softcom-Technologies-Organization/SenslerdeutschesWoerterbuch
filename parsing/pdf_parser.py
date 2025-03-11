@@ -151,7 +151,6 @@ class DictionaryParser:
         """
         Clean up a keyword by removing unwanted characters.
         """
-        # todo add a version used for search not containing the middle dot and a display version containing the middle dot as it is a reding help
         return (
             keyword.replace("*", "")
             .replace("·", "")  # middle dot
