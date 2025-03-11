@@ -12,12 +12,18 @@ This project aims to parse the Senslerdeutsches Wörterbuch, generate JSON data,
      cd senslerdeutsches-woerterbuch
      ```
    - Start Elasticsearch and Kibana using Docker Compose:
-
      ```sh
      cd docker
      docker-compose up -d
      cd ..
      ```
+
+   - Generate an API key in Kibana and add an index:
+     - Go to Kibana at [http://localhost:5601/app/enterprise_search/elasticsearch](http://localhost:5601/app/enterprise_search/elasticsearch)
+     - login with username "elastic" and password from KIBANA_PASSWORD in `.env` file in the `.\docker` folder
+     - Create a new index named `dictionary`
+     - Generate an API key and copy the "encoded" version.
+     - Paste the "encoded" version of the API key in the `apiKey` variable of `search.service.ts`.
 
    - Create a Python virtual environment and activate it:
      ```sh
@@ -35,12 +41,6 @@ This project aims to parse the Senslerdeutsches Wörterbuch, generate JSON data,
      ```sh
      python .\parsing\pdf_parser.py
      ```
-   - Generate an API key in Kibana:
-
-     - Go to Kibana at [http://localhost:5601/app/enterprise_search/elasticsearch](http://localhost:5601/app/enterprise_search/elasticsearch)
-     - login with username "elastic" and password from KIBANA_PASSWORD in `.env` file in the `.\docker` folder
-     - Generate an API key and copy the "encoded" version.
-     - Paste the "encoded" version of the API key in the `apiKey` variable of `search.service.ts`.
 
    - Start the frontend application
 
