@@ -1,1 +1,26 @@
-<p>word-page works!</p>
+<div class="word-page-container">
+  @if (loading) {
+    <div class="loading">Loading word details...</div>
+  }
+
+  @if (error) {
+    <div class="error">Error loading word details. Please try again later.</div>
+  }
+
+  @if (!loading && !error && wordEntry) {
+    <div class="word-details">
+      <h1 class="word-term">{{ wordEntry.term }}</h1>
+
+      <div class="word-section">
+        <h2>Definition</h2>
+        @if (wordEntry["formatted-description"]) {
+          <app-formatted-description
+            [formattedDescription]="wordEntry['formatted-description']"
+          ></app-formatted-description>
+        } @else {
+          <p>No definition</p>
+        }
+      </div>
+    </div>
+  }
+</div>

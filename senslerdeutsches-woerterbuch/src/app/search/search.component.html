@@ -8,14 +8,20 @@
     type="text"
     placeholder="Search..."
     (keyup.enter)="onSearch($event)"
+    class="search-input"
   />
 
-  <mat-autocomplete #auto="matAutocomplete">
+  <mat-autocomplete
+    #auto="matAutocomplete"
+    (optionSelected)="onOptionSelected($event)"
+  >
     @if (!searchResults || searchResults.hits.hits.total === 0) {
       <mat-option disabled>No results found</mat-option>
     } @else {
       @for (item of searchResults.hits.hits; track searchResults.hits.hits) {
-        <mat-option [value]="item._source.term">{{ item._source.term }}</mat-option>
+        <mat-option [value]="item._source.term">
+          {{ item._source.term }}
+        </mat-option>
       }
     }
   </mat-autocomplete>
