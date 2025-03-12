@@ -32,6 +32,8 @@ jobs:
       run: npm run build --if-present
       working-directory: ./senslerdeutsches-woerterbuch
 
+    - uses: browser-actions/setup-chrome@v1
+
     - name: Test
       run: npm test
       working-directory: ./senslerdeutsches-woerterbuch
