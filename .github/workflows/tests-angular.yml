@@ -35,5 +35,5 @@ jobs:
     - uses: browser-actions/setup-chrome@v1
 
     - name: Test
-      run: npm test
+      run: npx ng test --no-watch --no-progress --browsers=ChromeHeadless
       working-directory: ./senslerdeutsches-woerterbuch
