@@ -64,7 +64,8 @@ This project aims to parse the Senslerdeutsches Wörterbuch, generate JSON data,
    - Todo
 
 # Build and Test
-
+- Depending on your setup, you have to install Chrome (for example when using WSL2 on Windows) for the Angular tests
+- Use act to test the pipelines locally before creating a pull request
 TODO: Describe and show how to build your code and run the tests.
 
 # Contribute
