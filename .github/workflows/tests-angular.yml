@@ -11,29 +11,27 @@ on:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./senslerdeutsches-woerterbuch
 
     steps:
     - uses: actions/checkout@v4
-    - name: Use Node.js ${{ matrix.node-version }}
+
+    - name: Setup Node
       uses: actions/setup-node@v4
       with:
-        node-version: lts/*
+        node-version-file: '.nvmrc'
         cache: 'npm'
         cache-dependency-path: |
           ./senslerdeutsches-woerterbuch/package-lock.json
 
-    - name: Install
-      working-directory: ./senslerdeutsches-woerterbuch
+    - name: Install dependencies
       run: npm ci
 
-    - name: Build
-      run: npm run build --if-present
-      working-directory: ./senslerdeutsches-woerterbuch
+    - name: Setup Chrome
+      uses: browser-actions/setup-chrome@v1
 
-    - uses: browser-actions/setup-chrome@v1
-
-    - name: Test
+    - name: Run Angular Unit Tests
       run: npx ng test --no-watch --no-progress --browsers=ChromeHeadless
-      working-directory: ./senslerdeutsches-woerterbuch
