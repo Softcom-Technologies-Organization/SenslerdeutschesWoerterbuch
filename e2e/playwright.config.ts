@@ -72,8 +72,11 @@ export default defineConfig({
 
   /* Run your local dev server before starting the tests */
   webServer: {
-    command: 'cd ../senslerdeutsches-woerterbuch && npm install && npx ng serve',
+    command: process.env.CI 
+      ? 'cd ../senslerdeutsches-woerterbuch && npx serve -s dist/senslerdeutsches-woerterbuch/browser -l 4200' 
+      : 'cd ../senslerdeutsches-woerterbuch && npm install && npx ng serve',
     url: 'http://127.0.0.1:4200',
-    reuseExistingServer: !process.env.CI
+    reuseExistingServer: !process.env.CI,
+    timeout: 120000, // 2 minutes
   },
 });
