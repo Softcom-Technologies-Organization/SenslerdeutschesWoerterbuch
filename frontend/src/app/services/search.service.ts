@@ -6,9 +6,9 @@ import { Observable } from 'rxjs';
   providedIn: 'root',
 })
 export class SearchService {
-  private apiUrl = '/api'; // Elasticsearch endpoint --> Todo: move to a config file
+  private apiUrl = 'http://localhost:4202/elastic/'; // Elasticsearch endpoint --> Todo: move to a config file
   private apiKey =
-    'VEpuc2ZwVUJ3RWd4amhjNW4tNEo6MHVPZVdjQkNSUVdnR1RHMmRabW5iQQ=='; // Replace with your actual API key --> Todo: Move to a config file
+    'ZXpuOWo1VUJPb0RZdnRsNllUOWY6N0pUWTctbGlSMTZ3SmRaazk1U3lWZw=='; // Replace with your actual API key --> Todo: Move to a config file
 
   // go to http://localhost:5601/app/enterprise_search/elasticsearch to genreate an api key
   // the generation of the api key should be automated in the docker-compose setup at a future step
@@ -57,7 +57,7 @@ export class SearchService {
       },
       size: size,
     };
-    return this.http.post(`${this.apiUrl}/dictionary/_search`, body, {
+    return this.http.post(`${this.apiUrl}_search`, body, {
       headers: this.getHeaders(),
     });
   }
@@ -91,7 +91,7 @@ export class SearchService {
       },
     };
     this.http
-      .post(`${this.apiUrl}/dictionary/_search`, body, {
+      .post(`${this.apiUrl}_search`, body, {
         headers: this.getHeaders(),
       })
       .subscribe((data) => {
@@ -100,7 +100,7 @@ export class SearchService {
   }
 
   public getById(id: string): Observable<any> {
-    return this.http.get(`${this.apiUrl}/dictionary/_doc/${id}`, {
+    return this.http.get(`${this.apiUrl}dictionary/_doc/${id}`, {
       headers: this.getHeaders(),
     });
   }

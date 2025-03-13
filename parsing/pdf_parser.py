@@ -200,7 +200,7 @@ class DictionaryParser:
 class ElasticHelper:
     def __init__(self, dotenv_path):
         self.es = Elasticsearch(
-            [{"host": "localhost", "port": 9200, "scheme": "https"}],
+            ['http://localhost:4202/elastic/'],
             basic_auth=(
                 "elastic",
                 dotenv_values(dotenv_path=dotenv_path)["ELASTIC_PASSWORD"],
@@ -307,12 +307,17 @@ class ElasticHelper:
 
     def delete_index(self, index_name="dictionary"):
         """
-        Deletes the specified Elasticsearch index.
+        Safely deletes the specified Elasticsearch index if it exists.
         """
-        resp = self.es.indices.delete(
-            index=index_name,
-        )
-        print(resp)
+        if self.es.indices.exists(index=index_name):
+            try:
+                resp = self.es.indices.delete(index=index_name)
+                print(f"Index '{index_name}' successfully deleted.")
+                print(resp)
+            except Exception as e:
+                print(f"Error deleting index '{index_name}': {e}")
+        else:
+            print(f"Index '{index_name}' does not exist. Nothing to delete.")
 
 
 def main():
@@ -322,7 +327,7 @@ def main():
     entries = parser.parse_pdf()
     parser.save_json("./resources/dictionary_entries.json", entries)
 
-    elasticHelper = ElasticHelper("./docker/.env")
+    elasticHelper = ElasticHelper(".env")
     elasticHelper.delete_index()
     elasticHelper.create_index()
     elasticHelper.insert_into_elasticsearch(entries)
