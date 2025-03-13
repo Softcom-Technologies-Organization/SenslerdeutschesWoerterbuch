@@ -6,17 +6,11 @@ This project aims to parse the Senslerdeutsches Wörterbuch, generate JSON data,
 
 1. Installation process
 
-   - Clone the repository:
-     ```sh
-     git clone https://github.com/your-repo/senslerdeutsches-woerterbuch.git
-     cd senslerdeutsches-woerterbuch
-     ```
-   - Start Elasticsearch and Kibana using Docker Compose:
+   - Create a `.env` based on the `.env.example`
+   - Use Docker Compose to at least run elastic and the proxy:
 
      ```sh
-     cd docker
-     docker-compose up -d
-     cd ..
+     docker compose up -d elasticsearch proxy
      ```
 
    - Create a Python virtual environment and activate it:
@@ -33,23 +27,36 @@ This project aims to parse the Senslerdeutsches Wörterbuch, generate JSON data,
      ```
    - Populate elastic search with data using the python script
      ```sh
-     python .\parsing\pdf_parser.py
+     python parsing/pdf_parser.py
      ```
-   - Generate an API key in Kibana:
+   - Generate an API key
 
-     - Go to Kibana at [http://localhost:5601/app/enterprise_search/elasticsearch](http://localhost:5601/app/enterprise_search/elasticsearch)
-     - login with username "elastic" and password from KIBANA_PASSWORD in `.env` file in the `.\docker` folder
-     - Generate an API key and copy the "encoded" version.
-     - Paste the "encoded" version of the API key in the `apiKey` variable of `search.service.ts`.
-
-   - Start the frontend application
-
-     ```sh
-     cd .\senslerdeutsches-woerterbuch\
-     ng serve
+     ```curl
+     curl -X POST "http://localhost:4202/elastic/_security/api_key" \
+     -H "Content-Type: application/json" \
+     -u elastic:${ELASTIC_PASSWORD} \
+     -k \
+     -d '{
+     "name": "angular_app_key",
+     "role_descriptors": {
+      "app_role": {
+        "cluster": ["monitor"],
+        "indices": [
+          {
+            "names": ["*"],
+            "privileges": ["all"]
+          }
+        ]
+      }
+     }
+     }'
      ```
 
-   - Frontend running at [http://localhost:4200/](http://localhost:4200)
+   - Paste the "encoded" version of the API key in the `apiKey` variable of `search.service.ts`.
+   - Start the Angular app in the container (or use ng serve)
+      ```sh
+        docker compose up -d frontend
+      ```
 
 2. Software dependencies
 
