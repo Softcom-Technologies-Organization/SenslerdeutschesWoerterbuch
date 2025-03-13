@@ -3,6 +3,40 @@ services:
     build: 
       context: .
       dockerfile: docker/frontend/Dockerfile
-
     ports:
-      - "4200:80"
+      - "${FRONTEND_PORT}:80"
+    networks:
+      - sw-network
+
+  proxy:
+    image: nginx:stable-alpine
+    ports:
+      - "${PROXY_PORT}:80"
+    volumes:
+      - ./docker/proxy/default.conf:/etc/nginx/conf.d/default.conf
+      - ./docker/proxy/logs/nginx:/var/log/nginx
+    networks:
+      - sw-network
+    # Make sure proxy starts after elasticsearch
+    depends_on:
+      - elasticsearch
+
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.17.3
+    environment:
+      - ELASTIC_PASSWORD=${ELASTIC_PASSWORD}
+    volumes:
+      - elasticsearch-data:/usr/share/elasticsearch/data  # Persist API keys and indices locally
+    deploy:
+      resources:
+        limits:
+          memory: 1GB
+    networks:
+      - sw-network
+
+networks:
+  sw-network:
+    driver: bridge
+
+volumes:
+  elasticsearch-data:

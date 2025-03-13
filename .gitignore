@@ -1,2 +1,3 @@
 venv/*
 bin/*
+docker/proxy/logs/*
