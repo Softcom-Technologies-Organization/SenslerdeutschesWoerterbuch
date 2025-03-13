@@ -2,12 +2,12 @@ name: Angular tests
 
 on:
   push:
-    branches: [ "main" ]
+    branches: ["main"]
   pull_request:
-    branches: [ "main" ]
+    branches: ["main"]
 
 jobs:
-  build:
+  angular-tests:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     defaults:
@@ -15,21 +15,22 @@ jobs:
         working-directory: ./senslerdeutsches-woerterbuch
 
     steps:
-    - uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-    - name: Setup Node
-      uses: actions/setup-node@v4
-      with:
-        node-version-file: '.nvmrc'
-        cache: 'npm'
-        cache-dependency-path: |
-          ./senslerdeutsches-woerterbuch/package-lock.json
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: ".nvmrc"
+          cache: "npm"
+          cache-dependency-path: |
+            ./senslerdeutsches-woerterbuch/package-lock.json
 
-    - name: Install dependencies
-      run: npm ci
+      - name: Install frontend dependencies
+        run: npm ci
 
-    - name: Setup Chrome
-      uses: browser-actions/setup-chrome@v1
+      - name: Setup Chrome
+        uses: browser-actions/setup-chrome@v1
 
-    - name: Run Angular Unit Tests
-      run: npx ng test --no-watch --no-progress --browsers=ChromeHeadless
+      - name: Run Angular Unit Tests
+        run: npx ng test --no-watch --no-progress --browsers=ChromeHeadless

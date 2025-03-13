@@ -70,13 +70,17 @@ export default defineConfig({
     // },
   ],
 
-  /* Run your local dev server before starting the tests */
+  /**
+   * Run your local dev server before starting the tests.
+   * If Playwright is used locally, ng serve is used.
+   * If Playwright is used in CI, a build is used.
+   */
   webServer: {
-    command: process.env.CI 
-      ? 'cd ../senslerdeutsches-woerterbuch && npx serve -s dist/senslerdeutsches-woerterbuch/browser -l 4200' 
+    command: process.env.CI
+      ? 'cd ../senslerdeutsches-woerterbuch && npx serve -s dist/senslerdeutsches-woerterbuch/browser -l 4200'
       : 'cd ../senslerdeutsches-woerterbuch && npm install && npx ng serve',
     url: 'http://127.0.0.1:4200',
     reuseExistingServer: !process.env.CI,
-    timeout: 120000, // 2 minutes
+    timeout: 60000, // 1 minute
   },
 });
