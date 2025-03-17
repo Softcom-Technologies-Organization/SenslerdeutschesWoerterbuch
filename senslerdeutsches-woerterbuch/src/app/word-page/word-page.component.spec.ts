@@ -22,13 +22,7 @@ describe('WordPageComponent', () => {
     fixture.detectChanges();
   });
 
-  beforeEach(() => {
-    fixture = TestBed.createComponent(WordPageComponent);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
-  });
-
   it('should create', () => {
-    expect(component).toBeDefined();
+    expect(component).toBeTruthy();
   });
 });
