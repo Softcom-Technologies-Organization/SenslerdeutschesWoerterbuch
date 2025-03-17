@@ -1,3 +1,4 @@
+name: senslerdeutsches-woerterbuch
 services:
   frontend:
     build: 
