@@ -71,8 +71,23 @@ This project aims to parse the Senslerdeutsches Wörterbuch, generate JSON data,
    - Todo
 
 # Build and Test
+Angular unit tests can be run normally. Just make sure you have Chrome available.
+```
+cd senselerdeutsches-woerterbuch
+ng test
+```
 
-TODO: Describe and show how to build your code and run the tests.
+E2e tests are using Playwright.
+```
+cd e2e
+npm install
+npx playwright test
+```
+
+GitHub Actions are used to run the tests automatically. To test and debug them locally we suggest using https://github.com/nektos/act. After downloading the binary you can use it with a simple command.
+```
+bin/act
+```
 
 # Contribute
 
