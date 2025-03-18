@@ -77,8 +77,8 @@ export default defineConfig({
    */
   webServer: {
     command: process.env.CI
-      ? 'cd ../senslerdeutsches-woerterbuch && npx serve -s dist/senslerdeutsches-woerterbuch/browser -l 4200'
-      : 'cd ../senslerdeutsches-woerterbuch && npm install && npx ng serve',
+      ? 'cd ../frontend && npx serve -s dist/senslerdeutsches-woerterbuch/browser -l 4200'
+      : 'cd ../frontend && npm install && npx ng serve',
     url: 'http://127.0.0.1:4200',
     reuseExistingServer: !process.env.CI,
     timeout: 60000, // 1 minute

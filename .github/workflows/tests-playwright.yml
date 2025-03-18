@@ -22,11 +22,11 @@ jobs:
 
       # Build the Angular application to use for testing as "ng serve" seems to cause problems
       - name: Install frontend dependencies
-        working-directory: ./senslerdeutsches-woerterbuch
+        working-directory: ./frontend
         run: npm ci
 
       - name: Build Angular app
-        working-directory: ./senslerdeutsches-woerterbuch
+        working-directory: ./frontend
         run: npm run build -- --configuration=production
 
       - name: Install Playwright browsers
