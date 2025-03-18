@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
 import { WordPageComponent } from './word-page.component';
+import { provideRouter } from '@angular/router';
+import { provideHttpClient } from '@angular/common/http';
 
 describe('WordPageComponent', () => {
   let component: WordPageComponent;
@@ -8,9 +9,13 @@ describe('WordPageComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [WordPageComponent]
+      imports: [WordPageComponent],
+      providers: [
+        provideRouter([]),
+        provideHttpClient()
+      ],
     })
-    .compileComponents();
+      .compileComponents();
 
     fixture = TestBed.createComponent(WordPageComponent);
     component = fixture.componentInstance;
