@@ -12,7 +12,7 @@ jobs:
     timeout-minutes: 5
     defaults:
       run:
-        working-directory: ./senslerdeutsches-woerterbuch
+        working-directory: ./frontend
 
     steps:
       - name: Checkout repository
@@ -24,7 +24,7 @@ jobs:
           node-version-file: ".nvmrc"
           cache: "npm"
           cache-dependency-path: |
-            ./senslerdeutsches-woerterbuch/package-lock.json
+            ./frontend/package-lock.json
 
       - name: Install frontend dependencies
         run: npm ci
