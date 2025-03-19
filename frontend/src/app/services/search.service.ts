@@ -8,7 +8,7 @@ import { Observable } from 'rxjs';
 export class SearchService {
   private apiUrl = 'http://localhost:4202/elastic/'; // Elasticsearch endpoint --> Todo: move to a config file
   private apiKey =
-    'ZXpuOWo1VUJPb0RZdnRsNllUOWY6N0pUWTctbGlSMTZ3SmRaazk1U3lWZw=='; // Replace with your actual API key --> Todo: Move to a config file
+    'RndQVnFaVUJ3YWpDc1BrREhwdVo6OFprSndwbUZSSmFtQVFSSVJ4TmxIZw=='; // Replace with your actual API key --> Todo: Move to a config file
 
   // go to http://localhost:5601/app/enterprise_search/elasticsearch to genreate an api key
   // the generation of the api key should be automated in the docker-compose setup at a future step

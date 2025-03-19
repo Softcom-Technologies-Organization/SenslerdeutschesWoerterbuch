@@ -14,9 +14,7 @@
       <div class="word-section">
         <h2>Definition</h2>
         @if (wordEntry["formatted-description"]) {
-          <app-formatted-description
-            [formattedDescription]="wordEntry['formatted-description']"
-          ></app-formatted-description>
+          {{wordEntry['formatted-description']}}
         } @else {
           <p>No definition</p>
         }
