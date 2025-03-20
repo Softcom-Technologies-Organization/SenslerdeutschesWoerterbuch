@@ -15,9 +15,7 @@
             </mat-card-header>
             <mat-divider class="card-divider"></mat-divider>
             <mat-card-content>
-              <app-formatted-description
-                [formattedDescription]="item._source['formatted-description']"
-              ></app-formatted-description>
+              {{item._source['formatted-description']}}
             </mat-card-content>
           </mat-card>
         }
