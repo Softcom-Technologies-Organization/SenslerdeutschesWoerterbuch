@@ -1,16 +1,10 @@
 name: senslerdeutsches-woerterbuch
 services:
-  frontend:
-    build: 
-      context: .
-      dockerfile: docker/frontend/Dockerfile
-    ports:
-      - "${FRONTEND_PORT}:80"
-    networks:
-      - sw-network
 
   proxy:
-    image: nginx:stable-alpine
+    build: 
+      context: .
+      dockerfile: docker/proxy/Dockerfile
     ports:
       - "${PROXY_PORT}:80"
     volumes:
@@ -18,7 +12,6 @@ services:
       - ./docker/proxy/logs/nginx:/var/log/nginx
     networks:
       - sw-network
-    # Make sure proxy starts after elasticsearch
     depends_on:
       - elasticsearch
 
@@ -36,6 +29,43 @@ services:
       resources:
         limits:
           memory: 1GB
+    networks:
+      - sw-network
+    healthcheck:
+      test: ["CMD-SHELL", "curl --silent --fail -u ${ELASTIC_USERNAME}:${ELASTIC_PASSWORD} http://localhost:9200/_cluster/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  setup:
+    build:
+      context: .
+      dockerfile: docker/setup/Dockerfile
+    environment:
+      - PROXY_URL=http://elasticsearch
+      - PROXY_PORT=9200
+      - PROXY_SUFFIX= # Needs to be empty to avoid "None"
+      - ELASTIC_USERNAME=${ELASTIC_USERNAME}
+      - ELASTIC_PASSWORD=${ELASTIC_PASSWORD}
+      - ELASTIC_INDEX=${ELASTIC_INDEX}
+    depends_on:
+      elasticsearch:
+        condition: service_healthy
+    networks:
+      - sw-network
+
+  e2e:
+    build:
+      context: .
+      dockerfile: docker/e2e/Dockerfile
+    environment:
+      - FRONTEND_URL=${PROXY_URL}
+    volumes:
+      - ./e2e/playwright-report:/app/playwright-report
+      - ./e2e/test-results:/app/test-results
+    depends_on:
+      setup:
+        condition: service_completed_successfully
     networks:
       - sw-network
 

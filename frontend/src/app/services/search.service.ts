@@ -1,12 +1,13 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root',
 })
 export class SearchService {
-  private apiUrl = 'http://localhost:4202/elastic/'; // Elasticsearch endpoint --> Todo: move to a config file
+  private apiUrl = environment.proxyUrl;
   private apiKey =
     'RndQVnFaVUJ3YWpDc1BrREhwdVo6OFprSndwbUZSSmFtQVFSSVJ4TmxIZw=='; // Replace with your actual API key --> Todo: Move to a config file
 
@@ -57,6 +58,9 @@ export class SearchService {
       },
       size: size,
     };
+    // Check what URL is being used
+    console.log('API URL:', this.apiUrl); 
+
     return this.http.post(`${this.apiUrl}_search`, body, {
       headers: this.getHeaders(),
     });
@@ -90,6 +94,9 @@ export class SearchService {
         },
       },
     };
+    // Check what URL is being used
+    console.log('API URL:', this.apiUrl); 
+
     this.http
       .post(`${this.apiUrl}_search`, body, {
         headers: this.getHeaders(),
@@ -100,6 +107,9 @@ export class SearchService {
   }
 
   public getById(id: string): Observable<any> {
+    // Check what URL is being used
+    console.log('API URL:', this.apiUrl); 
+    
     return this.http.get(`${this.apiUrl}dictionary/_doc/${id}`, {
       headers: this.getHeaders(),
     });
