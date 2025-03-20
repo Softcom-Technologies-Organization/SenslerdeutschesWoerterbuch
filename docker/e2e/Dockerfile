@@ -14,4 +14,4 @@ COPY ./e2e/playwright.config.ts ./
 COPY ./e2e/tests ./tests
 
 # Command to run tests
-CMD ["npx", "playwright", "test"]
+CMD ["sh", "-c", "npx playwright test && exit $?"]

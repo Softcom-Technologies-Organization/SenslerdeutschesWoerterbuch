@@ -24,7 +24,7 @@ jobs:
           echo "ELASTIC_USERNAME=elastic" >> .env
           echo "ELASTIC_INDEX=dictionary" >> .env
           echo "PROXY_PORT=4202" >> .env
-          echo "PROXY_URL=http://frontend" >> .env
+          echo "PROXY_URL=http://proxy" >> .env
           echo "FRONTEND_PORT=4201" >> .env
 
       - name: Run setup and prepare environment
