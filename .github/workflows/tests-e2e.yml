@@ -21,6 +21,7 @@ jobs:
       - name: Create .env file
         run: |
           echo "ELASTIC_PASSWORD=changeme" > .env
+          echo "ELASTIC_USERNAME=elastic" >> .env
           echo "ELASTIC_INDEX=dictionary" >> .env
           echo "PROXY_PORT=4202" >> .env
           echo "PROXY_URL=http://frontend" >> .env
