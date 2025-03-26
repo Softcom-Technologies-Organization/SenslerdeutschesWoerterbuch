@@ -8,11 +8,8 @@ import { environment } from '../../environments/environment';
 })
 export class SearchService {
   private apiUrl = environment.proxyUrl;
-  private apiKey =
-    'RndQVnFaVUJ3YWpDc1BrREhwdVo6OFprSndwbUZSSmFtQVFSSVJ4TmxIZw=='; // Replace with your actual API key --> Todo: Move to a config file
-
-  // go to http://localhost:5601/app/enterprise_search/elasticsearch to genreate an api key
-  // the generation of the api key should be automated in the docker-compose setup at a future step
+  private username = environment.elasticUsername;
+  private password = environment.elasticPassword;
 
   private _searchResults: any;
 
@@ -23,9 +20,10 @@ export class SearchService {
   constructor(private http: HttpClient) {}
 
   private getHeaders(): HttpHeaders {
+    const credentials = btoa(`${this.username}:${this.password}`);
     return new HttpHeaders({
       'Content-Type': 'application/json',
-      Authorization: `ApiKey ${this.apiKey}`,
+      Authorization: `Basic ${credentials}`,
     });
   }
 
