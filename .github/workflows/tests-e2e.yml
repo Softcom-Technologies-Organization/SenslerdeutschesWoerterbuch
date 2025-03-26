@@ -22,8 +22,8 @@ jobs:
         run: |
           echo "ELASTIC_ADMIN_PASSWORD=changeme" > .env
           echo "ELASTIC_ADMIN_USERNAME=elastic" >> .env
-          echo "ELASTIC_READER_USERNAME=fallbackdictionaryreader" >> .env
-          echo "ELASTIC_READER_PASSWORD=tobereplacedbygithubsecret" >> .env
+          echo "ELASTIC_READER_USERNAME=dictionary_reader" >> .env
+          echo "ELASTIC_READER_PASSWORD=thisisgonnabepublic" >> .env
           echo "ELASTIC_INDEX=dictionary" >> .env
           echo "PROXY_PORT=4202" >> .env
           echo "PROXY_URL=http://proxy" >> .env
@@ -34,6 +34,23 @@ jobs:
           docker compose up -d elasticsearch proxy 
           docker compose up setup --exit-code-from setup
           echo "✅ Setup completed successfully"
+
+      - name: Debug container networking
+        if: always()
+        run: |
+          echo "==== CONTAINER STATUS ===="
+          docker compose ps
+          
+          echo "==== ELASTICSEARCH STATUS ===="
+          docker compose exec -T elasticsearch curl -s -u elastic:changeme http://localhost:9200/_cat/indices
+          docker compose exec -T elasticsearch curl -s -u elastic:changeme http://localhost:9200/_security/user
+          
+          echo "==== PROXY TEST ===="
+          docker compose exec -T proxy curl -s -u dictionary_reader:thisisgonnabepublic -H "Content-Type: application/json" http://elasticsearch:9200/dictionary/_search -d '{"query":{"match_all":{}}}'
+          
+          echo "==== TEST FROM E2E CONTAINER ===="
+          docker compose run --rm e2e curl -s -v http://proxy/
+          docker compose run --rm e2e curl -s -v -u dictionary_reader:thisisgonnabepublic -H "Content-Type: application/json" http://proxy/elastic/_search -d '{"query":{"match":{"term":"wundere"}}}'
 
       - name: Run E2E tests
         run: docker compose up e2e --exit-code-from e2e
