@@ -4,5 +4,8 @@ elastic-transport==8.17.1
 elasticsearch==8.17.2
 urllib3==2.3.0
 
+# For PDF parsing
+pdfplumber==0.11.5
+
 # General
 python-dotenv==1.0.1
