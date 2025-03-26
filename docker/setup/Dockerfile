@@ -1,12 +1,17 @@
-FROM python:3.10-alpine
+FROM alpine:3.21.3
+
+# Install curl for API calls
+RUN apk add --no-cache curl
 
 WORKDIR /app
 
-COPY ./parsing/requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
-
+# Copy configuration and data files
 COPY ./parsing/index.json .
-COPY ./parsing/ssdw-small.json .
-COPY ./parsing/json_into_elastic.py .
+COPY ./parsing/bulk_data.ndjson .
+COPY ./docker/setup/setup.sh .
 
-CMD ["python", "json_into_elastic.py"]
+# Make script executable
+RUN chmod +x setup.sh
+
+# Run setup script
+CMD ["./setup.sh"]

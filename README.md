@@ -6,7 +6,7 @@ This project aims to parse the Senslerdeutsches Wörterbuch, generate JSON data,
 
 1. Installation process
 
-   - Create a `.env` based on the `.env.example`
+   - Copy and rename the `.env.defaults` file into a `.env` file and add the missing variables as described in the file 
    - Use Docker Compose to at least run elastic and the proxy:
 
      ```sh
@@ -86,7 +86,7 @@ npx playwright test
 
 GitHub Actions are used to run the tests automatically. To test and debug them locally we suggest using https://github.com/nektos/act. After downloading the binary you can use it with a simple command.
 ```
-bin/act
+bin/act --seceret-file .env
 ```
 
 # Contribute

@@ -20,14 +20,22 @@ jobs:
 
       - name: Create .env file
         run: |
-          echo "ELASTIC_ADMIN_PASSWORD=changeme" > .env
-          echo "ELASTIC_ADMIN_USERNAME=elastic" >> .env
-          echo "ELASTIC_READER_USERNAME=dictionary_reader" >> .env
-          echo "ELASTIC_READER_PASSWORD=thisisgonnabepublic" >> .env
-          echo "ELASTIC_INDEX=dictionary" >> .env
-          echo "PROXY_PORT=4202" >> .env
-          echo "PROXY_URL=http://proxy" >> .env
-          echo "FRONTEND_PORT=4201" >> .env
+          # Start with defaults
+          cp .env.defaults .env
+
+          # Add a newline to ensure clean append
+          echo "" >> .env
+          
+          # Add sensitive values
+          echo "ELASTIC_ADMIN_PASSWORD=${{ secrets.ELASTIC_ADMIN_PASSWORD || 'changeme' }}" >> .env
+
+      - name: Debug .env file
+        run: |
+          echo "CONTENTS OF .env FILE:"
+          cat .env
+          
+          echo "ENVIRONMENT VARIABLES IN DOCKER COMPOSE:"
+          docker compose config | grep -A10 setup:
 
       - name: Run setup and prepare environment
         run: |

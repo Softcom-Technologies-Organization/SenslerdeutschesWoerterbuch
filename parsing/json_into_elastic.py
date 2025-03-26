@@ -1,10 +1,17 @@
 import os
 import json
+import socket
+import sys
 from dotenv import load_dotenv
 from elasticsearch import Elasticsearch, helpers
 
 # Get environment variables from .env file
-load_dotenv()
+if load_dotenv():
+    print("Loaded configuration from .env file")
+else:
+    print("WARNING: .env file not found or empty")
+    sys.exit(1)
+
 proxy_url = os.getenv('PROXY_URL')
 proxy_port = os.getenv('PROXY_PORT')
 proxy_suffix = os.getenv('PROXY_SUFFIX')
@@ -14,9 +21,26 @@ elastic_index = os.getenv('ELASTIC_INDEX')
 elastic_reader_username = os.getenv('ELASTIC_READER_USERNAME')
 elastic_reader_password = os.getenv('ELASTIC_READER_PASSWORD')
 
+# Detect if we're running in docker or locally
+def get_elasticsearch_endpoint():
+    # Check for an environment variable that explicitly tells us the environment
+    run_env = os.getenv('IS_DOCKER')
 
-# Construct the Elasticsearch endpoint
-elastics_endpoint = f"{proxy_url}:{proxy_port}/{proxy_suffix}"
+    # If we can resolve the proxy hostname, we're in Docker
+    try:
+        socket.gethostbyname('proxy')
+        # We're in Docker, use proxy hostname
+        endpoint = f"{proxy_url}:80/{proxy_suffix}"
+        print(f"Running in Docker, using: {endpoint}")
+        return endpoint
+    except socket.gaierror:
+        # We're running locally, use localhost with proxy port
+        endpoint = f"http://localhost:{proxy_port}/{proxy_suffix}"
+        print(f"Running locally, using: {endpoint}")
+        return endpoint
+
+# Get the proper endpoint
+elastics_endpoint = get_elasticsearch_endpoint()
 print(f"Connecting to Elasticsearch at: {elastics_endpoint}")
 
 # Create Elasticsearch client
