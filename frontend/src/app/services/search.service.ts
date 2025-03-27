@@ -1,17 +1,15 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root',
 })
 export class SearchService {
-  private apiUrl = 'http://localhost:4202/elastic/'; // Elasticsearch endpoint --> Todo: move to a config file
-  private apiKey =
-    'ZXpuOWo1VUJPb0RZdnRsNllUOWY6N0pUWTctbGlSMTZ3SmRaazk1U3lWZw=='; // Replace with your actual API key --> Todo: Move to a config file
-
-  // go to http://localhost:5601/app/enterprise_search/elasticsearch to genreate an api key
-  // the generation of the api key should be automated in the docker-compose setup at a future step
+  private apiUrl = environment.proxyUrl;
+  private username = environment.elasticUsername;
+  private password = environment.elasticPassword;
 
   private _searchResults: any;
 
@@ -22,9 +20,10 @@ export class SearchService {
   constructor(private http: HttpClient) {}
 
   private getHeaders(): HttpHeaders {
+    const credentials = btoa(`${this.username}:${this.password}`);
     return new HttpHeaders({
       'Content-Type': 'application/json',
-      Authorization: `ApiKey ${this.apiKey}`,
+      Authorization: `Basic ${credentials}`,
     });
   }
 
@@ -57,6 +56,9 @@ export class SearchService {
       },
       size: size,
     };
+    // Check what URL is being used
+    console.log('API URL:', this.apiUrl); 
+
     return this.http.post(`${this.apiUrl}_search`, body, {
       headers: this.getHeaders(),
     });
@@ -90,6 +92,9 @@ export class SearchService {
         },
       },
     };
+    // Check what URL is being used
+    console.log('API URL:', this.apiUrl); 
+
     this.http
       .post(`${this.apiUrl}_search`, body, {
         headers: this.getHeaders(),
@@ -100,6 +105,9 @@ export class SearchService {
   }
 
   public getById(id: string): Observable<any> {
+    // Check what URL is being used
+    console.log('API URL:', this.apiUrl); 
+    
     return this.http.get(`${this.apiUrl}dictionary/_doc/${id}`, {
       headers: this.getHeaders(),
     });
