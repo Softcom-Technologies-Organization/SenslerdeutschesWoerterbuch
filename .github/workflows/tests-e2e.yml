@@ -50,8 +50,8 @@ jobs:
           docker compose ps
           
           echo "==== ELASTICSEARCH STATUS ===="
-          docker compose exec -T elasticsearch curl -s -u elastic:changeme http://localhost:9200/_cat/indices
-          docker compose exec -T elasticsearch curl -s -u elastic:changeme http://localhost:9200/_security/user
+          docker compose exec -T elasticsearch curl -s -u elastic:${{ secrets.ELASTIC_ADMIN_PASSWORD || 'changeme' }} http://localhost:9200/_cat/indices
+          docker compose exec -T elasticsearch curl -s -u elastic:${{ secrets.ELASTIC_ADMIN_PASSWORD || 'changeme' }} http://localhost:9200/_security/user
           
           echo "==== PROXY TEST ===="
           docker compose exec -T proxy curl -s -u dictionary_reader:thisisgonnabepublic -H "Content-Type: application/json" http://elasticsearch:9200/dictionary/_search -d '{"query":{"match_all":{}}}'
