@@ -45,13 +45,15 @@ jobs:
 
       - name: Debug container networking
         if: always()
+        env:
+          ELASTIC_ADMIN_PASSWORD: ${{ secrets.ELASTIC_ADMIN_PASSWORD }}
         run: |
           echo "==== CONTAINER STATUS ===="
           docker compose ps
           
           echo "==== ELASTICSEARCH STATUS ===="
-          docker compose exec -T elasticsearch curl -s -u elastic:${{ secrets.ELASTIC_ADMIN_PASSWORD || 'changeme' }} http://localhost:9200/_cat/indices
-          docker compose exec -T elasticsearch curl -s -u elastic:${{ secrets.ELASTIC_ADMIN_PASSWORD || 'changeme' }} http://localhost:9200/_security/user
+          docker compose exec -T elasticsearch curl -s -u elastic:"$ELASTIC_ADMIN_PASSWORD" http://localhost:9200/_cat/indices
+          docker compose exec -T elasticsearch curl -s -u elastic:${{ secrets.ELASTIC_ADMIN_PASSWORD}} http://localhost:9200/_security/user
           
           echo "==== PROXY TEST ===="
           docker compose exec -T proxy curl -s -u dictionary_reader:thisisgonnabepublic -H "Content-Type: application/json" http://elasticsearch:9200/dictionary/_search -d '{"query":{"match_all":{}}}'
