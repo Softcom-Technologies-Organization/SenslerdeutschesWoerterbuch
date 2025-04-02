@@ -1,0 +1,4 @@
+fastapi[standard]
+uvicorn[standard]
+elasticsearch
+python-dotenv

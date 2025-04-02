@@ -10,32 +10,25 @@ services:
       - xpack.security.transport.ssl.enabled=false
       - discovery.type=single-node # Required to disable SSL while keeping security enabled
     volumes:
-      - elasticsearch-data:/usr/share/elasticsearch/data  # Persist user, role and indices locally
-    deploy:
-      resources:
-        limits:
-          memory: 1GB
+      - elasticsearch-data:/usr/share/elasticsearch/data # Persist user, role and indices locally
     networks:
       - sw-network
-    healthcheck:
-      test: ["CMD-SHELL", "curl --silent --fail -u ${ELASTIC_ADMIN_USERNAME}:${ELASTIC_ADMIN_PASSWORD} http://localhost:9200/_cluster/health || exit 1"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
 
-  setup:
+  backend:
     build:
       context: .
-      dockerfile: docker/setup/Dockerfile
-    env_file: ./.env
-    depends_on:
-      elasticsearch:
-        condition: service_healthy
+      dockerfile: docker/backend/Dockerfile
+    env_file:
+      - .env
+    environment:
+      - ELASTIC_URL=http://elasticsearch:9200
+    ports:
+      - "8001:8000"
     networks:
       - sw-network
 
   proxy:
-    build: 
+    build:
       context: .
       dockerfile: docker/proxy/Dockerfile
     ports:
@@ -45,8 +38,6 @@ services:
       - ./docker/proxy/logs/nginx:/var/log/nginx
     networks:
       - sw-network
-    depends_on:
-      - elasticsearch
 
   e2e:
     build:
@@ -57,9 +48,6 @@ services:
     volumes:
       - ./e2e/playwright-report:/app/playwright-report
       - ./e2e/test-results:/app/test-results
-    depends_on:
-      setup:
-        condition: service_completed_successfully
     networks:
       - sw-network
 
