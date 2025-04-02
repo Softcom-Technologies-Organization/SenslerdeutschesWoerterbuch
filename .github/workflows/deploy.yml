@@ -1,0 +1,33 @@
+name: Deploy to Azure
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+env:
+  AZURE_RESOURCE_GROUP: senslerdeutsches-woerterbuch
+  AZURE_CONTAINER_APP_NAME: senslerdeutsches-woerterbuch
+  ACR_NAME: seislerwoerterbuech 
+  YAML_CONFIG_PATH: ./containerapp-deploy.yaml
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Log in to Azure CLI
+      uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+    - name: Build and deploy Container App
+      uses: azure/container-apps-deploy-action@v1
+      with:
+        yamlConfigPath: containerapp-deploy.yaml

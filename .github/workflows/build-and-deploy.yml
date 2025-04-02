@@ -1,4 +1,4 @@
-name: Build, Push and Deploy to Azure
+name: Build and Push to Azure
 
 on:
   push:
@@ -7,9 +7,8 @@ on:
     branches: [main]
   workflow_dispatch:
 
-
 jobs:
-  build-and-deploy:
+  build:
     runs-on: ubuntu-latest
     timeout-minutes: 5
 
@@ -17,12 +16,13 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
 
-    - name: Log in to Azure Container Registry
-      uses: azure/docker-login@v1
+    - name: Log in to Azure CLI
+      uses: azure/login@v1
       with:
-        login-server: ${{ secrets.ACR_NAME }}.azurecr.io
-        username: ${{ secrets.ACR_USERNAME }}
-        password: ${{ secrets.ACR_PASSWORD }}
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+    - name: Log in to Azure Container Registry
+      run: az acr login --name ${{ env.ACR_NAME }}
 
     - name: Build and push proxy
       run: |
