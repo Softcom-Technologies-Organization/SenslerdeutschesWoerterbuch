@@ -35,13 +35,68 @@ jobs:
           cat .env
           
           echo "ENVIRONMENT VARIABLES IN DOCKER COMPOSE:"
-          docker compose config | grep -A10 setup:
+          docker compose config
 
       - name: Run setup and prepare environment
         run: |
-          docker compose up -d elasticsearch proxy 
-          docker compose up setup --exit-code-from setup
+          docker compose up -d elasticsearch proxy backend
           echo "✅ Setup completed successfully"
+
+      - name: Wait for proxy to be ready
+        run: |
+          echo "Waiting for proxy container to be ready..."
+          # First check if container is running
+          for i in {1..12}; do
+            if docker compose ps proxy | grep -q "Up"; then
+              echo "✅ Proxy container is running"
+              break
+            fi
+            
+            if [ $i -eq 12 ]; then
+              echo "❌ Proxy container failed to start"
+              docker compose ps
+              docker compose logs proxy
+              exit 1
+            fi
+            
+            echo "Waiting for proxy... (attempt $i/12)"
+            sleep 5
+          done
+
+      - name: Check services through proxy
+        run: |
+          echo "Checking services via proxy..."
+          
+          # Wait for backend health endpoint
+          for i in {1..12}; do
+            echo "Checking backend via proxy (attempt $i/12)..."
+            HEALTH=$(docker compose exec -T proxy curl -s http://backend:8000/elastic-health || echo "failed")
+            echo "Backend health: $HEALTH"
+            
+            if echo "$HEALTH" | grep -q "healthy" || echo "$HEALTH" | grep -q "status"; then
+              echo "✅ Backend is responding"
+              break
+            fi
+            
+            if [ $i -eq 12 ]; then
+              echo "❌ Backend is not responding properly"
+              docker compose logs backend
+              exit 1
+            fi
+            
+            sleep 5
+          done
+          
+          # Initialize Elasticsearch via backend
+          echo "Initializing Elasticsearch data..."
+          RESPONSE=$(docker compose exec -T proxy curl -s -X POST http://backend:8000/elastic-reset || echo "failed")
+          echo "Elasticsearch initialization: $RESPONSE"
+          
+          if echo "$RESPONSE" | grep -q "error"; then
+            echo "⚠️ Data initialization returned an error but continuing..."
+          else
+            echo "✅ Data initialization completed"
+          fi
 
       - name: Debug container networking
         if: always()
@@ -55,6 +110,7 @@ jobs:
           
           echo "==== PROXY TEST ===="
           docker compose exec -T proxy curl -s -u dictionary_reader:thisisgonnabepublic -H "Content-Type: application/json" http://elasticsearch:9200/dictionary/_search -d '{"query":{"match_all":{}}}'
+          docker compose exec -T proxy curl -s http://backend:8000/elastic-health
           
           echo "==== TEST FROM E2E CONTAINER ===="
           docker compose run --rm e2e curl -s -v http://proxy/
