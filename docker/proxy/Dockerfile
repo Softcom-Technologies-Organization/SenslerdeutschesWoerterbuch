@@ -8,7 +8,7 @@ RUN npm run build --configuration=production
 
 FROM nginx:stable-alpine
 COPY --from=builder /app/dist/senslerdeutsches-woerterbuch/browser /usr/share/nginx/html
-COPY ./docker/proxy/default.conf /etc/nginx/conf.d/default.conf
+COPY ./docker/proxy/default.conf.template /etc/nginx/templates/default.conf.template
 
 # Add SSL certificates for production
 # COPY ./certs/cert.pem /etc/nginx/ssl/cert.pem

@@ -31,10 +31,11 @@ services:
     build:
       context: .
       dockerfile: docker/proxy/Dockerfile
+    environment:
+      - ELASTICSEARCH_URL=http://elasticsearch:9200
     ports:
       - "${PROXY_PORT}:80"
     volumes:
-      - ./docker/proxy/default.conf:/etc/nginx/conf.d/default.conf
       - ./docker/proxy/logs/nginx:/var/log/nginx
     networks:
       - sw-network
