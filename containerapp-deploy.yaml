@@ -1,51 +1,30 @@
-# containerapp-deploy.yaml
-location: Switzerland North # Or your app's region
+location: Switzerland North
 properties:
-  # Reference your existing Container App Environment
   managedEnvironmentId: /subscriptions/9f833d03-bba1-48f9-8087-b5ba39f8b62f/resourceGroups/senslerdeutsches-woerterbuch/providers/Microsoft.App/managedEnvironments/managedEnvironment-senslerdeutsche-b6f7
 
   configuration:
     secrets:
-      # --- Define Secrets for Sensitive Data ---
       - name: elastic-admin-password
-      # Add other secrets as needed
-    # --- ACR Credentials (Managed Identity Preferred) ---
-    # If using Managed Identity + AcrPull role, you can omit 'registries'.
-    # If using credentials, define them (ensure secrets exist in ACA):
-    # registries:
-    #   - server: youracrname.azurecr.io
-    #     username: your_registry_user_or_sp_id
-    #     passwordSecretRef: registry-password # Name of secret in Container App
 
-    # --- Ingress: Pointing to Proxy (Publicly Available) ---
     ingress:
-      external: true       # Allow public internet traffic
-      targetPort: 80       # The port your PROXY container listens on
-      # Optional: Use your configured custom domain
-      # customDomains:
-      #  - name: your.customdomain.com
-      #    bindingType: SniEnabled
-      #    certificateId: /subscriptions/YOUR_SUBSCRIPTION_ID/resourceGroups/YOUR_RESOURCE_GROUP/providers/Microsoft.App/managedEnvironments/YOUR_ACA_ENVIRONMENT_NAME/certificates/your-certificate-name # If using managed certs
-      transport: auto      # Or http/http2/tcp
-      # Optional: IP security restrictions if needed
+      external: true 
+      targetPort: 80 # Mapping traffic to proxy container
+      transport: auto 
 
   template:
-    # --- Define the Containers for the New Revision ---
     containers:
-      # 1. Proxy Container (Public Ingress Target)
       - name: proxy
-        image: seislerwoerterbuech.azurecr.io/proxy:latest # Or specific tag/sha
+        image: seislerwoerterbuech.azurecr.io/proxy:latest
         resources:
           cpu: 0.5
           memory: 1Gi
         env:
           - name: ELASTICSEARCH_URL # Internal URL for ES
             value: http://localhost:9200
-        # Add probes if needed
 
-      # 2. Backend Container (Internal Only)
       - name: backend
-        image: seislerwoerterbuech.azurecr.io/backend:latest # Or specific tag/sha
+        # Updated: 03.04.2025 13:20 for ~12k words
+        image: seislerwoerterbuech.azurecr.io/backend:latest
         resources:
           cpu: 0.5
           memory: 1Gi
@@ -63,12 +42,8 @@ properties:
           - name: ELASTIC_READER_PASSWORD
             value: thisisgonnabepublic     
 
-          # Add other necessary env vars/secrets
-        # NO Ingress block for this container = Internal only
-
-      # 3. Elasticsearch Container (Internal Only)
       - name: elasticsearch
-        image: docker.elastic.co/elasticsearch/elasticsearch:8.17.3 # Use a specific version
+        image: docker.elastic.co/elasticsearch/elasticsearch:8.17.3
         resources:
           cpu: 1.0
           memory: 2Gi
@@ -82,11 +57,4 @@ properties:
           - name: xpack.security.transport.ssl.enabled
             value: false
           - name: discovery.type
-            value: single-node # Required to disable SSL while keeping security enabled
-        # NO Ingress block for this container = Internal only
-        # Consider adding volume mounts for persistence if needed
-
-    # --- Optional: Scale settings ---
-    # scale:
-    #   minReplicas: 1
-    #   maxReplicas: 3
+            value: single-node

@@ -140,3 +140,22 @@ However, given the **low frequency of updates**, maintaining synchronization bet
     - Reference: [Soundex for German](https://de.wikipedia.org/wiki/Soundex#Soundex_f%C3%BCr_die_deutsche_Sprache)
   - Other possible improvements...
 - **Optimize search suggestions** while typing by experimenting with different Elasticsearch query techniques
+
+## Deploying
+Important: For now the target infrastructure is not available. This is why we currently only do manual deployments. If 
+you really want to deploy, create an issue to ask for permissions.
+
+Build and push images to Azure Container Registry
+```
+az acr login --name seislerwoerterbuech
+docker build -t seislerwoerterbuech.azurecr.io/<container>:latest -f docker/<container>/Dockerfile .
+docker push seislerwoerterbuech.azurecr.io/backend:latest
+```
+
+Then update the Container App
+```
+az containerapp update \
+  --resource-group senslerdeutsches-woerterbuch \
+  --name senslerdeutsches-woerterbuch \
+  --yaml containerapp-deploy.yaml
+```

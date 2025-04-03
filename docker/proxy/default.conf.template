@@ -25,6 +25,8 @@ server {
         # Pass the Authorization header from client
         proxy_pass_request_headers on;
 
+        # Azure Container Apps use localhost unlike Docker, thus this variable
+        # is used to make it work with both environments
         proxy_pass $ELASTICSEARCH_URL;
 
         # Add very verbose logging
