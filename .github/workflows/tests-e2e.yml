@@ -67,19 +67,19 @@ jobs:
         run: |
           echo "Checking services via proxy..."
           
-          # Wait for backend health endpoint
+          # Wait for elastic health endpoint
           for i in {1..12}; do
             echo "Checking backend via proxy (attempt $i/12)..."
             HEALTH=$(docker compose exec -T proxy curl -s http://backend:8000/elastic-health || echo "failed")
-            echo "Backend health: $HEALTH"
+            echo "Elastic health: $HEALTH"
             
             if echo "$HEALTH" | grep -q "healthy" || echo "$HEALTH" | grep -q "status"; then
-              echo "✅ Backend is responding"
+              echo "✅ Elastic is responding"
               break
             fi
             
             if [ $i -eq 12 ]; then
-              echo "❌ Backend is not responding properly"
+              echo "❌ Elastic is not responding properly"
               docker compose logs backend
               exit 1
             fi
@@ -89,7 +89,7 @@ jobs:
           
           # Initialize Elasticsearch via backend
           echo "Initializing Elasticsearch data..."
-          RESPONSE=$(docker compose exec -T proxy curl -s -X POST http://backend:8000/elastic-reset || echo "failed")
+          RESPONSE=$(docker compose exec -T proxy curl -s http://backend:8000/elastic-reset || echo "failed")
           echo "Elasticsearch initialization: $RESPONSE"
           
           if echo "$RESPONSE" | grep -q "error"; then
