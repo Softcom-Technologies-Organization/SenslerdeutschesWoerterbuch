@@ -22,3 +22,22 @@ Every contribution to the project is more than welcome! You can submit bugs or f
 If you want to start coding, you can find more information in the [Getting Started Guide](GETTING-STARTED.md).
 
 If you have any questions, please use Issues to ask them.
+
+## Deploying
+Important: For now the target infrastructure is not available. This is why we currently only do manual deployments. If 
+you really want to deploy, create an issue to ask for permissions.
+
+Build and push images to Azure Container Registry
+```
+az acr login --name seislerwoerterbuech
+docker build -t seislerwoerterbuech.azurecr.io/<container>:latest -f docker/<container>/Dockerfile .
+docker push seislerwoerterbuech.azurecr.io/backend:latest
+```
+
+Then update the Container App
+```
+az containerapp update \
+  --resource-group senslerdeutsches-woerterbuch \
+  --name senslerdeutsches-woerterbuch \
+  --yaml containerapp-deploy.yaml
+```
