@@ -2,3 +2,6 @@
 bin/*
 docker/proxy/logs/*
 .env
+.vscode/
+__pycache__/
+ssdw-full.csv

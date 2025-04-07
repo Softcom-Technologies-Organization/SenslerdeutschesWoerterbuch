@@ -1,0 +1,60 @@
+location: Switzerland North
+properties:
+  managedEnvironmentId: /subscriptions/9f833d03-bba1-48f9-8087-b5ba39f8b62f/resourceGroups/senslerdeutsches-woerterbuch/providers/Microsoft.App/managedEnvironments/managedEnvironment-senslerdeutsche-b6f7
+
+  configuration:
+    secrets:
+      - name: elastic-admin-password
+
+    ingress:
+      external: true 
+      targetPort: 80 # Mapping traffic to proxy container
+      transport: auto 
+
+  template:
+    containers:
+      - name: proxy
+        image: seislerwoerterbuech.azurecr.io/proxy:latest
+        resources:
+          cpu: 0.5
+          memory: 1Gi
+        env:
+          - name: ELASTICSEARCH_URL # Internal URL for ES
+            value: http://localhost:9200
+
+      - name: backend
+        # Updated: 03.04.2025 13:20 for ~12k words
+        image: seislerwoerterbuech.azurecr.io/backend:latest
+        resources:
+          cpu: 0.5
+          memory: 1Gi
+        env:
+          - name: ELASTIC_URL
+            value: http://localhost:9200
+          - name: ELASTIC_ADMIN_USERNAME
+            value: elastic
+          - name: ELASTIC_ADMIN_PASSWORD
+            secretRef: elastic-admin-password     
+          - name: ELASTIC_INDEX
+            value: dictionary     
+          - name: ELASTIC_READER_USERNAME
+            value: dictionary_reader
+          - name: ELASTIC_READER_PASSWORD
+            value: thisisgonnabepublic     
+
+      - name: elasticsearch
+        image: docker.elastic.co/elasticsearch/elasticsearch:8.17.3
+        resources:
+          cpu: 1.0
+          memory: 2Gi
+        env:
+          - name: ELASTIC_PASSWORD
+            secretRef: elastic-admin-password
+          - name: xpack.security.enabled
+            value: true
+          - name: xpack.security.http.ssl.enabled
+            value: false
+          - name: xpack.security.transport.ssl.enabled
+            value: false
+          - name: discovery.type
+            value: single-node
