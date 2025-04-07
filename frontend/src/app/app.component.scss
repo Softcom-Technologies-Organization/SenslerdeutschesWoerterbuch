@@ -1,5 +1,25 @@
-div.content {
-  padding: 2rem;
-  max-width: 40rem;
-  margin: 0 auto;
+header {
+  display: grid;
+  width: 100%;
+  span {
+    cursor: pointer;
+  }
+}
+
+main {
+  display: grid;
+  width: 100%;
+}
+
+footer {
+  display: grid;
+  width: 100%;
+}
+
+.content {
+  justify-self: center;
+  justify-content: center;
+  max-width: 1440px;
+  width: 100%;
+  padding: 1rem;
 }
