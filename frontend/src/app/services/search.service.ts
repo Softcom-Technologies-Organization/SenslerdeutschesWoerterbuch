@@ -11,6 +11,16 @@ export class SearchService {
   private username = environment.elasticUsername;
   private password = environment.elasticPassword;
 
+  private lastSearchTerm: string = '';
+
+  saveSearchTerm(term: string): void {
+    this.lastSearchTerm = term;
+  }
+
+  getLastSearchTerm(): string {
+    return this.lastSearchTerm;
+  }
+
   private _searchResults: any;
 
   public get searchResults(): any {
@@ -57,7 +67,7 @@ export class SearchService {
       size: size,
     };
     // Check what URL is being used
-    console.log('API URL:', this.apiUrl); 
+    console.log('API URL:', this.apiUrl);
 
     return this.http.post(`${this.apiUrl}_search`, body, {
       headers: this.getHeaders(),
@@ -93,7 +103,7 @@ export class SearchService {
       },
     };
     // Check what URL is being used
-    console.log('API URL:', this.apiUrl); 
+    console.log('API URL:', this.apiUrl);
 
     this.http
       .post(`${this.apiUrl}_search`, body, {
@@ -106,8 +116,8 @@ export class SearchService {
 
   public getById(id: string): Observable<any> {
     // Check what URL is being used
-    console.log('API URL:', this.apiUrl); 
-    
+    console.log('API URL:', this.apiUrl);
+
     return this.http.get(`${this.apiUrl}dictionary/_doc/${id}`, {
       headers: this.getHeaders(),
     });

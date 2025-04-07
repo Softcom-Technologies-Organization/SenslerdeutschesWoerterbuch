@@ -8,18 +8,17 @@ header {
 
 main {
   display: grid;
-  width: 100%;
+  padding: 1rem;
 }
 
 footer {
   display: grid;
-  width: 100%;
+  padding: 1rem;
 }
 
 .content {
   justify-self: center;
   justify-content: center;
-  max-width: 1440px;
+  max-width: 960px;
   width: 100%;
-  padding: 1rem;
 }
