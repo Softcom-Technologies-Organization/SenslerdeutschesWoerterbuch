@@ -2,12 +2,11 @@ import { Component, OnInit, DestroyRef } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { SearchService } from '../services/search.service';
-import { FormattedDescriptionComponent } from '../formatted-description/formatted-description.component';
 import { MatDividerModule } from '@angular/material/divider';
 
 @Component({
   selector: 'app-word-page',
-  imports: [FormattedDescriptionComponent, MatDividerModule],
+  imports: [MatDividerModule],
   templateUrl: './word-page.component.html',
   styleUrl: './word-page.component.scss',
 })

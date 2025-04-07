@@ -3,7 +3,6 @@ import { SearchService } from '../services/search.service';
 import { CommonModule } from '@angular/common';
 import { NavigationEnd, Router, RouterModule } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { FormattedDescriptionComponent } from '../formatted-description/formatted-description.component';
 import {
   MatCard,
   MatCardContent,
@@ -18,7 +17,6 @@ import { SearchComponent } from '../search/search.component';
   imports: [
     CommonModule,
     RouterModule,
-    FormattedDescriptionComponent,
     MatCard,
     MatCardHeader,
     MatCardTitle,
@@ -42,7 +40,7 @@ export class ResultsPageComponent {
           let word = 'default';
 
           let urlSegments = (event as NavigationEnd).url.split('/');
-          word = urlSegments[urlSegments.length - 1];
+          word = decodeURIComponent(urlSegments[urlSegments.length - 1]);
 
           if (word !== 'default') {
             this.searchService.search(word);

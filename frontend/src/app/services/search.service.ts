@@ -37,35 +37,52 @@ export class SearchService {
     });
   }
 
-  public autoComplete(query: string, size = 5): Observable<any> {
-    const body = {
+  private getDefautSearchBody(query: string): any {
+    return {
       query: {
         bool: {
           should: [
-            { match: { term: { query: query, operator: 'and' } } },
-            {
-              term: {
-                'term.keyword': {
-                  value: query.toLowerCase(),
-                  boost: 10,
-                },
-              },
-            },
+            // Match query for partial word matching
             {
               match: {
                 term: {
                   query: query,
+                  analyzer: 'term_search_analyzer',
+                  operator: 'and',
                   fuzziness: 'AUTO',
-                  prefix_length: 0,
                   boost: 1,
+                },
+              },
+            },
+            // Match query for exact word matching but with asciifolding (e.g. ü,ǜ,ù,... mapping to u)
+            {
+              match: {
+                'term.asciifolding_keyword': {
+                  query: query,
+                  operator: 'and',
+                  boost: 100,
+                },
+              },
+            },
+            // Match query for exact word matching
+            {
+              match: {
+                'term.keyword': {
+                  query: query,
+                  operator: 'and',
+                  boost: 10000,
                 },
               },
             },
           ],
         },
       },
-      size: size,
     };
+  }
+
+  public autoComplete(query: string, size = 5): Observable<any> {
+    const body = this.getDefautSearchBody(query);
+    body['size'] = size;
     // Check what URL is being used
     console.log('API URL:', this.apiUrl);
 
@@ -75,33 +92,18 @@ export class SearchService {
   }
 
   public search(query: string) {
-    const body = {
-      query: {
-        bool: {
-          should: [
-            { match: { term: { query: query, operator: 'and' } } },
-            {
-              term: {
-                'term.keyword': {
-                  value: query.toLowerCase(),
-                  boost: 10,
-                },
-              },
-            },
-            {
-              match: {
-                term: {
-                  query: query,
-                  fuzziness: 'AUTO',
-                  prefix_length: 0,
-                  boost: 1,
-                },
-              },
-            },
-          ],
+    const body = this.getDefautSearchBody(query);
+    // in the search, also match words in the description
+    body.query.bool.should.push({
+      match: {
+        'formatted-description': {
+          query: query,
+          operator: 'OR',
+          fuzziness: 'AUTO',
+          boost: 0.01,
         },
       },
-    };
+    });
     // Check what URL is being used
     console.log('API URL:', this.apiUrl);
 
