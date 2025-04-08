@@ -53,7 +53,7 @@ test('search functionality without autocomplete', async ({ page }) => {
    * details page "vom Bäcker hergestellter Zopf"
    * Note: The Autocomplete component from Angular Material defaults to role=combobox. Seems weird, but it is what it is.
    */
-  const searchField = page.getByRole('combobox', { name: 'Search...' });
+  const searchField = page.getByRole('combobox', { name: 'Search' });
   await expect(searchField).toBeVisible();
   await searchField.fill('beckertrütscha');
   await page.screenshot({ path: `test-results/suggestions.png` });
