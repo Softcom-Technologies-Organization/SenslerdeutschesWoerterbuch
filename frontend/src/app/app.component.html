@@ -5,12 +5,7 @@
     </mat-toolbar-row>
     <mat-toolbar-row>
       <a mat-button routerLink="/about">Infos</a>
-      <a
-        mat-button
-        href="https://github.com/Softcom-Technologies-Organization/SenslerdeutschesWoerterbuch/issues"
-        target="_blank"
-        >Feedback</a
-      >
+      <a mat-button routerLink="/feedback">Feedback</a>
     </mat-toolbar-row>
   </mat-toolbar>
 </header>
@@ -21,16 +16,21 @@
 </main>
 <footer>
   <div class="content">
-    <mat-divider></mat-divider>
-    <p>
-      Mit Unterstütztung von
-      <a href="https://softcom.pro" target="_blank">Softcom</a>. Möchtest auch
-      du das Projekt unterstützen? Dann melde dich
+    <p >
+      Mit Unterstützung von
+      <a href="https://softcom.pro" target="_blank" rel="noopener">Softcom</a>
+    </p>
+    <nav class="footer-links">
       <a
+        mat-button
         href="https://github.com/Softcom-Technologies-Organization/SenslerdeutschesWoerterbuch?tab=contributing-ov-file"
         target="_blank"
-        >hier</a
-      >.
-    </p>
+        rel="noopener"
+      >
+      <mat-icon
+        svgIcon="github" aria-label="GitHub icon"></mat-icon>
+        <span> Mithelfen auf GitHub </span>
+      </a>
+    </nav>
   </div>
 </footer>

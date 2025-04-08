@@ -2,7 +2,7 @@ import { Routes } from '@angular/router';
 import { ResultsPageComponent } from './results-page/results-page.component';
 import { WordPageComponent } from './word-page/word-page.component';
 import { AboutComponent } from './about/about.component';
-import { SearchComponent } from './search/search.component';
+import { FeedbackComponent } from './feedback/feedback.component';
 
 export const routes: Routes = [
   {
@@ -21,4 +21,5 @@ export const routes: Routes = [
     
   },
   { path: 'about', component: AboutComponent },
+  {path: 'feedback', component: FeedbackComponent },
 ];
