@@ -44,13 +44,34 @@ export class SearchService {
                 },
               },
             },
+            {
+              match: {
+                'term.phonetic': {
+                  query: query,
+                  operator: 'and',
+                  fuzziness: 'AUTO',
+                  boost: 2,
+                },
+              },
+            },
+            // Fuzzy matchword with asciifolding (e.g. ü,ǜ,ù,... mapping to u)
+            {
+              fuzzy: {
+                'term.asciifolding_keyword': {
+                  value: query.toLowerCase(),
+                  fuzziness: '2',
+                  transpositions: true,
+                  boost: 2,
+                },
+              },
+            },
             // Match query for exact word matching but with asciifolding (e.g. ü,ǜ,ù,... mapping to u)
             {
               match: {
                 'term.asciifolding_keyword': {
                   query: query,
                   operator: 'and',
-                  boost: 100,
+                  boost: 3,
                 },
               },
             },
@@ -60,7 +81,7 @@ export class SearchService {
                 'term.keyword': {
                   query: query,
                   operator: 'and',
-                  boost: 10000,
+                  boost: 5,
                 },
               },
             },
@@ -89,11 +110,12 @@ export class SearchService {
         'formatted-description': {
           query: query,
           operator: 'OR',
-          fuzziness: 'AUTO',
-          boost: 0.01,
+          boost: 1,
         },
       },
     });
+    body.explain = true; // This will include detailed scoring explanations
+
     // Check what URL is being used
     console.log('API URL:', this.apiUrl);
 

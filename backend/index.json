@@ -1,60 +1,89 @@
 {
-    "settings": {
-        "analysis": {
-            "filter": {
-                "autocomplete_filter": {
-                    "type": "edge_ngram",
-                    "min_gram": 1,
-                    "max_gram": 20
-                }
-            },
-            "analyzer": {
-                "autocomplete_analyzer": {
-                    "type": "custom",
-                    "tokenizer": "standard",
-                    "filter": [
-                        "lowercase",
-                        "asciifolding",
-                        "autocomplete_filter"
-                    ]
-                },
-                "autocomplete_search": {
-                    "type": "custom",
-                    "tokenizer": "standard",
-                    "filter": [
-                        "lowercase",
-                        "asciifolding"
-                    ]
-                }
-            },
-            "normalizer": {
-                "lowercase_normalizer": {
-                    "type": "custom",
-                    "filter": [
-                        "lowercase",
-                        "asciifolding"
-                    ]
-                }
-            }
+  "settings": {
+    "analysis": {
+      "char_filter": {
+        "remove_reading_aid_chars": {
+          "type": "mapping",
+          "mappings": ["· => ", "∙ => "]
         }
-    },
-    "mappings": {
-        "properties": {
-            "term": {
-                "type": "text",
-                "analyzer": "autocomplete_analyzer",
-                "search_analyzer": "autocomplete_search",
-                "fields": {
-                    "keyword": {
-                        "type": "keyword",
-                        "normalizer": "lowercase_normalizer"
-                    }
-                }
-            },
-            "description": {
-                "type": "text",
-                "analyzer": "standard"
-            }
+      },
+      "filter": {
+        "autocomplete_filter": {
+          "type": "edge_ngram",
+          "min_gram": 1,
+          "max_gram": 20
+        },
+        "koelner_phonetic": {
+          "type": "phonetic",
+          "encoder": "koelnerphonetik",
+          "replace": true
         }
+      },
+      "analyzer": {
+        "term_analyzer": {
+          "type": "custom",
+          "char_filter": ["remove_reading_aid_chars"],
+          "tokenizer": "standard",
+          "filter": ["lowercase", "asciifolding", "autocomplete_filter"]
+        },
+        "term_search_analyzer": {
+          "type": "custom",
+          "char_filter": ["remove_reading_aid_chars"],
+          "tokenizer": "standard",
+          "filter": ["lowercase", "asciifolding"]
+        },
+        "description_analyzer": {
+          "type": "custom",
+          "char_filter": ["remove_reading_aid_chars"],
+          "tokenizer": "standard",
+          "filter": ["lowercase", "asciifolding"]
+        },
+        "phonetic_analyzer": {
+          "type": "custom",
+          "char_filter": ["remove_reading_aid_chars"],
+          "tokenizer": "standard",
+          "filter": ["lowercase", "koelner_phonetic"]
+        }
+      },
+      "normalizer": {
+        "lowercase_normalizer": {
+          "type": "custom",
+          "char_filter": ["remove_reading_aid_chars"],
+          "filter": ["lowercase"]
+        },
+        "asciifolding_normalizer": {
+          "type": "custom",
+          "char_filter": ["remove_reading_aid_chars"],
+          "filter": ["lowercase", "asciifolding"]
+        }
+      }
     }
+  },
+  "mappings": {
+    "properties": {
+      "term": {
+        "type": "text",
+        "analyzer": "term_analyzer",
+        "search_analyzer": "term_search_analyzer",
+        "fields": {
+          "keyword": {
+            "type": "keyword",
+            "normalizer": "lowercase_normalizer"
+          },
+          "asciifolding_keyword": {
+            "type": "keyword",
+            "normalizer": "asciifolding_normalizer"
+          },
+          "phonetic": {
+            "type": "text",
+            "analyzer": "phonetic_analyzer"
+          }
+        }
+      },
+      "formatted-description": {
+        "type": "text",
+        "analyzer": "description_analyzer"
+      }
+    }
+  }
 }

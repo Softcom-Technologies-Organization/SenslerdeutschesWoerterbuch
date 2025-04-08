@@ -11,6 +11,7 @@ services:
       - discovery.type=single-node # Required to disable SSL while keeping security enabled
     volumes:
       - elasticsearch-data:/usr/share/elasticsearch/data # Persist user, role and indices locally
+      - ./elastic-config/elasticsearch-plugins.yml:/usr/share/elasticsearch/config/elasticsearch-plugins.yml
     networks:
       - sw-network
 
