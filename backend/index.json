@@ -12,6 +12,11 @@
           "type": "edge_ngram",
           "min_gram": 1,
           "max_gram": 20
+        },
+        "koelner_phonetic": {
+          "type": "phonetic",
+          "encoder": "koelnerphonetik",
+          "replace": true
         }
       },
       "analyzer": {
@@ -32,6 +37,12 @@
           "char_filter": ["remove_reading_aid_chars"],
           "tokenizer": "standard",
           "filter": ["lowercase", "asciifolding"]
+        },
+        "phonetic_analyzer": {
+          "type": "custom",
+          "char_filter": ["remove_reading_aid_chars"],
+          "tokenizer": "standard",
+          "filter": ["lowercase", "koelner_phonetic"]
         }
       },
       "normalizer": {
@@ -62,6 +73,10 @@
           "asciifolding_keyword": {
             "type": "keyword",
             "normalizer": "asciifolding_normalizer"
+          },
+          "phonetic": {
+            "type": "text",
+            "analyzer": "phonetic_analyzer"
           }
         }
       },
