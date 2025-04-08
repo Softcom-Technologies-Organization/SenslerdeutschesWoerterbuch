@@ -1,28 +1,16 @@
 <form>
-  <input
-    matInput
-    type="text"
-    [(ngModel)]="searchTerm"
-    [matAutocomplete]="auto"
-    name="searchField"
-    type="text"
-    placeholder="Search..."
-    (keyup.enter)="onSearch($event)"
-    class="search-input"
-  />
-
-  <mat-autocomplete
-    #auto="matAutocomplete"
-    (optionSelected)="onOptionSelected($event)"
-  >
-    @if (!searchResults || searchResults.hits.hits.total === 0) {
-      <mat-option disabled>No results found</mat-option>
-    } @else {
-      @for (item of searchResults.hits.hits; track searchResults.hits.hits) {
-        <mat-option [value]="item._source.term">
-          {{ item._source.term }}
-        </mat-option>
+  <mat-form-field>
+    <mat-label>Suche</mat-label>
+    <input type="text"
+           placeholder="Suche nach einem Wort oder einer Bedeutung..."
+           aria-label="Search"
+           matInput
+           [formControl]="myControl"
+           [matAutocomplete]="auto">
+    <mat-autocomplete #auto="matAutocomplete">
+      @for (option of filteredOptions | async; track option) {
+        <mat-option [value]="option">{{option}}</mat-option>
       }
-    }
-  </mat-autocomplete>
+    </mat-autocomplete>
+  </mat-form-field>
 </form>

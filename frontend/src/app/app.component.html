@@ -1,9 +1,36 @@
-<mat-toolbar color="primary">
-  <span routerLink="/" style="cursor: pointer">
-    Senslerdeutsches Wörterbuch
-  </span>
-</mat-toolbar>
-<div class="content">
-  <app-search></app-search>
-  <router-outlet></router-outlet>
-</div>
+<header>
+  <mat-toolbar>
+    <mat-toolbar-row>
+      <span routerLink="/">Senslerdeutsches Wörterbuch</span>
+    </mat-toolbar-row>
+    <mat-toolbar-row>
+      <a mat-button routerLink="/about">Infos</a>
+      <a
+        mat-button
+        href="https://github.com/Softcom-Technologies-Organization/SenslerdeutschesWoerterbuch/issues"
+        target="_blank"
+        >Feedback</a
+      >
+    </mat-toolbar-row>
+  </mat-toolbar>
+</header>
+<main>
+  <div class="content">
+    <router-outlet></router-outlet>
+  </div>
+</main>
+<footer>
+  <div class="content">
+    <mat-divider></mat-divider>
+    <p>
+      Mit Unterstütztung von
+      <a href="https://softcom.pro" target="_blank">Softcom</a>. Möchtest auch
+      du das Projekt unterstützen? Dann melde dich
+      <a
+        href="https://github.com/Softcom-Technologies-Organization/SenslerdeutschesWoerterbuch?tab=contributing-ov-file"
+        target="_blank"
+        >hier</a
+      >.
+    </p>
+  </div>
+</footer>

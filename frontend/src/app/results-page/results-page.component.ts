@@ -10,6 +10,7 @@ import {
   MatCardTitle,
 } from '@angular/material/card';
 import { MatDivider } from '@angular/material/divider';
+import { SearchComponent } from '../search/search.component';
 
 @Component({
   selector: 'app-results-page',
@@ -21,6 +22,7 @@ import { MatDivider } from '@angular/material/divider';
     MatCardTitle,
     MatCardContent,
     MatDivider,
+    SearchComponent,
   ],
   templateUrl: './results-page.component.html',
   styleUrl: './results-page.component.scss',
