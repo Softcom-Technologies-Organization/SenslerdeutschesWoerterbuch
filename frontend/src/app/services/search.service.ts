@@ -11,6 +11,16 @@ export class SearchService {
   private username = environment.elasticUsername;
   private password = environment.elasticPassword;
 
+  private lastSearchTerm: string = '';
+
+  saveSearchTerm(term: string): void {
+    this.lastSearchTerm = term;
+  }
+
+  getLastSearchTerm(): string {
+    return this.lastSearchTerm;
+  }
+
   private _searchResults: any;
 
   public get searchResults(): any {
