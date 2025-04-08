@@ -1,3 +1,9 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh; /* Full viewport height */
+}
+
 header {
   display: grid;
   width: 100%;
@@ -9,11 +15,14 @@ header {
 main {
   display: grid;
   padding: 1rem;
+  flex: 1; /* This makes it expand to push footer down */
 }
 
 footer {
   display: grid;
   padding: 1rem;
+  background:  var(--mat-sys-surface);
+  color: var(--mat-sys-on-surface);
 }
 
 .content {
@@ -21,4 +30,12 @@ footer {
   justify-content: center;
   max-width: 960px;
   width: 100%;
+}
+
+footer .content {
+  display: flex;
+  justify-content: space-between; /* Push support text left and GitHub link right */
+  align-items: center; /* Vertically center elements */
+  flex-wrap: wrap; /* Allow wrapping on very small screens */
+  gap: 1rem; /* Space between elements when wrapped */
 }
