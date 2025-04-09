@@ -43,7 +43,7 @@ properties:
             value: thisisgonnabepublic     
 
       - name: elasticsearch
-        image: docker.elastic.co/elasticsearch/elasticsearch:8.17.3
+        image: seislerwoerterbuech.azurecr.io/elasticsearch:latest
         resources:
           cpu: 1.0
           memory: 2Gi
