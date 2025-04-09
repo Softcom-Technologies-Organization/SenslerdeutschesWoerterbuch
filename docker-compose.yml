@@ -2,7 +2,9 @@ name: senslerdeutsches-woerterbuch
 
 services:
   elasticsearch:
-    image: docker.elastic.co/elasticsearch/elasticsearch:8.17.3
+    build:
+      context: .
+      dockerfile: docker/elasticsearch/Dockerfile
     environment:
       - ELASTIC_PASSWORD=${ELASTIC_ADMIN_PASSWORD}
       - xpack.security.enabled=true
@@ -11,7 +13,6 @@ services:
       - discovery.type=single-node # Required to disable SSL while keeping security enabled
     volumes:
       - elasticsearch-data:/usr/share/elasticsearch/data # Persist user, role and indices locally
-      - ./elastic-config/elasticsearch-plugins.yml:/usr/share/elasticsearch/config/elasticsearch-plugins.yml
     networks:
       - sw-network
 
