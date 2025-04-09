@@ -1,20 +1,20 @@
 <header>
-  <mat-toolbar>
-    <mat-toolbar-row>
-      <span routerLink="/">Senslerdeutsches Wörterbuch</span>
-    </mat-toolbar-row>
-    <mat-toolbar-row>
-      <a mat-button routerLink="/about">Infos</a>
-      <a mat-button routerLink="/feedback">Feedback</a>
-      <a
-        mat-button
-        href="https://cricprint.ch/senslerdeutsches-woerterbuch/"
-        target="_blank"
-        rel="noopener"
-        >Print Version</a
-      >
-    </mat-toolbar-row>
-  </mat-toolbar>
+    <div class="content">
+      <div class="header-bar ">
+        <span routerLink="/" class="header-title">Senslerdeutsches Wörterbuch</span>
+        <nav>
+          <a mat-button routerLink="/about">Infos</a>
+          <a mat-button routerLink="/feedback">Feedback</a>
+          <a
+            mat-button
+            href="https://cricprint.ch/senslerdeutsches-woerterbuch/"
+            target="_blank"
+            rel="noopener"
+            >Print Version</a
+          >
+        </nav>
+      </div>
+    </div>
 </header>
 <main>
   <div class="content">
@@ -40,7 +40,11 @@
       target="_blank"
       rel="noopener"
     >
-      <mat-icon svgIcon="github" aria-label="GitHub icon"></mat-icon>
+      <mat-icon
+        class="github"
+        svgIcon="github"
+        aria-label="GitHub icon"
+      ></mat-icon>
       <span> Mithelfen auf GitHub </span>
     </a>
   </div>

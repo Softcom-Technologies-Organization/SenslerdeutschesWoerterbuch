@@ -18,7 +18,7 @@
 }
 
 /* Simple breakpoint - desktop and up */
-@media (min-width: variables.$medium-breakpoint) {
+@media (min-width: variables.$Small-breakpoint) {
   .content-wrapper {
     grid-template-columns: 2fr 1fr;
   }
