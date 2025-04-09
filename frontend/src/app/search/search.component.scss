@@ -9,7 +9,7 @@ mat-form-field {
 figure.art-showcase {
   display: grid;
   justify-self: center;
-  max-width: 80%;
+  max-width: 60%;
 
   img {
     max-width: 100%;
@@ -18,9 +18,14 @@ figure.art-showcase {
   figcaption {
     font-style: italic;
     text-align: right;
+    font-size: small;
   }
 }
 
 mat-card {
   margin-top: 0.5rem;
+}
+
+.sponsored {
+  font-style: italic;
 }

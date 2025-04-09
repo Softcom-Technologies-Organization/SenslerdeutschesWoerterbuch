@@ -1,12 +1,17 @@
 <header>
   <mat-toolbar>
-    <mat-toolbar-row>
-      <a routerLink="/">
-        <img src="favicon-32x32.png" alt="Senslerdeutsches Wörterbuch" class="logo" />
-      </a>
-      <a mat-button routerLink="/about">Infos</a>
-      <a mat-button routerLink="/feedback">Feedback</a>
-    </mat-toolbar-row>
+    <a routerLink="/">
+      <img src="favicon-32x32.png" alt="Senslerdeutsches Wörterbuch" class="logo" />
+    </a>
+    <a mat-button routerLink="/about">Infos</a>
+    <a mat-button routerLink="/feedback">Fragen?</a>
+    <div class="spacer"></div>
+    <a mat-button
+      href="https://github.com/Softcom-Technologies-Organization/SenslerdeutschesWoerterbuch?tab=contributing-ov-file"
+      target="_blank" rel="noopener">
+      <mat-icon svgIcon="github" aria-label="GitHub icon"></mat-icon>
+      <span>Häḷffe</span>
+    </a>
   </mat-toolbar>
 </header>
 <main>
@@ -16,21 +21,8 @@
 </main>
 <footer>
   <div class="content">
-    <p >
-      Mit Unterstützung von
-      <a href="https://softcom.pro" target="_blank" rel="noopener">Softcom</a>
+    <p>
+      Ein Projekt von <a href="https://christianschmutz.ch" target="_blank" rel="noopener">Christian Schmutz</a>, mit technischer Unterstützung von <a href="https://softcom.pro" target="_blank" rel="noopener">Softcom Technologies SA</a>.
     </p>
-    <nav class="footer-links">
-      <a
-        mat-button
-        href="https://github.com/Softcom-Technologies-Organization/SenslerdeutschesWoerterbuch?tab=contributing-ov-file"
-        target="_blank"
-        rel="noopener"
-      >
-      <mat-icon
-        svgIcon="github" aria-label="GitHub icon"></mat-icon>
-        <span> Mithelfen auf GitHub </span>
-      </a>
-    </nav>
   </div>
 </footer>
