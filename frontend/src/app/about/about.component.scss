@@ -1,0 +1,25 @@
+@use "../../styles/variables";
+
+.content-wrapper {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2em;
+  align-items: start;
+}
+
+.image-content {
+  justify-self: center;
+}
+
+.image-content img {
+  max-width: 100%;
+  height: auto;
+  margin-top: 1em;
+}
+
+/* Simple breakpoint - desktop and up */
+@media (min-width: variables.$medium-breakpoint) {
+  .content-wrapper {
+    grid-template-columns: 2fr 1fr;
+  }
+}

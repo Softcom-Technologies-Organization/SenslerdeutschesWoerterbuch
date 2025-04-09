@@ -1,3 +1,5 @@
+@use "../styles/variables";
+
 :host {
   display: flex;
   flex-direction: column;
@@ -21,7 +23,7 @@ main {
 footer {
   display: grid;
   padding: 1rem;
-  background:  var(--mat-sys-surface);
+  background: var(--mat-sys-surface);
   color: var(--mat-sys-on-surface);
 }
 
@@ -30,6 +32,7 @@ footer {
   justify-content: center;
   max-width: 960px;
   width: 100%;
+  hyphens: auto;
 }
 
 footer .content {
@@ -37,5 +40,18 @@ footer .content {
   justify-content: space-between; /* Push support text left and GitHub link right */
   align-items: center; /* Vertically center elements */
   flex-wrap: wrap; /* Allow wrapping on very small screens */
-  gap: 1rem; /* Space between elements when wrapped */
+}
+
+/* For small screens - center all elements vertically */
+@media (max-width: variables.$medium-breakpoint) {
+  footer .content {
+    flex-direction: column;
+    justify-content: center;
+    text-align: center;
+  }
+
+  // make the supported by text appear at the bottom for small screens
+  .supported-by {
+    order: 2;
+  }
 }
