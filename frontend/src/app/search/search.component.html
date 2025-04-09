@@ -1,16 +1,34 @@
+<figure class="art-showcase" *ngIf="showFigure$ | async">
+  <img src="schwarzsee.png" alt="Sketch of the landscape in Schwarzsee" />
+  <figcaption>© ChatGPT</figcaption>
+</figure>
 <form>
   <mat-form-field>
     <mat-label>Suche</mat-label>
-    <input type="text"
-           placeholder="Suche nach einem Wort oder einer Bedeutung..."
-           aria-label="Search"
-           matInput
-           [formControl]="myControl"
-           [matAutocomplete]="auto">
-    <mat-autocomplete #auto="matAutocomplete">
-      @for (option of filteredOptions | async; track option) {
-        <mat-option [value]="option">{{option}}</mat-option>
-      }
-    </mat-autocomplete>
+    <input
+      matInput
+      type="text"
+      placeholder="Suche nach einem Wort oder einer Bedeutung..."
+      [formControl]="searchControl"
+    />
   </mat-form-field>
 </form>
+<div *ngIf="results$ | async as results">
+  <div *ngIf="results.length > 0">
+    <div *ngFor="let result of results">
+      <mat-card>
+        <mat-card-header>
+          <mat-card-title>
+            <a [routerLink]="['/', 'word', result.id]" class="result-link">{{
+              result.title
+            }}</a>
+          </mat-card-title>
+        </mat-card-header>
+        <mat-divider class="card-divider"></mat-divider>
+        <mat-card-content>
+          {{ result.description }}
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </div>
+</div>

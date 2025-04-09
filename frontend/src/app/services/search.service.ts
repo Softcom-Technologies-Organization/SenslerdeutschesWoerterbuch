@@ -1,33 +1,41 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { map, Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
+
+export interface SearchResult {
+  id: string;
+  title: string;
+  description?: string;
+}
+
+interface ElasticsearchResponse {
+  hits: {
+    total: {
+      value: number;
+      relation: string;
+    };
+    max_score: number | null;
+    hits: Array<{
+      _index: string;
+      _id: string;
+      _score: number | null;
+      _source: any; // This is where the document data resides
+    }>;
+  };
+}
 
 @Injectable({
   providedIn: 'root',
 })
 export class SearchService {
-  private apiUrl = environment.proxyUrl;
-  private username = environment.elasticUsername;
-  private password = environment.elasticPassword;
+  readonly apiUrl = environment.proxyUrl;
+  readonly username = environment.elasticUsername;
+  readonly password = environment.elasticPassword;
 
-  private lastSearchTerm: string = '';
+  lastSearchTerm: string = '';
 
-  saveSearchTerm(term: string): void {
-    this.lastSearchTerm = term;
-  }
-
-  getLastSearchTerm(): string {
-    return this.lastSearchTerm;
-  }
-
-  private _searchResults: any;
-
-  public get searchResults(): any {
-    return this._searchResults;
-  }
-
-  constructor(private http: HttpClient) {}
+  constructor(readonly http: HttpClient) {}
 
   private getHeaders(): HttpHeaders {
     const credentials = btoa(`${this.username}:${this.password}`);
@@ -104,15 +112,13 @@ export class SearchService {
   public autoComplete(query: string, size = 5): Observable<any> {
     const body = this.getDefautSearchBody(query);
     body['size'] = size;
-    // Check what URL is being used
-    console.log('API URL:', this.apiUrl);
 
     return this.http.post(`${this.apiUrl}_search`, body, {
       headers: this.getHeaders(),
     });
   }
 
-  public search(query: string) {
+  search(query: string): Observable<any[]> {
     const body = this.getDefautSearchBody(query);
     // in the search, also match words in the description
     body.query.bool.should.push({
@@ -125,23 +131,25 @@ export class SearchService {
       },
     });
     body.explain = true; // This will include detailed scoring explanations
-
-    // Check what URL is being used
-    console.log('API URL:', this.apiUrl);
-
-    this.http
-      .post(`${this.apiUrl}_search`, body, {
-        headers: this.getHeaders(),
+    return this.http.post<ElasticsearchResponse>(`${this.apiUrl}_search`, body, {
+      headers: this.getHeaders(),
+    })
+    .pipe(
+      map(response => {
+        if (response && response.hits && response.hits.hits) {
+          return response.hits.hits.map(hit => ({
+            id: hit._id,
+            title: hit._source['term'], 
+            description: hit._source['formatted-description'],
+            ...hit._source
+          } as SearchResult));
+        }
+        return [];
       })
-      .subscribe((data) => {
-        this._searchResults = data;
-      });
+    );
   }
 
   public getById(id: string): Observable<any> {
-    // Check what URL is being used
-    console.log('API URL:', this.apiUrl);
-
     return this.http.get(`${this.apiUrl}dictionary/_doc/${id}`, {
       headers: this.getHeaders(),
     });

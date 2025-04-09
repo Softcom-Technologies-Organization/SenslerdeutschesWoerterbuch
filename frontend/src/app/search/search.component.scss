@@ -1,3 +1,22 @@
 mat-form-field {
   width: 100%;
 }
+
+figure.art-showcase {
+  display: grid;
+  justify-self: center;
+  max-width: 80%;
+
+  img {
+    max-width: 100%;
+  }
+
+  figcaption {
+    font-style: italic;
+    text-align: right;
+  }
+}
+
+mat-card {
+  margin-top: 0.5rem;
+}
