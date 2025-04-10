@@ -8,13 +8,12 @@
 
 header {
   display: grid;
-  // width: 100%;
-  background: var(--mat-sys-surface);
-  color: var(--mat-sys-on-surface);
-  padding: 0 1rem;
-
   span {
     cursor: pointer;
+  }
+
+  a {
+    padding-left: 0.5rem;
   }
 }
 
@@ -33,22 +32,6 @@ main {
   padding: 1rem;
 }
 
-.header-bar {
-  display: grid;
-  grid-template-columns: auto auto;
-  justify-content: space-between;
-  align-items: center;
-  padding: 1rem 0 0.5rem;
-
-}
-
-.header-title {
-  font-family: var(--mat-sys-title-large-font);
-  font-size: var(--mat-sys-title-large-size);
-  line-height: var(--mat-sys-title-large-line-height);
-  font-weight: var(--mat-sys-title-large-weight);
-  letter-spacing: var(--mat-sys-title-large-tracking);
-}
 footer {
   display: grid;
   padding: 1rem;
@@ -69,32 +52,6 @@ footer .content {
   grid-template-columns: auto auto auto;
   align-items: center;
   justify-content: space-between;
-}
-
-/* For small screens - center all elements vertically */
-@media (max-width: variables.$Small-breakpoint) {
-  footer .content {
-    grid-template-columns: 1fr;
-    grid-template-rows: auto auto auto;
-    justify-items: center;
-    text-align: center;
-  }
-
-  // make the supported by text appear at the bottom for small screens
-  .supported-by {
-    grid-row: 3;
-  }
-
-  .header-bar {
-    display: grid;
-    grid-template-columns: 1fr;
-    grid-template-rows: auto auto;
-    justify-items: center;
-    gap: 0.5rem;
-  }
-  .header-bar h3 {
-    margin: 0;
-  }
 }
 
 mat-icon.github {
