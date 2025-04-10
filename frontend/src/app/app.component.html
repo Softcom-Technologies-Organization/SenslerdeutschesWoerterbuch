@@ -1,20 +1,19 @@
 <header>
-    <div class="content">
-      <div class="header-bar ">
-        <span routerLink="/" class="header-title">Senslerdeutsches Wörterbuch</span>
-        <nav>
-          <a mat-button routerLink="/about">Infos</a>
-          <a mat-button routerLink="/feedback">Feedback</a>
-          <a
-            mat-button
-            href="https://cricprint.ch/senslerdeutsches-woerterbuch/"
-            target="_blank"
-            rel="noopener"
-            >Print Version</a
-          >
-        </nav>
-      </div>
-    </div>
+  <mat-toolbar>
+    <a routerLink="/">
+      <img src="favicon-32x32.png" alt="Senslerdeutsches Wörterbuch" class="logo" />
+    </a>
+    <a mat-button routerLink="/about">Infos</a>
+    <a mat-button routerLink="/feedback">Fragen?</a>
+    <a mat-button href="https://cricprint.ch/senslerdeutsches-woerterbuch/" target="_blank" rel="noopener">Buch</a>
+    <div class="spacer"></div>
+    <a mat-button
+      href="https://github.com/Softcom-Technologies-Organization/SenslerdeutschesWoerterbuch?tab=contributing-ov-file"
+      target="_blank" rel="noopener">
+      <mat-icon svgIcon="github" aria-label="GitHub icon"></mat-icon>
+      <span>Häḷffe</span>
+    </a>
+  </mat-toolbar>
 </header>
 <main>
   <div class="content">
@@ -23,29 +22,10 @@
 </main>
 <footer>
   <div class="content">
-    <p class="supported-by">
-      Mit Unterstützung von
-      <a href="https://softcom.pro" target="_blank" rel="noopener">Softcom</a>
+    <p>
+      Ein Projekt von <a href="https://christianschmutz.ch" target="_blank" rel="noopener">Christian Schmutz</a>, mit
+      technischer Unterstützung von <a href="https://softcom.pro" target="_blank" rel="noopener">Softcom Technologies
+        SA</a>.
     </p>
-    <a
-      mat-button
-      href="https://christianschmutz.ch/"
-      target="_blank"
-      rel="noopener"
-      >christianschmutz.ch</a
-    >
-    <a
-      mat-button
-      href="https://github.com/Softcom-Technologies-Organization/SenslerdeutschesWoerterbuch?tab=contributing-ov-file"
-      target="_blank"
-      rel="noopener"
-    >
-      <mat-icon
-        class="github"
-        svgIcon="github"
-        aria-label="GitHub icon"
-      ></mat-icon>
-      <span> Mithelfen auf GitHub </span>
-    </a>
   </div>
 </footer>

@@ -1,12 +1,14 @@
 import { Component, OnInit } from '@angular/core';
-import { SearchService } from '../services/search.service';
+import { SearchResult, SearchService } from '../services/search.service';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatFormFieldModule } from '@angular/material/form-field';
-import { map, Observable, startWith } from 'rxjs';
+import { BehaviorSubject, debounceTime, map, Observable, Subscription, switchMap } from 'rxjs';
 import { MatInputModule } from '@angular/material/input';
+import { MatCardModule } from '@angular/material/card';
+import { MatDividerModule } from '@angular/material/divider';
 
 @Component({
   selector: 'app-search',
@@ -15,6 +17,8 @@ import { MatInputModule } from '@angular/material/input';
     RouterModule,
     FormsModule,
     MatAutocompleteModule,
+    MatCardModule,
+    MatDividerModule,
     MatInputModule,
     MatFormFieldModule,
     ReactiveFormsModule,
@@ -22,36 +26,46 @@ import { MatInputModule } from '@angular/material/input';
   templateUrl: './search.component.html',
   styleUrl: './search.component.scss',
 })
+
 export class SearchComponent implements OnInit {
-  myControl = new FormControl('');
-  options: string[] = [];
-  filteredOptions: Observable<string[]> | undefined;
+  results$!: Observable<SearchResult[]>;
+  showFigure$!: Observable<boolean>;
+  readonly searchTermSubject = new BehaviorSubject<string>('');
+  readonly subscriptions = new Subscription();
+  searchControl = new FormControl('');
 
   constructor(readonly searchService: SearchService) {}
 
   ngOnInit() {
-    const savedSearchTerm = this.searchService.getLastSearchTerm();
-    if (savedSearchTerm) {
-      this.myControl.setValue(savedSearchTerm);
-      this.searchService.search(savedSearchTerm);
-    }
-
-    this.filteredOptions = this.myControl.valueChanges.pipe(
-      startWith(savedSearchTerm || ''),
-      map((value) => {
-        if (value !== null && value !== undefined) {
-          this.searchService.saveSearchTerm(value);
-        }
-        return this._filter(value || '');
-      }),
+    this.results$ = this.searchTermSubject.pipe(
+      debounceTime(300),
+      switchMap((term: string) => {
+        this.searchService.lastSearchTerm = term;
+        return this.searchService.search(term);
+     })
     );
+
+    this.subscriptions.add(
+      this.searchControl.valueChanges.subscribe(term => {
+        if (term) {
+          this.searchTermSubject.next(term);
+        } else {
+          this.searchTermSubject.next('');
+        }
+      })
+    );
+
+    this.showFigure$ = this.results$.pipe(
+      map(results => !results || results.length === 0)
+    );
+
+    const savedTerm = this.searchService.lastSearchTerm;
+    if (savedTerm) {
+      this.searchControl.setValue(savedTerm);
+    }
   }
 
-  private _filter(value: string): string[] {
-    const filterValue = value.toLowerCase();
-    this.searchService.search(value);
-    return this.options.filter((option) =>
-      option.toLowerCase().includes(filterValue),
-    );
+  ngOnDestroy() {
+    this.subscriptions.unsubscribe();
   }
 }
