@@ -64,4 +64,8 @@ export class SearchComponent implements OnInit {
       this.searchControl.setValue(savedTerm);
     }
   }
+
+  ngOnDestroy() {
+    this.subscriptions.unsubscribe();
+  }
 }

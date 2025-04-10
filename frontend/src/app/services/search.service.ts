@@ -109,15 +109,6 @@ export class SearchService {
     };
   }
 
-  public autoComplete(query: string, size = 5): Observable<any> {
-    const body = this.getDefautSearchBody(query);
-    body['size'] = size;
-
-    return this.http.post(`${this.apiUrl}_search`, body, {
-      headers: this.getHeaders(),
-    });
-  }
-
   search(query: string): Observable<any[]> {
     const body = this.getDefautSearchBody(query);
     // in the search, also match words in the description

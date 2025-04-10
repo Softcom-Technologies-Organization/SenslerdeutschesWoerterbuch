@@ -1,37 +1,32 @@
-<figure class="art-showcase" *ngIf="showFigure$ | async">
-  <img src="schwarzsee.png" alt="Sketch of the landscape in Schwarzsee" />
-  <figcaption>© ChatGPT</figcaption>
-</figure>
+@if (showFigure$ | async) {
+  <figure class="art-showcase">
+    <img src="schwarzsee.png" alt="Sketch of the landscape in Schwarzsee" />
+    <figcaption>© ChatGPT</figcaption>
+  </figure>
+}
 <form>
   <mat-form-field>
     <mat-label>Suechi</mat-label>
-    <input
-      matInput
-      type="text"
-      placeholder="Probiers ifach us..."
-      [formControl]="searchControl"
-    />
+    <input matInput type="text" placeholder="Probiers ifach us..." [formControl]="searchControl" />
   </mat-form-field>
 </form>
-<div *ngIf="results$ | async as results">
-  <div *ngIf="results.length > 0">
-    <div *ngFor="let result of results">
-      <mat-card>
-        <mat-card-header>
-          <mat-card-title>
-            <a [routerLink]="['/', 'word', result.id]" class="result-link">{{
-              result.title
-            }}</a>
-          </mat-card-title>
-        </mat-card-header>
-        <mat-divider class="card-divider"></mat-divider>
-        <mat-card-content>
-          {{ result.description }}
-        </mat-card-content>
-      </mat-card>
-    </div>
-  </div>
-</div>
+@if (results$ | async; as results) {
+  @for (result of results; track result.id) {
+  <mat-card>
+    <mat-card-header>
+      <mat-card-title>
+        <a [routerLink]="['/', 'word', result.id]" class="result-link">{{
+          result.title
+          }}</a>
+      </mat-card-title>
+    </mat-card-header>
+    <mat-divider class="card-divider"></mat-divider>
+    <mat-card-content>
+      {{ result.description }}
+    </mat-card-content>
+  </mat-card>
+  }
+}
 <div class="sponsored">
   <p>Unterstützt va <a href="https://softcom.pro">Softcom SA</a></p>
 </div>
