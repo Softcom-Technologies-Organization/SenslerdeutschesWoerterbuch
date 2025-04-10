@@ -1,12 +1,18 @@
+@use "../styles/variables";
+
 :host {
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-rows: auto 1fr auto;
   min-height: 100vh; /* Full viewport height */
 }
 
 header {
   display: grid;
-  width: 100%;
+  // width: 100%;
+  background: var(--mat-sys-surface);
+  color: var(--mat-sys-on-surface);
+  padding: 0 1rem;
+
   span {
     cursor: pointer;
   }
@@ -25,27 +31,78 @@ header {
 main {
   display: grid;
   padding: 1rem;
-  flex: 1; /* This makes it expand to push footer down */
 }
 
+.header-bar {
+  display: grid;
+  grid-template-columns: auto auto;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 0 0.5rem;
+
+}
+
+.header-title {
+  font-family: var(--mat-sys-title-large-font);
+  font-size: var(--mat-sys-title-large-size);
+  line-height: var(--mat-sys-title-large-line-height);
+  font-weight: var(--mat-sys-title-large-weight);
+  letter-spacing: var(--mat-sys-title-large-tracking);
+}
 footer {
   display: grid;
   padding: 1rem;
-  background:  var(--mat-sys-surface);
+  background: var(--mat-sys-surface);
   color: var(--mat-sys-on-surface);
 }
 
 .content {
   justify-self: center;
   justify-content: center;
-  max-width: 960px;
+  max-width: variables.$max-width;
   width: 100%;
+  hyphens: auto;
 }
 
 footer .content {
-  display: flex;
-  justify-content: space-between; /* Push support text left and GitHub link right */
-  align-items: center; /* Vertically center elements */
-  flex-wrap: wrap; /* Allow wrapping on very small screens */
-  gap: 1rem; /* Space between elements when wrapped */
+  display: grid;
+  grid-template-columns: auto auto auto;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* For small screens - center all elements vertically */
+@media (max-width: variables.$Small-breakpoint) {
+  footer .content {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto auto auto;
+    justify-items: center;
+    text-align: center;
+  }
+
+  // make the supported by text appear at the bottom for small screens
+  .supported-by {
+    grid-row: 3;
+  }
+
+  .header-bar {
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: auto auto;
+    justify-items: center;
+    gap: 0.5rem;
+  }
+  .header-bar h3 {
+    margin: 0;
+  }
+}
+
+mat-icon.github {
+  fill: #24292f;
+}
+
+@media (prefers-color-scheme: dark) {
+  mat-icon.github {
+    fill: #fff;
+  }
 }
