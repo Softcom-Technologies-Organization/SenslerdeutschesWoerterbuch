@@ -135,6 +135,14 @@ export class SearchService {
             ...hit._source
           } as SearchResult));
         }
+        // Track the search term for analytics
+        if (window.plausible) {
+          window.plausible('Search', { 
+            props: { 
+              term: query 
+            }
+          });
+        }
         return [];
       })
     );
