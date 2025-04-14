@@ -4,7 +4,7 @@ html {
   color-scheme: light dark;
   @include mat.theme((
     color: mat.$red-palette,
-    typography: Roboto,
+    typography: 'Noto Sans',
     density: 0
   ));
 }
@@ -15,10 +15,10 @@ body {
 }
 body {
   margin: 0;
-  font-family: Roboto, "Helvetica Neue", sans-serif;
+  font-family: 'Noto Sans', "Helvetica Neue", sans-serif;
 }
 
-p a {
+p,mat-card-title a {
   color: var(--mat-sys-primary);
   text-decoration: none;
   &:hover {
