@@ -110,6 +110,14 @@ export class SearchService {
   }
 
   search(query: string): Observable<any[]> {
+    // Track the search term for analytics
+    if (window.plausible) {
+      window.plausible('Search', { 
+        props: { 
+          term: query 
+        }
+      });
+    }
     const body = this.getDefautSearchBody(query);
     // in the search, also match words in the description
     body.query.bool.should.push({
@@ -134,14 +142,6 @@ export class SearchService {
             description: hit._source['formatted-description'],
             ...hit._source
           } as SearchResult));
-        }
-        // Track the search term for analytics
-        if (window.plausible) {
-          window.plausible('Search', { 
-            props: { 
-              term: query 
-            }
-          });
         }
         return [];
       })

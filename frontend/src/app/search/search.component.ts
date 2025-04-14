@@ -5,7 +5,7 @@ import { RouterModule } from '@angular/router';
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatFormFieldModule } from '@angular/material/form-field';
-import { BehaviorSubject, debounceTime, map, Observable, Subscription, switchMap } from 'rxjs';
+import { BehaviorSubject, debounceTime, map, Observable, shareReplay, Subscription, switchMap } from 'rxjs';
 import { MatInputModule } from '@angular/material/input';
 import { MatCardModule } from '@angular/material/card';
 import { MatDividerModule } from '@angular/material/divider';
@@ -42,7 +42,8 @@ export class SearchComponent implements OnInit {
       switchMap((term: string) => {
         this.searchService.lastSearchTerm = term;
         return this.searchService.search(term);
-     })
+     }),
+     shareReplay(1)
     );
 
     this.subscriptions.add(
