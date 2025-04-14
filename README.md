@@ -41,8 +41,14 @@ Build and push images to Azure Container Registry
 
 ```
 az acr login --name seislerwoerterbuech
-docker build -t seislerwoerterbuech.azurecr.io/<container>:latest -f docker/<container>/Dockerfile .
+
+docker build -t seislerwoerterbuech.azurecr.io/elasticsearch:latest -f docker/elasticsearch/Dockerfile .
+docker build -t seislerwoerterbuech.azurecr.io/backend:latest -f docker/backend/Dockerfile .
+docker build -t seislerwoerterbuech.azurecr.io/proxy:latest -f docker/proxy/Dockerfile .
+
+docker push seislerwoerterbuech.azurecr.io/elasticsearch:latest
 docker push seislerwoerterbuech.azurecr.io/backend:latest
+docker push seislerwoerterbuech.azurecr.io/proxy:latest
 ```
 
 Then update the Container App
