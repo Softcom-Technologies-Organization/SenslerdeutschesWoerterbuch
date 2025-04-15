@@ -1,10 +1,11 @@
 ---
 name: Wort hinzufügen/ändern
-about: Neues Wort hinzufügen oder bestehenden ändern
+about: Du hast ein Wort welches du gerne in der nächsten Version sehen möchtest oder
+  ein Verbesserungsvorschlag für ein bereits vorhandenes Wort?
 title: ''
 labels: content
 assignees: ''
 
 ---
 
-Hier folgt eine Erklärung des "Formulars"...
+
