@@ -1,9 +1,10 @@
 import json
 import os
+import logging
 from fastapi import FastAPI
 from elasticsearch import Elasticsearch
 from dotenv import load_dotenv
-
+logging.basicConfig(level=logging.ERROR)
 load_dotenv()
 
 ELASTIC_URL = os.getenv("ELASTIC_URL", "http://localhost:9200")
@@ -104,4 +105,5 @@ def elastic_reset():
         }
 
     except Exception as e:
-        return {"status": "error", "message": str(e)}
+        logging.error("An error occurred during the elastic reset process", exc_info=True)
+        return {"status": "error", "message": "An internal error has occurred!"}
