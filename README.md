@@ -20,7 +20,7 @@ That's it. Now you can run everything locally with Docker.
 docker compose up elasticsearch proxy backend
 ```
 
-The first time it might take a few minutes to download all the images. After everything is up and running you need to initially setup the words in the elastic container by calling `http://localhost:8001/elastic-reset`.
+The first time it might take a few minutes to download all the images. After everything is up and running you need to initially setup the words in the elastic container by calling `http://localhost:8001/elastic-reset`. You can use `http://localhost:8001/elastic-health` to check if Elasticsearch is ready. If yes it should return that it's health and status is green.
 
 After that you can access the application in your browser at `http://localhost:4202`.
 
@@ -31,31 +31,3 @@ Every contribution to the project is more than welcome! You can submit bugs or f
 If you want to start coding, you can find more information in the [Getting Started Guide](GETTING-STARTED.md).
 
 If you have any questions, please use Issues to ask them.
-
-## Deploying
-
-Important: For now the target infrastructure is not available. This is why we currently only do manual deployments. If
-you really want to deploy, create an issue to ask for permissions.
-
-Build and push images to Azure Container Registry
-
-```
-az acr login --name seislerwoerterbuech
-
-docker build -t seislerwoerterbuech.azurecr.io/elasticsearch:latest -f docker/elasticsearch/Dockerfile .
-docker build -t seislerwoerterbuech.azurecr.io/backend:latest -f docker/backend/Dockerfile .
-docker build -t seislerwoerterbuech.azurecr.io/proxy:latest -f docker/proxy/Dockerfile .
-
-docker push seislerwoerterbuech.azurecr.io/elasticsearch:latest
-docker push seislerwoerterbuech.azurecr.io/backend:latest
-docker push seislerwoerterbuech.azurecr.io/proxy:latest
-```
-
-Then update the Container App
-
-```
-az containerapp update \
-  --resource-group senslerdeutsches-woerterbuch \
-  --name senslerdeutsches-woerterbuch \
-  --yaml containerapp-deploy.yaml
-```

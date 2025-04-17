@@ -31,3 +31,31 @@ GitHub Actions are used to run the tests automatically. To test and debug them l
 ```
 bin/act --seceret-file .env
 ```
+
+## Deploying
+
+Important: For now the target infrastructure is not available. This is why we currently only do manual deployments. If
+you really want to deploy, create an issue to ask for permissions.
+
+Build and push images to Azure Container Registry
+
+```
+az acr login --name seislerwoerterbuech
+
+docker build -t seislerwoerterbuech.azurecr.io/elasticsearch:latest -f docker/elasticsearch/Dockerfile . --no-cache
+docker build -t seislerwoerterbuech.azurecr.io/backend:latest -f docker/backend/Dockerfile . --no-cache
+docker build -t seislerwoerterbuech.azurecr.io/proxy:latest -f docker/proxy/Dockerfile . --no-cache
+
+docker push seislerwoerterbuech.azurecr.io/elasticsearch:latest
+docker push seislerwoerterbuech.azurecr.io/backend:latest
+docker push seislerwoerterbuech.azurecr.io/proxy:latest
+```
+
+Then update the Container App
+
+```
+az containerapp update \
+  --resource-group senslerdeutsches-woerterbuch \
+  --name senslerdeutsches-woerterbuch \
+  --yaml containerapp-deploy.yaml
+```
