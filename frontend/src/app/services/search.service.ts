@@ -153,4 +153,34 @@ export class SearchService {
       headers: this.getHeaders(),
     });
   }
+
+  public getByTerm(term: string): Observable<SearchResult | null> {
+    const body = {
+      query: {
+        match: {
+          'term.keyword': {
+            query: term,
+            operator: 'and',
+          },
+        },
+      },
+    };
+  
+    return this.http.post<ElasticsearchResponse>(`${this.apiUrl}_search`, body, {
+      headers: this.getHeaders(),
+    }).pipe(
+      map(response => {
+        if (response && response.hits && response.hits.hits.length > 0) {
+          const hit = response.hits.hits[0];
+          return {
+            id: hit._id,
+            title: hit._source['term'],
+            description: hit._source['formatted-description'],
+            ...hit._source,
+          } as SearchResult;
+        }
+        return null;
+      })
+    );
+  }
 }
