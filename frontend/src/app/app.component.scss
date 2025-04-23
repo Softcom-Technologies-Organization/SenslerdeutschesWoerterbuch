@@ -11,10 +11,6 @@ header {
   span {
     cursor: pointer;
   }
-
-  a {
-    padding-left: 0.5rem;
-  }
 }
 
 .spacer {
@@ -62,4 +58,8 @@ mat-icon.github {
   mat-icon.github {
     fill: #fff;
   }
+}
+
+mat-icon.toolbar-icon{
+  font-size: var(--mat-sys-label-large-size);
 }
