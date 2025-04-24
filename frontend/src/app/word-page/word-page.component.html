@@ -15,7 +15,12 @@
       <div class="word-section">
         <h2>Definition</h2>
         @if (wordEntry["formatted-description"]) {
+          @if(synonymId){
+            <a href="/word/{{synonymId}}">{{wordEntry['formatted-description']}}</a>
+          }
+          @else{
           {{wordEntry['formatted-description']}}
+        }
         } @else {
           <p>No definition</p>
         }
