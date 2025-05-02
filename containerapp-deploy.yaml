@@ -7,9 +7,9 @@ properties:
       - name: elastic-admin-password
 
     ingress:
-      external: true 
+      external: true
       targetPort: 80 # Mapping traffic to proxy container
-      transport: auto 
+      transport: auto
 
   template:
     containers:
@@ -34,13 +34,13 @@ properties:
           - name: ELASTIC_ADMIN_USERNAME
             value: elastic
           - name: ELASTIC_ADMIN_PASSWORD
-            secretRef: elastic-admin-password     
+            secretRef: elastic-admin-password
           - name: ELASTIC_INDEX
-            value: dictionary     
+            value: dictionary
           - name: ELASTIC_READER_USERNAME
             value: dictionary_reader
           - name: ELASTIC_READER_PASSWORD
-            value: thisisgonnabepublic     
+            value: thisisgonnabepublic
 
       - name: elasticsearch
         image: seislerwoerterbuech.azurecr.io/elasticsearch:latest
@@ -58,3 +58,12 @@ properties:
             value: false
           - name: discovery.type
             value: single-node
+
+    scale:
+      minReplicas: 1
+      maxReplicas: 10
+      rules:
+        - name: http-scaler
+          http:
+            metadata:
+              concurrentRequests: "50"
