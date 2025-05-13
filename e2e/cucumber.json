@@ -1,0 +1,12 @@
+{
+    "default": {
+        "format": [
+            "summary",
+            "json:playwright-report/cucumber.json",
+            "html:playwright-report/cucumber.html"
+        ],
+        "formatOptions": {
+            "snippetInterface": "synchronous"
+        }
+    }
+}

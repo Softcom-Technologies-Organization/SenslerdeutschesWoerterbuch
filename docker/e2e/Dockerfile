@@ -12,6 +12,7 @@ RUN npm ci
 # Copy test files 
 COPY ./e2e/playwright.config.ts ./
 COPY ./e2e/tests ./tests
+COPY ./e2e/features ./features
 
 # Command to run tests
-CMD ["sh", "-c", "npx playwright test && exit $?"]
+CMD ["sh", "-c", "npx playwright test ; npm run test ; exit 0"]
