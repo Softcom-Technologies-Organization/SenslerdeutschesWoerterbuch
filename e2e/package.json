@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "test": "cucumber-js --exit"
+    "test": "cucumber-js --format html:test-results/cucumber.html --exit"
   },
   "keywords": [],
   "author": "",

@@ -2,8 +2,7 @@
     "default": {
         "format": [
             "summary",
-            "json:playwright-report/cucumber.json",
-            "html:playwright-report/cucumber.html"
+            "html:test-results/cucumber.html"
         ],
         "formatOptions": {
             "snippetInterface": "synchronous"

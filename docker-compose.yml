@@ -49,7 +49,6 @@ services:
     environment:
       - FRONTEND_URL=${PROXY_URL}
     volumes:
-      - ./e2e/playwright-report:/app/playwright-report
       - ./e2e/test-results:/app/test-results
     networks:
       - sw-network
