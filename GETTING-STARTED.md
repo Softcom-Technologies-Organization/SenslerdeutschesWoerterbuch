@@ -32,7 +32,7 @@ GitHub Actions are used to run the tests automatically. To test and debug them l
 bin/act --seceret-file .env
 ```
 
-## Deploying
+## Deploying 
 
 Important: For now the target infrastructure is not available. This is why we currently only do manual deployments. If
 you really want to deploy, create an issue to ask for permissions.
