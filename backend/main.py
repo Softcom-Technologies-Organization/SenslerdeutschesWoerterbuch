@@ -4,6 +4,7 @@ import logging
 from fastapi import FastAPI
 from elasticsearch import Elasticsearch
 from dotenv import load_dotenv
+import subprocess
 logging.basicConfig(level=logging.ERROR)
 load_dotenv()
 
