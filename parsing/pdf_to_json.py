@@ -194,12 +194,25 @@ class DictionaryParser:
         with open(output_path, "w", encoding="utf-8") as f:
             json.dump(entries, f, ensure_ascii=False, indent=2)
 
+    @staticmethod
+    def save_bulk_ndjson(output_path, entries, index_name):
+        with open(output_path, "w", encoding="utf-8") as f:
+            for entry in entries.values():
+                action = {"index": {"_index": index_name}}
+                f.write(json.dumps(action, ensure_ascii=False) + "\n")
+                document = {
+                    "term": entry["term"],
+                    "formatted-description": entry["formatted-description"],
+                }
+                f.write(json.dumps(document, ensure_ascii=False) + "\n")
+
 def main():
     parser = DictionaryParser(
         "./ssdw-auflage-4.pdf", start_page=20, end_page=58
     )
     entries = parser.parse_pdf()
     parser.save_json("./pdf_data.json", entries)
+    parser.save_bulk_ndjson("./bulk_data.ndjson", entries, "dictionary")
 
 if __name__ == "__main__":
     main()
