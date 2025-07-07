@@ -10,6 +10,10 @@
     <input matInput type="text" placeholder="Probiers ifach us..." [formControl]="searchControl" />
   </mat-form-field>
 </form>
+
+<button mat-stroked-button (click)="randomWordSearch()">...or search for a random word</button>
+
+
 @if (results$ | async; as results) {
   @for (result of results; track result.id) {
   <mat-card>

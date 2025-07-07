@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { SearchResult, SearchService } from '../services/search.service';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -9,6 +9,7 @@ import { BehaviorSubject, debounceTime, map, Observable, shareReplay, Subscripti
 import { MatInputModule } from '@angular/material/input';
 import { MatCardModule } from '@angular/material/card';
 import { MatDividerModule } from '@angular/material/divider';
+import { MatButtonModule } from '@angular/material/button';
 
 @Component({
   selector: 'app-search',
@@ -22,6 +23,7 @@ import { MatDividerModule } from '@angular/material/divider';
     MatInputModule,
     MatFormFieldModule,
     ReactiveFormsModule,
+    MatButtonModule
   ],
   templateUrl: './search.component.html',
   styleUrl: './search.component.scss',
@@ -34,7 +36,10 @@ export class SearchComponent implements OnInit {
   readonly subscriptions = new Subscription();
   searchControl = new FormControl('');
 
-  constructor(readonly searchService: SearchService) {}
+  constructor(
+    readonly searchService: SearchService, 
+    private router : Router
+  ) {}
 
   ngOnInit() {
     this.results$ = this.searchTermSubject.pipe(
@@ -64,6 +69,19 @@ export class SearchComponent implements OnInit {
     if (savedTerm) {
       this.searchControl.setValue(savedTerm);
     }
+  }
+
+  randomWordSearch() {
+    const randomResult$ = this.searchService.getRandomResult();
+
+    this.subscriptions.add(
+      randomResult$.subscribe(result => {
+        if(result.length > 0) {
+          const wordId = result[0].id;
+          this.router.navigate(['/word', wordId])
+        }
+      })
+    )
   }
 
   ngOnDestroy() {
