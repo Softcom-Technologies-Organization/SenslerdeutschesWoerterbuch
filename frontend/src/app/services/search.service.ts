@@ -186,4 +186,33 @@ export class SearchService {
       })
     );
   }
+
+  getRandomResult(): Observable<SearchResult[]> {
+    const body = {
+      size: 1,
+      query: {
+        function_score: {
+          query: { match_all: {} },
+          random_score: {}
+        }
+      }
+    };
+
+    return this.http.post<ElasticsearchResponse>(`${this.apiUrl}_search`, body, {
+      headers: this.getHeaders()
+    }).pipe(
+      map(response => {
+        if (response?.hits?.hits) {
+          return response.hits.hits.map(hit => ({
+            id: hit._id,
+            title: hit._source['term'],
+            description: hit._source['formatted-description'],
+            ...hit._source
+          } as SearchResult));
+        }
+        return [];
+      })
+    );
+  }
+
 }
