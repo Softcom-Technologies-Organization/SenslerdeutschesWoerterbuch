@@ -10,16 +10,8 @@
     <mat-label>Suechi</mat-label>
     <input matInput type="text" placeholder="Probiers ifach us..." [formControl]="searchControl" />
   </mat-form-field>
-
-  <mat-form-field class="tag-filter" appearance="fill">
-    <mat-label>Azeige na Tägg</mat-label>
-    <mat-select (selectionChange)="onTagsChanged($event.value)" multiple>
-      <mat-option *ngFor="let tag of tags" [value]="tag">
-        {{ tag | tagTranslation }}
-      </mat-option>
-    </mat-select>
-  </mat-form-field>
 </div>
+<button mat-stroked-button (click)="randomWordSearch()">...or search for a random word</button>
 
 @if (filteredResults$ | async; as results) {
   @for (result of results; track result.id) {

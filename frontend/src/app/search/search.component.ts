@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { SearchResult, SearchService } from '../services/search.service';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -12,6 +12,7 @@ import { MatDividerModule } from '@angular/material/divider';
 import { MatIcon } from '@angular/material/icon';
 import { TagTranslationPipe } from "../pipes/tag-translation.pipe";
 import { MatSelect } from '@angular/material/select';
+import { MatButtonModule } from '@angular/material/button';
 
 @Component({
   selector: 'app-search',
@@ -25,10 +26,11 @@ import { MatSelect } from '@angular/material/select';
     MatInputModule,
     MatFormFieldModule,
     ReactiveFormsModule,
+    MatButtonModule,
     MatIcon,
     TagTranslationPipe,
     MatSelect
-],
+  ],
   templateUrl: './search.component.html',
   styleUrl: './search.component.scss',
 })
@@ -46,7 +48,10 @@ export class SearchComponent implements OnInit {
   readonly selectedTagsSubject = new BehaviorSubject<string[]>([]);
 
 
-  constructor(readonly searchService: SearchService) {}
+  constructor(
+    readonly searchService: SearchService, 
+    private router : Router
+  ) {}
 
   ngOnInit() {
     this.results$ = this.searchTermSubject.pipe(
@@ -88,6 +93,19 @@ export class SearchComponent implements OnInit {
     if (savedTerm) {
       this.searchControl.setValue(savedTerm);
     }
+  }
+
+  randomWordSearch() {
+    const randomResult$ = this.searchService.getRandomResult();
+
+    this.subscriptions.add(
+      randomResult$.subscribe(result => {
+        if(result.length > 0) {
+          const wordId = result[0].id;
+          this.router.navigate(['/word', wordId])
+        }
+      })
+    )
   }
 
   onTagsChanged(selected: string[]) {
