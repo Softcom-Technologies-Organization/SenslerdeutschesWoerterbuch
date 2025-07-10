@@ -51,6 +51,10 @@ with open(bulk_output, 'w', encoding='utf-8') as bulk_file:
         # Include sources if present and not empty
         if "sources" in row and row["sources"]:
             document["sources"] = row["sources"]
+
+        # Include tags if present and not empty
+        if "tags" in row and row["tags"]:
+            document["tags"] = row["tags"]
             
         bulk_file.write(json.dumps(document, ensure_ascii=False))
         bulk_file.write('\n')
