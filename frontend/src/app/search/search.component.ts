@@ -10,6 +10,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatCardModule } from '@angular/material/card';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatIcon } from '@angular/material/icon';
+import { TagTranslationPipe } from "../pipes/tag-translation.pipe";
 
 @Component({
   selector: 'app-search',
@@ -23,8 +24,9 @@ import { MatIcon } from '@angular/material/icon';
     MatInputModule,
     MatFormFieldModule,
     ReactiveFormsModule,
-    MatIcon
-  ],
+    MatIcon,
+    TagTranslationPipe
+],
   templateUrl: './search.component.html',
   styleUrl: './search.component.scss',
 })

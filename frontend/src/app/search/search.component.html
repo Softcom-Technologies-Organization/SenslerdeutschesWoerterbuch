@@ -23,7 +23,7 @@
         @if (result.tags && result.tags.length > 0) {
           <span class="result-tags">
             <mat-icon>label</mat-icon>
-            {{ result.tags.join(', ') }}
+            {{ result.tags | tagTranslation }}
           </span>
         }
       </mat-card-header>
