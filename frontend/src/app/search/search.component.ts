@@ -9,6 +9,7 @@ import { BehaviorSubject, debounceTime, map, Observable, shareReplay, Subscripti
 import { MatInputModule } from '@angular/material/input';
 import { MatCardModule } from '@angular/material/card';
 import { MatDividerModule } from '@angular/material/divider';
+import { MatIcon } from '@angular/material/icon';
 
 @Component({
   selector: 'app-search',
@@ -22,6 +23,7 @@ import { MatDividerModule } from '@angular/material/divider';
     MatInputModule,
     MatFormFieldModule,
     ReactiveFormsModule,
+    MatIcon
   ],
   templateUrl: './search.component.html',
   styleUrl: './search.component.scss',
@@ -33,6 +35,8 @@ export class SearchComponent implements OnInit {
   readonly searchTermSubject = new BehaviorSubject<string>('');
   readonly subscriptions = new Subscription();
   searchControl = new FormControl('');
+
+  tags: string[] = ['curse-word'];
 
   constructor(readonly searchService: SearchService) {}
 

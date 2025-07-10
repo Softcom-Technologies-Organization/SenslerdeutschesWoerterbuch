@@ -7,6 +7,7 @@ export interface SearchResult {
   id: string;
   title: string;
   description?: string;
+  tags?: string[];
 }
 
 interface ElasticsearchResponse {
@@ -140,6 +141,7 @@ export class SearchService {
             id: hit._id,
             title: hit._source['term'], 
             description: hit._source['formatted-description'],
+            tags: hit._source['tags'] || [],
             ...hit._source
           } as SearchResult));
         }
@@ -176,6 +178,7 @@ export class SearchService {
             id: hit._id,
             title: hit._source['term'],
             description: hit._source['formatted-description'],
+            tags: hit._source['tags'] || [],
             ...hit._source,
           } as SearchResult;
         }

@@ -12,19 +12,28 @@
 </form>
 @if (results$ | async; as results) {
   @for (result of results; track result.id) {
-  <mat-card>
-    <mat-card-header>
-      <mat-card-title>
-        <a [routerLink]="['/', 'word', result.id]" class="result-link">{{
-          result.title
-          }}</a>
-      </mat-card-title>
-    </mat-card-header>
-    <mat-divider class="card-divider"></mat-divider>
-    <mat-card-content>
-      {{ result.description }}
-    </mat-card-content>
-  </mat-card>
+    <mat-card>
+      <mat-card-header class="result-header">
+        <mat-card-title>
+          <a [routerLink]="['/', 'word', result.id]" class="result-link">
+            {{ result.title }}
+          </a>
+        </mat-card-title>
+
+        @if (result.tags && result.tags.length > 0) {
+          <span class="result-tags">
+            <mat-icon>label</mat-icon>
+            {{ result.tags.join(', ') }}
+          </span>
+        }
+      </mat-card-header>
+
+      <mat-divider class="card-divider"></mat-divider>
+
+      <mat-card-content>
+        {{ result.description }}
+      </mat-card-content>
+    </mat-card>
   }
 }
 <div class="sponsored">
