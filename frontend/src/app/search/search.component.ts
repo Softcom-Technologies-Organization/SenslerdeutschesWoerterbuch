@@ -5,12 +5,13 @@ import { RouterModule } from '@angular/router';
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatFormFieldModule } from '@angular/material/form-field';
-import { BehaviorSubject, debounceTime, map, Observable, shareReplay, Subscription, switchMap } from 'rxjs';
+import { BehaviorSubject, combineLatest, debounceTime, map, Observable, shareReplay, startWith, Subscription, switchMap } from 'rxjs';
 import { MatInputModule } from '@angular/material/input';
 import { MatCardModule } from '@angular/material/card';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatIcon } from '@angular/material/icon';
 import { TagTranslationPipe } from "../pipes/tag-translation.pipe";
+import { MatSelect } from '@angular/material/select';
 
 @Component({
   selector: 'app-search',
@@ -25,7 +26,8 @@ import { TagTranslationPipe } from "../pipes/tag-translation.pipe";
     MatFormFieldModule,
     ReactiveFormsModule,
     MatIcon,
-    TagTranslationPipe
+    TagTranslationPipe,
+    MatSelect
 ],
   templateUrl: './search.component.html',
   styleUrl: './search.component.scss',
@@ -39,6 +41,10 @@ export class SearchComponent implements OnInit {
   searchControl = new FormControl('');
 
   tags: string[] = ['curse-word'];
+  selectedTags: { [tag: string]: boolean } = {};
+  filteredResults$!: Observable<SearchResult[]>;
+  readonly selectedTagsSubject = new BehaviorSubject<string[]>([]);
+
 
   constructor(readonly searchService: SearchService) {}
 
@@ -66,13 +72,30 @@ export class SearchComponent implements OnInit {
       map(results => !results || results.length === 0)
     );
 
+    this.filteredResults$ = combineLatest([
+      this.results$,
+      this.selectedTagsSubject.asObservable().pipe(startWith([]))
+    ]).pipe(
+      map(([results, selectedTags] : [SearchResult[], string[]]) => {
+        if (!selectedTags.length) return results;
+        return results.filter(result =>
+          result.tags?.some(tag => selectedTags.includes(tag))
+        );
+      })
+    );
+
     const savedTerm = this.searchService.lastSearchTerm;
     if (savedTerm) {
       this.searchControl.setValue(savedTerm);
     }
   }
 
+  onTagsChanged(selected: string[]) {
+    this.selectedTagsSubject.next(selected);
+  }
+
   ngOnDestroy() {
     this.subscriptions.unsubscribe();
   }
+
 }

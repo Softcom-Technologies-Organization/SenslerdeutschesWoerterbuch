@@ -10,7 +10,17 @@
     <input matInput type="text" placeholder="Probiers ifach us..." [formControl]="searchControl" />
   </mat-form-field>
 </form>
-@if (results$ | async; as results) {
+
+<mat-form-field appearance="fill">
+  <mat-label>Filter by tag</mat-label>
+  <mat-select (selectionChange)="onTagsChanged($event.value)" multiple>
+    <mat-option *ngFor="let tag of tags" [value]="tag">
+      {{ tag | tagTranslation }}
+    </mat-option>
+  </mat-select>
+</mat-form-field>
+
+@if (filteredResults$ | async; as results) {
   @for (result of results; track result.id) {
     <mat-card>
       <mat-card-header class="result-header">
