@@ -1,3 +1,5 @@
+@use 'col';
+
 :host {
   display: grid;
 }
@@ -28,4 +30,34 @@ mat-card {
 
 .sponsored {
   font-style: italic;
+}
+
+.search-box {
+  display: flex;
+}
+
+form {
+  width: 70%;
+}
+
+.random-search-button {
+  margin-left: 12px;
+  min-width: 180px;
+  width: 30%;
+  height: 56px;
+  border-radius: 4px;
+  display: flex;
+  justify-content: center;
+  color: col.$normal-black;
+  border: none;
+  background: col.$red-neutral-90;
+
+  &:hover {
+    box-shadow: var(--mdc-elevated-card-container-elevation, var(--mat-sys-level1))
+  }
+
+  span {
+    margin-left: 12px;
+    align-content: center;
+  }
 }
