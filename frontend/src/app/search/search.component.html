@@ -4,21 +4,22 @@
     <figcaption>© ChatGPT</figcaption>
   </figure>
 }
-<form>
-  <mat-form-field>
+
+<div class="search-controls">
+  <mat-form-field class="search-input">
     <mat-label>Suechi</mat-label>
     <input matInput type="text" placeholder="Probiers ifach us..." [formControl]="searchControl" />
   </mat-form-field>
-</form>
 
-<mat-form-field appearance="fill">
-  <mat-label>Filter by tag</mat-label>
-  <mat-select (selectionChange)="onTagsChanged($event.value)" multiple>
-    <mat-option *ngFor="let tag of tags" [value]="tag">
-      {{ tag | tagTranslation }}
-    </mat-option>
-  </mat-select>
-</mat-form-field>
+  <mat-form-field class="tag-filter" appearance="fill">
+    <mat-label>Filter by tag</mat-label>
+    <mat-select (selectionChange)="onTagsChanged($event.value)" multiple>
+      <mat-option *ngFor="let tag of tags" [value]="tag">
+        {{ tag | tagTranslation }}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+</div>
 
 @if (filteredResults$ | async; as results) {
   @for (result of results; track result.id) {
