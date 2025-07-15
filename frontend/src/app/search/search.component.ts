@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { SearchResult, SearchService } from '../services/search.service';
 import { CommonModule } from '@angular/common';
-import { Router, RouterModule } from '@angular/router';
+import { RouterModule } from '@angular/router';
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -36,17 +36,18 @@ export class SearchComponent implements OnInit {
   readonly subscriptions = new Subscription();
   searchControl = new FormControl('');
 
-  constructor(
-    readonly searchService: SearchService, 
-    private router : Router
-  ) {}
+  private exactMatchMode = false;
+
+  constructor(readonly searchService: SearchService) {}
 
   ngOnInit() {
     this.results$ = this.searchTermSubject.pipe(
       debounceTime(300),
       switchMap((term: string) => {
         this.searchService.lastSearchTerm = term;
-        return this.searchService.search(term);
+        const exact = this.exactMatchMode;
+        this.exactMatchMode = false;
+        return this.searchService.search(term, exact);
      }),
      shareReplay(1)
     );
@@ -76,12 +77,13 @@ export class SearchComponent implements OnInit {
 
     this.subscriptions.add(
       randomResult$.subscribe(result => {
-        if(result.length > 0) {
-          const wordId = result[0].id;
-          this.router.navigate(['/word', wordId])
+        if (result.length > 0) {
+          const term = result[0].title;
+          this.exactMatchMode = true;
+          this.searchControl.setValue(term);
         }
       })
-    )
+    );
   }
 
   ngOnDestroy() {
