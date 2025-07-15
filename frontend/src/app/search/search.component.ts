@@ -47,6 +47,7 @@ export class SearchComponent implements OnInit {
   filteredResults$!: Observable<SearchResult[]>;
   readonly selectedTagsSubject = new BehaviorSubject<string[]>([]);
 
+  private exactMatchMode = false;
 
   constructor(
     readonly searchService: SearchService, 
@@ -58,7 +59,9 @@ export class SearchComponent implements OnInit {
       debounceTime(300),
       switchMap((term: string) => {
         this.searchService.lastSearchTerm = term;
-        return this.searchService.search(term);
+        const exact = this.exactMatchMode;
+        this.exactMatchMode = false;
+        return this.searchService.search(term, exact);
      }),
      shareReplay(1)
     );
@@ -100,12 +103,13 @@ export class SearchComponent implements OnInit {
 
     this.subscriptions.add(
       randomResult$.subscribe(result => {
-        if(result.length > 0) {
-          const wordId = result[0].id;
-          this.router.navigate(['/word', wordId])
+        if (result.length > 0) {
+          const term = result[0].title;
+          this.exactMatchMode = true;
+          this.searchControl.setValue(term);
         }
       })
-    )
+    );
   }
 
   onTagsChanged(selected: string[]) {

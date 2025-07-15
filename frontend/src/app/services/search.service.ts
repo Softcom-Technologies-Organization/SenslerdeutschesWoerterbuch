@@ -110,7 +110,7 @@ export class SearchService {
     };
   }
 
-  search(query: string): Observable<any[]> {
+  search(query: string, exactMatch : boolean = false): Observable<any[]> {
     // Track the search term for analytics
     if (window.plausible) {
       window.plausible('Search', { 
@@ -120,16 +120,29 @@ export class SearchService {
       });
     }
     const body = this.getDefautSearchBody(query);
+    
     // in the search, also match words in the description
-    body.query.bool.should.push({
-      match: {
-        'formatted-description': {
-          query: query,
-          operator: 'OR',
-          boost: 1,
+      if (exactMatch) {
+        body.size = 1;
+        body.query = {
+          term: {
+            'term.keyword': {
+              value: query
+            }
+          }
+        };
+      } else {
+      body.query.bool.should.push({
+        match: {
+          'formatted-description': {
+            query: query,
+            operator: 'OR',
+            boost: 1,
+          },
         },
-      },
-    });
+      });
+    }
+
     body.explain = true; // This will include detailed scoring explanations
     return this.http.post<ElasticsearchResponse>(`${this.apiUrl}_search`, body, {
       headers: this.getHeaders(),
