@@ -72,6 +72,8 @@ form {
 }
 
 .random-search-button {
+  display: flex; 
+  align-items: center;
   margin-left: 12px;
   min-width: 180px;
   width: 30%;
@@ -90,5 +92,9 @@ form {
   span {
     margin-left: 12px;
     align-content: center;
+  }
+
+  mat-icon{
+    width: 40px;
   }
 }
