@@ -33,7 +33,8 @@ import { TagTranslationPipe } from "../pipes/tag-translation.pipe";
     MatSelect,
     MatIconModule,
     MatIcon,
-    TagTranslationPipe
+    TagTranslationPipe,
+    MatSelect
   ],
   templateUrl: './search.component.html',
   styleUrl: './search.component.scss',
