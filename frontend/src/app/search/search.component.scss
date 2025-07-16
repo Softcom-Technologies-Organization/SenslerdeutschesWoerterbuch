@@ -74,7 +74,6 @@ form {
   width: 30%;
   height: 56px;
   border-radius: 4px;
-  display: flex;
   justify-content: center;
   color: col.$normal-black;
   border: none;
@@ -96,11 +95,22 @@ form {
 }
 
 .tag-filter-drowpdown {
-  display: flex;
+  display: flex; 
   align-items: center;
   margin-left: 12px;
   min-width: 180px;
-  width: 30%;
+  width: 40%;
+  justify-content: center;
+
+  mat-label {
+    align-content: center;
+    vertical-align: middle; 
+  }
+
+  mat-icon{
+    width: 30px;
+    vertical-align: middle;
+  }
 }
 
 .result-header {
