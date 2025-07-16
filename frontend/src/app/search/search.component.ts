@@ -9,11 +9,11 @@ import { BehaviorSubject, combineLatest, debounceTime, map, Observable, shareRep
 import { MatInputModule } from '@angular/material/input';
 import { MatCardModule } from '@angular/material/card';
 import { MatDividerModule } from '@angular/material/divider';
-import { MatIcon } from '@angular/material/icon';
-import { TagTranslationPipe } from "../pipes/tag-translation.pipe";
 import { MatSelect } from '@angular/material/select';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
+import { MatIcon } from '@angular/material/icon';
+import { TagTranslationPipe } from "../pipes/tag-translation.pipe";
 
 @Component({
   selector: 'app-search',
@@ -31,7 +31,9 @@ import { MatIconModule } from '@angular/material/icon';
     MatIcon,
     TagTranslationPipe,
     MatSelect,
-    MatIconModule
+    MatIconModule,
+    MatIcon,
+    TagTranslationPipe
   ],
   templateUrl: './search.component.html',
   styleUrl: './search.component.scss',
