@@ -4,12 +4,21 @@
     <figcaption>© ChatGPT</figcaption>
   </figure>
 }
-<form>
-  <mat-form-field>
-    <mat-label>Suechi</mat-label>
-    <input matInput type="text" placeholder="Probiers ifach us..." [formControl]="searchControl" />
-  </mat-form-field>
-</form>
+<div class="search-box">
+  <form>
+    <mat-form-field>
+      <mat-label>Suechi</mat-label>
+      <input matInput type="text" placeholder="Probiers ifach us..." [formControl]="searchControl"/>
+    </mat-form-field>
+  </form>
+
+  <button (click)="randomWordSearch()" class="random-search-button">
+    <mat-icon aria-label="Dice icon" fontSet="material-icons-outlined">casino</mat-icon>
+    <span>Yyrgend iis Wort</span>
+  </button>
+</div>
+
+
 @if (results$ | async; as results) {
   @for (result of results; track result.id) {
   <mat-card>

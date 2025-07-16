@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { SearchResult, SearchService } from '../services/search.service';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
@@ -9,6 +9,9 @@ import { BehaviorSubject, debounceTime, map, Observable, shareReplay, Subscripti
 import { MatInputModule } from '@angular/material/input';
 import { MatCardModule } from '@angular/material/card';
 import { MatDividerModule } from '@angular/material/divider';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule, MatIconRegistry } from '@angular/material/icon';
+import { DomSanitizer } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-search',
@@ -22,6 +25,8 @@ import { MatDividerModule } from '@angular/material/divider';
     MatInputModule,
     MatFormFieldModule,
     ReactiveFormsModule,
+    MatButtonModule,
+    MatIconModule
   ],
   templateUrl: './search.component.html',
   styleUrl: './search.component.scss',
@@ -34,6 +39,7 @@ export class SearchComponent implements OnInit {
   readonly subscriptions = new Subscription();
   searchControl = new FormControl('');
 
+  private exactMatchMode = false;
   constructor(readonly searchService: SearchService) {}
 
   ngOnInit() {
@@ -41,7 +47,9 @@ export class SearchComponent implements OnInit {
       debounceTime(300),
       switchMap((term: string) => {
         this.searchService.lastSearchTerm = term;
-        return this.searchService.search(term);
+        const exact = this.exactMatchMode;
+        this.exactMatchMode = false;
+        return this.searchService.search(term, exact);
      }),
      shareReplay(1)
     );
@@ -64,6 +72,20 @@ export class SearchComponent implements OnInit {
     if (savedTerm) {
       this.searchControl.setValue(savedTerm);
     }
+  }
+
+  randomWordSearch() {
+    const randomResult$ = this.searchService.getRandomResult();
+
+    this.subscriptions.add(
+      randomResult$.subscribe(result => {
+        if (result.length > 0) {
+          const term = result[0].title;
+          this.exactMatchMode = true;
+          this.searchControl.setValue(term);
+        }
+      })
+    );
   }
 
   ngOnDestroy() {
