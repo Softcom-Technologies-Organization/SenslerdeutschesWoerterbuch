@@ -97,4 +97,20 @@ form {
   mat-icon{
     width: 40px;
   }
+
+}
+.result-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.result-tags {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  white-space: nowrap;
+  font-size: 0.9rem;
+  color: #ccc;
 }
