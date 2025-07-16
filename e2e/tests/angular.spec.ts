@@ -86,3 +86,33 @@ test('navigate to Info page and back to Home/Search via toolbar icon', async ({ 
   await expect(searchField).toBeVisible();
   await page.screenshot({ path: `test-results/back-to-home.png` });
 });
+
+test('make a random search and check if the results are displayed', async ({ page }) => {
+  await page.goto('/');
+  await page.screenshot({ path: `test-results/landing.png` });
+
+  const searchField = page.getByRole('textbox', { name: 'Suechi' });
+  const randomSearchButton = page.getByRole('button', { name: 'Yyrgend iis Wort' });
+  
+  // Ensure the search field is empty before starting
+  let searchFieldInputValue = await searchField.inputValue();
+  expect(searchFieldInputValue.length).toBe(0);
+  
+  // Perform a random search
+  await expect(randomSearchButton).toBeVisible();
+  await randomSearchButton.click();
+  await page.screenshot({ path: `test-results/result.png` });
+  
+  await page.waitForTimeout(1000); // Wait for the random search to complete
+  
+  searchFieldInputValue = await searchField.inputValue();
+  expect(searchFieldInputValue.length).toBeGreaterThan(0);
+
+  // Check if the search results are displayed
+  const searchResults = page.getByRole('link', { name: searchFieldInputValue });
+  await expect(searchResults).toBeVisible();
+
+  // Check that the search results is the same as the input value
+  const searchResultText = await searchResults.textContent();
+  expect(searchResultText).toBe(searchFieldInputValue);
+});
