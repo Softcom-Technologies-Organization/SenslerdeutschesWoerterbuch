@@ -101,7 +101,7 @@ export class SearchComponent implements OnInit {
   }
 
   randomWordSearch() {
-    const randomResult$ = this.searchService.getRandomResult();
+    const randomResult$ = this.searchService.getRandomResult(this.selectedTagsSubject.value);
 
     this.subscriptions.add(
       randomResult$.subscribe(result => {
