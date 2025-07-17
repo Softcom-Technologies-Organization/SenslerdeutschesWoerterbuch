@@ -124,6 +124,32 @@ test('make a random search and check if one result is displayed', async ({ page 
   expect(searchResultText?.trim()).toBe(searchFieldInputValue.trim());
 });
 
+test('search functionality with filter', async ({ page }, testInfo) => {
+  const screenshotDir = `test-results/${testInfo.title}`;
+  // Increase timeout for GitHub Actions
+  test.setTimeout(60000);  
+  await page.goto('/');
+  
+  const tagFilter = page.getByRole('combobox', { name: 'Azeige na Tägg' });
+  await tagFilter.click();
+  const tagOption = page.getByRole('option', { name: 'Schimpfwort' });
+  await expect(tagOption).toBeVisible();
+  await tagOption.click(); // Select the "Schimpfwort" tag
+  await tagFilter.press('Escape');  
+  
+  const searchField = page.getByRole('textbox', { name: 'Suechi' })
+  await expect(searchField).toBeVisible();
+  await searchField.fill('Flaag');
+  await page.screenshot({ path: `${screenshotDir}/suggestions.png` });
+  await searchField.press('Enter');
+  await expect(page.getByRole('link', { name: 'Flaag' })).toBeVisible();
+  await page.screenshot({ path: `${screenshotDir}/results.png` });
+
+  // Check the presence of a tag chip
+  const tagChip = page.getByText('Schimpfwort', { exact: true });
+  await expect(tagChip).toBeVisible();
+});
+
 test('make a random search with a tag filter and check if one result is displayed', async ({ page }, testInfo) => {
   const screenshotDir = `test-results/${testInfo.title}`;
   await page.goto('/');
@@ -134,9 +160,8 @@ test('make a random search with a tag filter and check if one result is displaye
   // Ensure the search field is empty before starting
   let searchFieldInputValue = await searchField.inputValue();
   expect(searchFieldInputValue.length).toBe(0);
-  
-  await tagFilter.click();
 
+  await tagFilter.click();
   const tagOption = page.getByRole('option', { name: 'Schimpfwort' });
   await expect(tagOption).toBeVisible();
   await tagOption.click(); // Select the "Schimpfwort" tag
