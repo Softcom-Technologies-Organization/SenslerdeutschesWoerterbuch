@@ -91,7 +91,7 @@ test('navigate to Info page and back to Home/Search via toolbar icon', async ({ 
   await page.screenshot({ path: `${screenshotDir}/back-to-home.png` });
 });
 
-test('make a random search and check if the results are displayed', async ({ page }, testInfo) => {
+test('make a random search and check if one result is displayed', async ({ page }, testInfo) => {
   const screenshotDir = `test-results/${testInfo.title}`;
   await page.goto('/');
   const searchField = page.getByRole('textbox', { name: 'Suechi' });
@@ -101,6 +101,52 @@ test('make a random search and check if the results are displayed', async ({ pag
   let searchFieldInputValue = await searchField.inputValue();
   expect(searchFieldInputValue.length).toBe(0);
   
+  // Perform a random search
+  await page.screenshot({ path: `${screenshotDir}/before-research.png` });
+  await expect(randomSearchButton).toBeVisible();
+  await randomSearchButton.click();
+  // Wait for the search field to be populated, indicating the random search is complete
+  await expect(async () => {
+    const value = await searchField.inputValue();
+    expect(value.length).toBeGreaterThan(0);
+  }).toPass();
+  await page.screenshot({ path: `${screenshotDir}/after-research.png` });
+  
+  searchFieldInputValue = await searchField.inputValue();
+  expect(searchFieldInputValue.length).toBeGreaterThan(0);
+
+  // Check if the search results are displayed
+  const searchResults = page.getByRole('link', { name: searchFieldInputValue });
+  await expect(searchResults).toBeVisible();
+
+  // Check that the search results is the same as the input value
+  const searchResultText = await searchResults.textContent();
+  expect(searchResultText?.trim()).toBe(searchFieldInputValue.trim());
+});
+
+test('make a random search with a tag filter and check if one result is displayed', async ({ page }, testInfo) => {
+  const screenshotDir = `test-results/${testInfo.title}`;
+  await page.goto('/');
+  const searchField = page.getByRole('textbox', { name: 'Suechi' });
+  const tagFilter = page.getByRole('combobox', { name: 'Azeige na Tägg' });
+  const randomSearchButton = page.getByRole('button', { name: 'Yyrgend iis Wort' });
+  
+  // Ensure the search field is empty before starting
+  let searchFieldInputValue = await searchField.inputValue();
+  expect(searchFieldInputValue.length).toBe(0);
+  
+  await tagFilter.click();
+
+  const tagOption = page.getByRole('option', { name: 'Schimpfwort' });
+  await expect(tagOption).toBeVisible();
+  await tagOption.click(); // Select the "Schimpfwort" tag
+
+  // Wait for the filter indicator or results to update, e.g., a chip or result count change
+  await page.screenshot({ path: `${screenshotDir}/tag-filter-applied.png` });
+  
+  // Close the combobox by pressing Escape
+  await tagFilter.press('Escape');
+
   // Perform a random search
   await page.screenshot({ path: `${screenshotDir}/before-research.png` });
   await expect(randomSearchButton).toBeVisible();
@@ -117,5 +163,9 @@ test('make a random search and check if the results are displayed', async ({ pag
 
   // Check that the search results is the same as the input value
   const searchResultText = await searchResults.textContent();
-  expect(searchResultText).toBe(searchFieldInputValue);
+  expect(searchResultText?.trim()).toBe(searchFieldInputValue.trim());
+
+  // Check the presence of a tag chip
+  const tagChip = page.getByText('Schimpfwort', { exact: true });
+  await expect(tagChip).toBeVisible();
 });
