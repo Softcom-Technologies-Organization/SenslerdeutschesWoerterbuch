@@ -128,3 +128,23 @@ form {
   font-size: 0.9rem;
   color: #ccc;
 }
+
+@media (max-width: 600px) {
+  .search-box {
+    flex-direction: column;
+
+    > * {
+      margin: 0 !important;
+    }
+  }
+
+  .tag-filter-drowpdown {
+    width: 100%;
+    min-width: unset;
+  }
+
+  .random-search-button {
+    width: 100%;
+    min-width: unset;
+  }
+}
