@@ -39,15 +39,6 @@ mat-card {
   flex-wrap: wrap;
 }
 
-.result-tags {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  white-space: nowrap;
-  font-size: 0.9rem;
-  color: #ccc;
-}
-
 .search-controls {
   display: flex;
   gap: 1rem;
@@ -58,6 +49,7 @@ mat-card {
   flex: 1 1 0;
   min-width: 200px;
 }
+
 .search-box {
   display: flex;
 }
@@ -113,17 +105,10 @@ form {
   }
 }
 
-.result-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  flex-wrap: wrap;
-}
-
 .result-tags {
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 0.25em;
   white-space: nowrap;
   font-size: 0.9rem;
   color: #ccc;
