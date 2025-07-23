@@ -128,7 +128,7 @@ test('search functionality with filter', async ({ page }, testInfo) => {
   test.setTimeout(60000);  
   await page.goto('/');
   
-  const tagFilter = page.getByRole('combobox', { name: 'Azeige na Tägg' });
+  const tagFilter = page.getByRole('combobox', { name: 'Aaziige na Tag' });
   await tagFilter.click();
   const tagOption = page.getByRole('option', { name: 'Schimpfwort' });
   await expect(tagOption).toBeVisible();
@@ -151,7 +151,7 @@ test('search functionality with filter', async ({ page }, testInfo) => {
 test('make a random search with a tag filter and check if one result is displayed', async ({ page }, testInfo) => {
   await page.goto('/');
   const searchField = page.getByRole('textbox', { name: 'Suechi' });
-  const tagFilter = page.getByRole('combobox', { name: 'Azeige na Tägg' });
+  const tagFilter = page.getByRole('combobox', { name: 'Aaziige na Tag' });
   const randomSearchButton = page.getByRole('button', { name: 'Yyrgend iis Wort' });
   
   // Ensure the search field is empty before starting
