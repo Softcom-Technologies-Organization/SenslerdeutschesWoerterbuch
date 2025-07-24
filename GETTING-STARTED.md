@@ -1,11 +1,13 @@
 # Getting Started
-The application consists of multiple more or less independent parts. For each part you can find more detailed information in the Makrdown files inside the directories.
+The application consists of multiple more or less independent parts. For each part you can find more detailed information in the Markdown files inside the directories.
 
 ## Frontend
 Angular with Angular Material is used for the Frontend. `./frontend/`.
 
 ## Proxy
-Nginx is used to a) serve the frontend and b) to forward requests to Elasticsearch. `./docker/proxy/`. 
+Nginx is used to 
+  - a) serve the frontend and 
+  - b) to forward requests to Elasticsearch. `./docker/proxy/`. 
 
 ## Parsing
 The data for the dictionary is only available as semi-structured CSV or PDFs used for printing. Python scripts are used to parse those files to make the compatible and searchable with Elastic. [Read more](./parsing/README.md)
@@ -40,22 +42,22 @@ you really want to deploy, create an issue to ask for permissions.
 Build and push images to Azure Container Registry
 
 ```
-az acr login --name seislerwoerterbuech
+az acr login --name seislerduetscheswoerterbuech
 
-docker build -t seislerwoerterbuech.azurecr.io/elasticsearch:latest -f docker/elasticsearch/Dockerfile . --no-cache
-docker build -t seislerwoerterbuech.azurecr.io/backend:latest -f docker/backend/Dockerfile . --no-cache
-docker build -t seislerwoerterbuech.azurecr.io/proxy:latest -f docker/proxy/Dockerfile . --no-cache
+docker build -t seislerduetscheswoerterbuech.azurecr.io/elasticsearch:latest -f docker/elasticsearch/Dockerfile . --no-cache
+docker build -t seislerduetscheswoerterbuech.azurecr.io/backend:latest -f docker/backend/Dockerfile . --no-cache
+docker build -t seislerduetscheswoerterbuech.azurecr.io/proxy:latest -f docker/proxy/Dockerfile . --no-cache
 
-docker push seislerwoerterbuech.azurecr.io/elasticsearch:latest
-docker push seislerwoerterbuech.azurecr.io/backend:latest
-docker push seislerwoerterbuech.azurecr.io/proxy:latest
+docker push seislerduetscheswoerterbuech.azurecr.io/elasticsearch:latest
+docker push seislerduetscheswoerterbuech.azurecr.io/backend:latest
+docker push seislerduetscheswoerterbuech.azurecr.io/proxy:latest
 ```
 
 Then update the Container App
 
 ```
 az containerapp update \
-  --resource-group senslerdeutsches-woerterbuch \
-  --name senslerdeutsches-woerterbuch \
+  --resource-group rg-SeislerdütschesWörterbuech-prod \
+  --name wb-test \
   --yaml containerapp-deploy.yaml
 ```
