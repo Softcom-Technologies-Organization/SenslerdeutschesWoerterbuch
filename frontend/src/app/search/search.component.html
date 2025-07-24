@@ -5,35 +5,53 @@
   </figure>
 }
 <div class="search-box">
-  <form>
     <mat-form-field>
       <mat-label>Suechi</mat-label>
       <input matInput type="text" placeholder="Probiers ifach us..." [formControl]="searchControl"/>
     </mat-form-field>
-  </form>
 
-  <button (click)="randomWordSearch()" class="random-search-button">
-    <mat-icon aria-label="Dice icon" fontSet="material-icons-outlined">casino</mat-icon>
-    <span>Yyrgend iis Wort</span>
-  </button>
+    <mat-form-field class="tag-filter-drowpdown" appearance="fill">
+      <mat-label>
+        <mat-icon aria-label="Label icon">label</mat-icon>
+           Aaziige na Tag
+        </mat-label>
+      <mat-select (selectionChange)="onTagsChanged($event.value)" multiple>
+        <mat-option *ngFor="let tag of tags" [value]="tag">
+          {{ tag | tagTranslation }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <button (click)="randomWordSearch()" class="random-search-button">
+      <mat-icon aria-label="Dice icon" fontSet="material-icons-outlined">casino</mat-icon>
+      <span>Yyrgend iis Wort</span>
+    </button>
+  
 </div>
-
-
-@if (results$ | async; as results) {
+@if (filteredResults$ | async; as results) {
   @for (result of results; track result.id) {
-  <mat-card>
-    <mat-card-header>
-      <mat-card-title>
-        <a [routerLink]="['/', 'word', result.id]" class="result-link">{{
-          result.title
-          }}</a>
-      </mat-card-title>
-    </mat-card-header>
-    <mat-divider class="card-divider"></mat-divider>
-    <mat-card-content>
-      {{ result.description }}
-    </mat-card-content>
-  </mat-card>
+    <mat-card>
+      <mat-card-header class="result-header">
+        <mat-card-title>
+          <a [routerLink]="['/', 'word', result.id]" class="result-link">
+            {{ result.title }}
+          </a>
+        </mat-card-title>
+
+        @if (result.tags && result.tags.length > 0) {
+          <span class="result-tags">
+            <mat-icon>label</mat-icon>
+            {{ result.tags | tagTranslation }}
+          </span>
+        }
+      </mat-card-header>
+
+      <mat-divider class="card-divider"></mat-divider>
+
+      <mat-card-content>
+        {{ result.description }}
+      </mat-card-content>
+    </mat-card>
   }
 }
 <div class="sponsored">

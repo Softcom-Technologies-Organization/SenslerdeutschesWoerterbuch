@@ -32,6 +32,24 @@ mat-card {
   font-style: italic;
 }
 
+.result-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.search-controls {
+  display: flex;
+  gap: 1rem;
+  align-items: flex-end;
+}
+
+.tag-filter {
+  flex: 1 1 0;
+  min-width: 200px;
+}
+
 .search-box {
   display: flex;
 }
@@ -48,7 +66,6 @@ form {
   width: 30%;
   height: 56px;
   border-radius: 4px;
-  display: flex;
   justify-content: center;
   color: col.$normal-black;
   border: none;
@@ -65,5 +82,54 @@ form {
 
   mat-icon{
     width: 40px;
+  }
+
+}
+
+.tag-filter-drowpdown {
+  display: flex; 
+  align-items: center;
+  margin-left: 12px;
+  min-width: 180px;
+  width: 40%;
+  justify-content: center;
+
+  mat-label {
+    align-content: center;
+    vertical-align: middle; 
+  }
+
+  mat-icon{
+    width: 25px;
+    vertical-align: middle;
+  }
+}
+
+.result-tags {
+  display: flex;
+  align-items: center;
+  gap: 0.25em;
+  white-space: nowrap;
+  font-size: 0.9rem;
+  color: #ccc;
+}
+
+@media (max-width: 600px) {
+  .search-box {
+    flex-direction: column;
+
+    > * {
+      margin: 0 !important;
+    }
+  }
+
+  .tag-filter-drowpdown {
+    width: 100%;
+    min-width: unset;
+  }
+
+  .random-search-button {
+    width: 100%;
+    min-width: unset;
   }
 }

@@ -7,6 +7,7 @@ export interface SearchResult {
   id: string;
   title: string;
   description?: string;
+  tags?: string[];
 }
 
 interface ElasticsearchResponse {
@@ -153,6 +154,7 @@ export class SearchService {
             id: hit._id,
             title: hit._source['term'], 
             description: hit._source['formatted-description'],
+            tags: hit._source['tags'] || [],
             ...hit._source
           } as SearchResult));
         }
@@ -189,6 +191,7 @@ export class SearchService {
             id: hit._id,
             title: hit._source['term'],
             description: hit._source['formatted-description'],
+            tags: hit._source['tags'] || [],
             ...hit._source,
           } as SearchResult;
         }
@@ -197,12 +200,27 @@ export class SearchService {
     );
   }
 
-  getRandomResult(): Observable<SearchResult[]> {
+  getRandomResult(tags : string[] = []): Observable<SearchResult[]> {
+    
+    // Build tag filters if tags are provided
+    const tagFilters = tags.length > 0
+      ? {
+          bool: {
+          must: tags.map(tag => ({
+            term: { 'tags.keyword': tag }
+          }))
+        }
+      }
+      : { 
+        match_all: {} 
+      };
+
+    // Construct the body for random result search
     const body = {
       size: 1,
       query: {
         function_score: {
-          query: { match_all: {} },
+          query: tagFilters,
           random_score: {}
         }
       }

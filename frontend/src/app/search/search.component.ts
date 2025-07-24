@@ -1,17 +1,19 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { SearchResult, SearchService } from '../services/search.service';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatFormFieldModule } from '@angular/material/form-field';
-import { BehaviorSubject, debounceTime, map, Observable, shareReplay, Subscription, switchMap } from 'rxjs';
+import { BehaviorSubject, combineLatest, debounceTime, map, Observable, shareReplay, startWith, Subscription, switchMap } from 'rxjs';
 import { MatInputModule } from '@angular/material/input';
 import { MatCardModule } from '@angular/material/card';
 import { MatDividerModule } from '@angular/material/divider';
+import { MatSelect } from '@angular/material/select';
 import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule, MatIconRegistry } from '@angular/material/icon';
-import { DomSanitizer } from '@angular/platform-browser';
+import { MatIconModule } from '@angular/material/icon';
+import { MatIcon } from '@angular/material/icon';
+import { TagTranslationPipe } from "../pipes/tag-translation.pipe";
 
 @Component({
   selector: 'app-search',
@@ -26,7 +28,13 @@ import { DomSanitizer } from '@angular/platform-browser';
     MatFormFieldModule,
     ReactiveFormsModule,
     MatButtonModule,
-    MatIconModule
+    MatIcon,
+    TagTranslationPipe,
+    MatSelect,
+    MatIconModule,
+    MatIcon,
+    TagTranslationPipe,
+    MatSelect
   ],
   templateUrl: './search.component.html',
   styleUrl: './search.component.scss',
@@ -39,7 +47,13 @@ export class SearchComponent implements OnInit {
   readonly subscriptions = new Subscription();
   searchControl = new FormControl('');
 
+  tags: string[] = ['curse-word'];
+  selectedTags: { [tag: string]: boolean } = {};
+  filteredResults$!: Observable<SearchResult[]>;
+  readonly selectedTagsSubject = new BehaviorSubject<string[]>([]);
+
   private exactMatchMode = false;
+
   constructor(readonly searchService: SearchService) {}
 
   ngOnInit() {
@@ -68,6 +82,18 @@ export class SearchComponent implements OnInit {
       map(results => !results || results.length === 0)
     );
 
+    this.filteredResults$ = combineLatest([
+      this.results$,
+      this.selectedTagsSubject.asObservable().pipe(startWith([]))
+    ]).pipe(
+      map(([results, selectedTags] : [SearchResult[], string[]]) => {
+        if (!selectedTags.length) return results;
+        return results.filter(result =>
+          result.tags?.some(tag => selectedTags.includes(tag))
+        );
+      })
+    );
+
     const savedTerm = this.searchService.lastSearchTerm;
     if (savedTerm) {
       this.searchControl.setValue(savedTerm);
@@ -75,7 +101,7 @@ export class SearchComponent implements OnInit {
   }
 
   randomWordSearch() {
-    const randomResult$ = this.searchService.getRandomResult();
+    const randomResult$ = this.searchService.getRandomResult(this.selectedTagsSubject.value);
 
     this.subscriptions.add(
       randomResult$.subscribe(result => {
@@ -88,7 +114,12 @@ export class SearchComponent implements OnInit {
     );
   }
 
+  onTagsChanged(selected: string[]) {
+    this.selectedTagsSubject.next(selected);
+  }
+
   ngOnDestroy() {
     this.subscriptions.unsubscribe();
   }
+
 }
