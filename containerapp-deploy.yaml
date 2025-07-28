@@ -1,11 +1,14 @@
 location: Switzerland North
 properties:
-  managedEnvironmentId: /subscriptions/9f833d03-bba1-48f9-8087-b5ba39f8b62f/resourceGroups/senslerdeutsches-woerterbuch/providers/Microsoft.App/managedEnvironments/managedEnvironment-senslerdeutsche-b6f7
+  managedEnvironmentId: /subscriptions/3c92b75f-68ec-4277-9ea8-daffa476f206/resourceGroups/rg-SeislerdütschesWörterbuech-prod/providers/Microsoft.App/managedEnvironments/managedEnvironment-rgSeislerdtsche-a893
 
   configuration:
     secrets:
       - name: elastic-admin-password
-
+        value: # Set password for elastic-admin-password
+      - name : seislerduetscheswoerterbuechazurecrio-seislerduetscheswoerterbuech
+        value : # Set password for seislerduetscheswoerterbuechazurecrio-seislerduetscheswoerterbuech
+      
     ingress:
       external: true
       targetPort: 80 # Mapping traffic to proxy container
@@ -14,7 +17,7 @@ properties:
   template:
     containers:
       - name: proxy
-        image: seislerwoerterbuech.azurecr.io/proxy:latest
+        image: seislerduetscheswoerterbuech.azurecr.io/proxy:latest
         resources:
           cpu: 0.5
           memory: 1Gi
@@ -24,7 +27,7 @@ properties:
 
       - name: backend
         # Updated: 03.04.2025 13:20 for ~12k words
-        image: seislerwoerterbuech.azurecr.io/backend:latest
+        image: seislerduetscheswoerterbuech.azurecr.io/backend:latest
         resources:
           cpu: 0.5
           memory: 1Gi
@@ -43,7 +46,7 @@ properties:
             value: thisisgonnabepublic
 
       - name: elasticsearch
-        image: seislerwoerterbuech.azurecr.io/elasticsearch:latest
+        image: seislerduetscheswoerterbuech.azurecr.io/elasticsearch:latest
         resources:
           cpu: 1.0
           memory: 2Gi
