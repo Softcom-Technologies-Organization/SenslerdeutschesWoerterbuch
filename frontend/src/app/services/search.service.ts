@@ -4,297 +4,297 @@ import { catchError, map, Observable, of } from 'rxjs';
 import { environment } from '../../environments/environment';
 
 export interface SearchResult {
-    elasticAvailable: boolean,
-    nbHits: number,
-    searchTerm: string;
-    hits: Array<{
-        id: string;
-        title: string;
-        description?: string;
-        tags?: string[];
-    }>
+  elasticAvailable: boolean,
+  nbHits: number,
+  searchTerm: string;
+  hits: Array<{
+    id: string;
+    title: string;
+    description?: string;
+    tags?: string[];
+  }>
 }
 
 interface ElasticsearchResponse {
-    hits: {
-        total: {
-            value: number;
-            relation: string;
-        };
-        max_score: number | null;
-        hits: Array<{
-            _index: string;
-            _id: string;
-            _score: number | null;
-            _source: any; // This is where the document data resides
-        }>;
+  hits: {
+    total: {
+      value: number;
+      relation: string;
     };
+    max_score: number | null;
+    hits: Array<{
+      _index: string;
+      _id: string;
+      _score: number | null;
+      _source: any; // This is where the document data resides
+    }>;
+  };
 }
 
 @Injectable({
-    providedIn: 'root',
+  providedIn: 'root',
 })
 export class SearchService {
-    readonly apiUrl = environment.proxyUrl;
-    readonly username = environment.elasticUsername;
-    readonly password = environment.elasticPassword;
+  readonly apiUrl = environment.proxyUrl;
+  readonly username = environment.elasticUsername;
+  readonly password = environment.elasticPassword;
 
-    lastSearchTerm: string = '';
+  lastSearchTerm: string = '';
 
-    constructor(readonly http: HttpClient) { }
+  constructor(readonly http: HttpClient) { }
 
-    private getHeaders(): HttpHeaders {
-        const credentials = btoa(`${this.username}:${this.password}`);
-        return new HttpHeaders({
-            'Content-Type': 'application/json',
-            Authorization: `Basic ${credentials}`,
-        });
-    }
+  private getHeaders(): HttpHeaders {
+    const credentials = btoa(`${this.username}:${this.password}`);
+    return new HttpHeaders({
+      'Content-Type': 'application/json',
+      Authorization: `Basic ${credentials}`,
+    });
+  }
 
-    private getDefautSearchBody(query: string): any {
-        return {
-            query: {
-                bool: {
-                    should: [
-                        // Match query for partial word matching
-                        {
-                            match: {
-                                term: {
-                                    query: query,
-                                    analyzer: 'term_search_analyzer',
-                                    operator: 'and',
-                                    fuzziness: 'AUTO',
-                                    boost: 1,
-                                },
-                            },
-                        },
-                        {
-                            match: {
-                                'term.phonetic': {
-                                    query: query,
-                                    operator: 'and',
-                                    fuzziness: 'AUTO',
-                                    boost: 2,
-                                },
-                            },
-                        },
-                        // Fuzzy matchword with asciifolding (e.g. ü,ǜ,ù,... mapping to u)
-                        {
-                            fuzzy: {
-                                'term.asciifolding_keyword': {
-                                    value: query.toLowerCase(),
-                                    fuzziness: '2',
-                                    transpositions: true,
-                                    boost: 2,
-                                },
-                            },
-                        },
-                        // Match query for exact word matching but with asciifolding (e.g. ü,ǜ,ù,... mapping to u)
-                        {
-                            match: {
-                                'term.asciifolding_keyword': {
-                                    query: query,
-                                    operator: 'and',
-                                    boost: 3,
-                                },
-                            },
-                        },
-                        // Match query for exact word matching
-                        {
-                            match: {
-                                'term.keyword': {
-                                    query: query,
-                                    operator: 'and',
-                                    boost: 5,
-                                },
-                            },
-                        },
-                    ],
-                },
-            },
-        };
-    }
-
-    public checkAvailability(): Observable<boolean> {
-        return this.http.get(`${this.apiUrl}`, { headers: this.getHeaders() }).pipe(
-            map(() => true),
-            catchError(() => of(false))
-        );
-    }
-    public search(query: string, exactMatch: boolean = false): Observable<SearchResult> {
-        // Track the search term for analytics
-        if (window.plausible) {
-            window.plausible('Search', {
-                props: {
-                    term: query
-                }
-            });
-        }
-        const body = this.getDefautSearchBody(query);
-
-        // in the search, also match words in the description
-        if (exactMatch) {
-            body.size = 1;
-            body.query = {
+  private getDefautSearchBody(query: string): any {
+    return {
+      query: {
+        bool: {
+          should: [
+            // Match query for partial word matching
+            {
+              match: {
                 term: {
-                    'term.keyword': {
-                        value: query
-                    }
-                }
-            };
-        } else {
-            body.query.bool.should.push({
-                match: {
-                    'formatted-description': {
-                        query: query,
-                        operator: 'OR',
-                        boost: 1,
-                    },
+                  query: query,
+                  analyzer: 'term_search_analyzer',
+                  operator: 'and',
+                  fuzziness: 'AUTO',
+                  boost: 1,
                 },
-            });
-        }
-
-        body.explain = true; // This will include detailed scoring explanations
-        return this.http.post<ElasticsearchResponse>(`${this.apiUrl}_search`, body, {
-            headers: this.getHeaders(),
-        })
-            .pipe(
-                map(response => {
-                    if (response && response.hits && response.hits.hits) {
-                        return {
-                            nbHits: response.hits.total.value,
-                            elasticAvailable: true,
-                            searchTerm: this.lastSearchTerm,
-                            hits: response.hits.hits.map(hit => ({
-                                id: hit._id,
-                                title: hit._source['term'],
-                                description: hit._source['formatted-description'],
-                                tags: hit._source['tags'] || [],
-                                ...hit._source
-                            }))
-                        } as SearchResult;
-                    }
-                    return {
-                        elasticAvailable: true,
-                        nbHits: response.hits.total.value,
-                        searchTerm: this.lastSearchTerm,
-                        hits: []
-                    } as SearchResult;
-                }), catchError(err => {
-                    console.error(err)
-                    return of({
-                        elasticAvailable: false,
-                    } as SearchResult);
-                })
-            );
-    }
-
-    public getById(id: string): Observable<any> {
-        return this.http.get(`${this.apiUrl}dictionary/_doc/${id}`, {
-            headers: this.getHeaders(),
-        });
-    }
-
-    public getByTerm(term: string): Observable<SearchResult | null> {
-        const body = {
-            query: {
-                match: {
-                    'term.keyword': {
-                        query: term,
-                        operator: 'and',
-                    },
-                },
+              },
             },
-        };
+            {
+              match: {
+                'term.phonetic': {
+                  query: query,
+                  operator: 'and',
+                  fuzziness: 'AUTO',
+                  boost: 2,
+                },
+              },
+            },
+            // Fuzzy matchword with asciifolding (e.g. ü,ǜ,ù,... mapping to u)
+            {
+              fuzzy: {
+                'term.asciifolding_keyword': {
+                  value: query.toLowerCase(),
+                  fuzziness: '2',
+                  transpositions: true,
+                  boost: 2,
+                },
+              },
+            },
+            // Match query for exact word matching but with asciifolding (e.g. ü,ǜ,ù,... mapping to u)
+            {
+              match: {
+                'term.asciifolding_keyword': {
+                  query: query,
+                  operator: 'and',
+                  boost: 3,
+                },
+              },
+            },
+            // Match query for exact word matching
+            {
+              match: {
+                'term.keyword': {
+                  query: query,
+                  operator: 'and',
+                  boost: 5,
+                },
+              },
+            },
+          ],
+        },
+      },
+    };
+  }
 
-        return this.http.post<ElasticsearchResponse>(`${this.apiUrl}_search`, body, {
-            headers: this.getHeaders(),
-        }).pipe(
-            map(response => {
-                if (response && response.hits && response.hits.hits.length > 0) {
-                    const hit = response.hits.hits[0];
-                    return {
-                        nbHits: response.hits.total.value,
-                        searchTerm: this.lastSearchTerm,
-                        hits: response.hits.hits.map(hit => ({
-                            id: hit._id,
-                            title: hit._source['term'],
-                            description: hit._source['formatted-description'],
-                            tags: hit._source['tags'] || [],
-                            ...hit._source,
-                        }))
-                    } as SearchResult;
-                }
-                return {
-                    elasticAvailable: true,
-                    nbHits: response.hits.total.value,
-                    searchTerm: this.lastSearchTerm,
-                    hits: []
-                } as SearchResult;
-            }), catchError(err => {
-                console.error(err)
-                return of({
-                    elasticAvailable: false,
-                } as SearchResult);
-            })
-        );
+  public checkAvailability(): Observable<boolean> {
+    return this.http.get(`${this.apiUrl}`, { headers: this.getHeaders() }).pipe(
+      map(() => true),
+      catchError(() => of(false))
+    );
+  }
+  public search(query: string, exactMatch: boolean = false): Observable<SearchResult> {
+    // Track the search term for analytics
+    if (window.plausible) {
+      window.plausible('Search', {
+        props: {
+          term: query
+        }
+      });
+    }
+    const body = this.getDefautSearchBody(query);
+
+    // in the search, also match words in the description
+    if (exactMatch) {
+      body.size = 1;
+      body.query = {
+        term: {
+          'term.keyword': {
+            value: query
+          }
+        }
+      };
+    } else {
+      body.query.bool.should.push({
+        match: {
+          'formatted-description': {
+            query: query,
+            operator: 'OR',
+            boost: 1,
+          },
+        },
+      });
     }
 
-    getRandomResult(tags: string[] = []): Observable<SearchResult> {
+    body.explain = true; // This will include detailed scoring explanations
+    return this.http.post<ElasticsearchResponse>(`${this.apiUrl}_search`, body, {
+      headers: this.getHeaders(),
+    })
+      .pipe(
+        map(response => {
+          if (response && response.hits && response.hits.hits) {
+            return {
+              nbHits: response.hits.total.value,
+              elasticAvailable: true,
+              searchTerm: this.lastSearchTerm,
+              hits: response.hits.hits.map(hit => ({
+                id: hit._id,
+                title: hit._source['term'],
+                description: hit._source['formatted-description'],
+                tags: hit._source['tags'] || [],
+                ...hit._source
+              }))
+            } as SearchResult;
+          }
+          return {
+            elasticAvailable: true,
+            nbHits: response.hits.total.value,
+            searchTerm: this.lastSearchTerm,
+            hits: []
+          } as SearchResult;
+        }), catchError(err => {
+          console.error(err)
+          return of({
+            elasticAvailable: false,
+          } as SearchResult);
+        })
+      );
+  }
 
-        // Build tag filters if tags are provided
-        const tagFilters = tags.length > 0
-            ? {
-                bool: {
-                    must: tags.map(tag => ({
-                        term: { 'tags.keyword': tag }
-                    }))
-                }
-            }
-            : {
-                match_all: {}
-            };
+  public getById(id: string): Observable<any> {
+    return this.http.get(`${this.apiUrl}dictionary/_doc/${id}`, {
+      headers: this.getHeaders(),
+    });
+  }
 
-        // Construct the body for random result search
-        const body = {
-            size: 1,
-            query: {
-                function_score: {
-                    query: tagFilters,
-                    random_score: {}
-                }
-            }
-        };
+  public getByTerm(term: string): Observable<SearchResult | null> {
+    const body = {
+      query: {
+        match: {
+          'term.keyword': {
+            query: term,
+            operator: 'and',
+          },
+        },
+      },
+    };
 
-        return this.http.post<ElasticsearchResponse>(`${this.apiUrl}_search`, body, {
-            headers: this.getHeaders()
-        }).pipe(
-            map(response => {
-                if (response?.hits?.hits) {
-                    return {
-                        nbHits: response.hits.total.value,
-                        searchTerm: this.lastSearchTerm,
-                        hits: response.hits.hits.map(hit => ({
-                            id: hit._id,
-                            title: hit._source['term'],
-                            description: hit._source['formatted-description'],
-                            ...hit._source
-                        }))
-                    } as SearchResult;
-                }
-                return {
-                    elasticAvailable: true,
-                    nbHits: response.hits.total.value,
-                    searchTerm: this.lastSearchTerm,
-                    hits: []
-                } as SearchResult;
-            }), catchError(err => {
-                console.error(err)
-                return of({
-                    elasticAvailable: false,
-                } as SearchResult);
-            })
-        );
-    }
+    return this.http.post<ElasticsearchResponse>(`${this.apiUrl}_search`, body, {
+      headers: this.getHeaders(),
+    }).pipe(
+      map(response => {
+        if (response && response.hits && response.hits.hits.length > 0) {
+          const hit = response.hits.hits[0];
+          return {
+            nbHits: response.hits.total.value,
+            searchTerm: this.lastSearchTerm,
+            hits: response.hits.hits.map(hit => ({
+              id: hit._id,
+              title: hit._source['term'],
+              description: hit._source['formatted-description'],
+              tags: hit._source['tags'] || [],
+              ...hit._source,
+            }))
+          } as SearchResult;
+        }
+        return {
+          elasticAvailable: true,
+          nbHits: response.hits.total.value,
+          searchTerm: this.lastSearchTerm,
+          hits: []
+        } as SearchResult;
+      }), catchError(err => {
+        console.error(err)
+        return of({
+          elasticAvailable: false,
+        } as SearchResult);
+      })
+    );
+  }
+
+  getRandomResult(tags: string[] = []): Observable<SearchResult> {
+
+    // Build tag filters if tags are provided
+    const tagFilters = tags.length > 0
+      ? {
+        bool: {
+          must: tags.map(tag => ({
+            term: { 'tags.keyword': tag }
+          }))
+        }
+      }
+      : {
+        match_all: {}
+      };
+
+    // Construct the body for random result search
+    const body = {
+      size: 1,
+      query: {
+        function_score: {
+          query: tagFilters,
+          random_score: {}
+        }
+      }
+    };
+
+    return this.http.post<ElasticsearchResponse>(`${this.apiUrl}_search`, body, {
+      headers: this.getHeaders()
+    }).pipe(
+      map(response => {
+        if (response?.hits?.hits) {
+          return {
+            nbHits: response.hits.total.value,
+            searchTerm: this.lastSearchTerm,
+            hits: response.hits.hits.map(hit => ({
+              id: hit._id,
+              title: hit._source['term'],
+              description: hit._source['formatted-description'],
+              ...hit._source
+            }))
+          } as SearchResult;
+        }
+        return {
+          elasticAvailable: true,
+          nbHits: response.hits.total.value,
+          searchTerm: this.lastSearchTerm,
+          hits: []
+        } as SearchResult;
+      }), catchError(err => {
+        console.error(err)
+        return of({
+          elasticAvailable: false,
+        } as SearchResult);
+      })
+    );
+  }
 
 }
