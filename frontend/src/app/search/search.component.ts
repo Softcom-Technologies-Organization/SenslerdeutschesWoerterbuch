@@ -16,114 +16,114 @@ import { MatIcon } from '@angular/material/icon';
 import { TagTranslationPipe } from "../pipes/tag-translation.pipe";
 
 @Component({
-    selector: 'app-search',
-    imports: [
-        CommonModule,
-        RouterModule,
-        FormsModule,
-        MatAutocompleteModule,
-        MatCardModule,
-        MatDividerModule,
-        MatInputModule,
-        MatFormFieldModule,
-        ReactiveFormsModule,
-        MatButtonModule,
-        MatIcon,
-        TagTranslationPipe,
-        MatSelect,
-        MatIconModule,
-        MatIcon,
-        TagTranslationPipe,
-        MatSelect
-    ],
-    templateUrl: './search.component.html',
-    styleUrl: './search.component.scss',
+  selector: 'app-search',
+  imports: [
+    CommonModule,
+    RouterModule,
+    FormsModule,
+    MatAutocompleteModule,
+    MatCardModule,
+    MatDividerModule,
+    MatInputModule,
+    MatFormFieldModule,
+    ReactiveFormsModule,
+    MatButtonModule,
+    MatIcon,
+    TagTranslationPipe,
+    MatSelect,
+    MatIconModule,
+    MatIcon,
+    TagTranslationPipe,
+    MatSelect
+  ],
+  templateUrl: './search.component.html',
+  styleUrl: './search.component.scss',
 })
 
 export class SearchComponent implements OnInit {
-    results$!: Observable<SearchResult>;
-    showFigure$!: Observable<boolean>;
-    esAvailable$!: Observable<boolean>;
-    readonly searchTermSubject = new BehaviorSubject<string>('');
-    readonly subscriptions = new Subscription();
-    searchControl = new FormControl('');
+  results$!: Observable<SearchResult>;
+  showFigure$!: Observable<boolean>;
+  esAvailable$!: Observable<boolean>;
+  readonly searchTermSubject = new BehaviorSubject<string>('');
+  readonly subscriptions = new Subscription();
+  searchControl = new FormControl('');
 
-    tags: string[] = ['curse-word'];
-    selectedTags: { [tag: string]: boolean } = {};
-    filteredResults$!: Observable<SearchResult>;
-    readonly selectedTagsSubject = new BehaviorSubject<string[]>([]);
+  tags: string[] = ['curse-word'];
+  selectedTags: { [tag: string]: boolean } = {};
+  filteredResults$!: Observable<SearchResult>;
+  readonly selectedTagsSubject = new BehaviorSubject<string[]>([]);
 
-    private exactMatchMode = false;
+  private exactMatchMode = false;
 
-    constructor(readonly searchService: SearchService) { }
+  constructor(readonly searchService: SearchService) { }
 
-    ngOnInit() {
-        this.esAvailable$ = this.searchService.checkAvailability();
+  ngOnInit() {
+    this.esAvailable$ = this.searchService.checkAvailability();
 
-        this.results$ = this.searchTermSubject.pipe(
-            debounceTime(300),
-            switchMap((term: string) => {
-                this.searchService.lastSearchTerm = term;
-                const exact = this.exactMatchMode;
-                this.exactMatchMode = false;
-                return this.searchService.search(term, exact);
-            }),
-            shareReplay(1)
-        );
+    this.results$ = this.searchTermSubject.pipe(
+      debounceTime(300),
+      switchMap((term: string) => {
+        this.searchService.lastSearchTerm = term;
+        const exact = this.exactMatchMode;
+        this.exactMatchMode = false;
+        return this.searchService.search(term, exact);
+      }),
+      shareReplay(1)
+    );
 
-        this.subscriptions.add(
-            this.searchControl.valueChanges.subscribe(term => {
-                if (term) {
-                    this.searchTermSubject.next(term);
-                } else {
-                    this.searchTermSubject.next('');
-                }
-            })
-        );
-
-
-        this.showFigure$ = this.results$.pipe(
-            map(results => !results.hits || results.hits.length === 0)
-        );
-
-        this.filteredResults$ = combineLatest([
-            this.results$,
-            this.selectedTagsSubject.asObservable().pipe(startWith([]))
-        ]).pipe(
-            map(([results, selectedTags]: [SearchResult, string[]]) => {
-                if (!selectedTags.length) return results;
-                results.hits = results.hits.filter(result =>
-                    result.tags?.some(tag => selectedTags.includes(tag))
-                );
-                return results;
-            })
-        );
-
-        const savedTerm = this.searchService.lastSearchTerm;
-        if (savedTerm) {
-            this.searchControl.setValue(savedTerm);
+    this.subscriptions.add(
+      this.searchControl.valueChanges.subscribe(term => {
+        if (term) {
+          this.searchTermSubject.next(term);
+        } else {
+          this.searchTermSubject.next('');
         }
-    }
+      })
+    );
 
-    randomWordSearch() {
-        const randomResult$ = this.searchService.getRandomResult(this.selectedTagsSubject.value);
-        this.subscriptions.add(
-            randomResult$.subscribe(result => {
-                if (result.hits.length > 0) {
-                    const term = result.hits[0].title;
-                    this.exactMatchMode = true;
-                    this.searchControl.setValue(term);
-                }
-            })
+
+    this.showFigure$ = this.results$.pipe(
+      map(results => !results.hits || results.hits.length === 0)
+    );
+
+    this.filteredResults$ = combineLatest([
+      this.results$,
+      this.selectedTagsSubject.asObservable().pipe(startWith([]))
+    ]).pipe(
+      map(([results, selectedTags]: [SearchResult, string[]]) => {
+        if (!selectedTags.length) return results;
+        results.hits = results.hits.filter(result =>
+          result.tags?.some(tag => selectedTags.includes(tag))
         );
-    }
+        return results;
+      })
+    );
 
-    onTagsChanged(selected: string[]) {
-        this.selectedTagsSubject.next(selected);
+    const savedTerm = this.searchService.lastSearchTerm;
+    if (savedTerm) {
+      this.searchControl.setValue(savedTerm);
     }
+  }
 
-    ngOnDestroy() {
-        this.subscriptions.unsubscribe();
-    }
+  randomWordSearch() {
+    const randomResult$ = this.searchService.getRandomResult(this.selectedTagsSubject.value);
+    this.subscriptions.add(
+      randomResult$.subscribe(result => {
+        if (result.hits.length > 0) {
+          const term = result.hits[0].title;
+          this.exactMatchMode = true;
+          this.searchControl.setValue(term);
+        }
+      })
+    );
+  }
+
+  onTagsChanged(selected: string[]) {
+    this.selectedTagsSubject.next(selected);
+  }
+
+  ngOnDestroy() {
+    this.subscriptions.unsubscribe();
+  }
 
 }
