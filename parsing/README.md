@@ -28,9 +28,11 @@ Currently there are 2 working scripts.
 # Script to transform the CSV file into a JSON file compatible with Elasticsearch and the setup script
 python csv_to_json.py
 
-# Script to transform the PDF file into a JSON file compatible with Elasticsearch BUT not yet with the setup script
+# Script to transform the PDF file into a JSON file compatible with Elasticsearch and the setup script
 python pdf_to_json.py
 ```
+
+The `pdf_to_json.py` script generates Elasticsearch bulk format output and saves the output to `parsing/bulk_data.ndjson`.
 
 ## Testing
 The easiest way to test your changes is to restart the setup container.
