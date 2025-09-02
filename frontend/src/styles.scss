@@ -1,27 +1,30 @@
 @use '@angular/material' as mat;
 
 html {
-  color-scheme: light dark;
-  @include mat.theme((
-    color: mat.$red-palette,
-    typography: 'Noto Sans',
-    density: 0
-  ));
+    color-scheme: light dark;
+    @include mat.theme((color: mat.$red-palette,
+            typography: 'Noto Sans',
+            density: 0));
 }
 
 html,
 body {
-  height: 100%;
-}
-body {
-  margin: 0;
-  font-family: 'Noto Sans', "Helvetica Neue", sans-serif;
+    height: 100%;
 }
 
-p a, mat-card-title a {
-  color: var(--mat-sys-primary);
-  text-decoration: none;
-  &:hover {
-    text-decoration: underline;
-  }
+body {
+    margin: 0;
+    font-family: 'Noto Sans', "Helvetica Neue", sans-serif;
+}
+
+p a,
+li a,
+mat-card-title a,
+mat-card-content a {
+    color: var(--mat-sys-primary);
+    text-decoration: none;
+
+    &:hover {
+        text-decoration: underline;
+    }
 }

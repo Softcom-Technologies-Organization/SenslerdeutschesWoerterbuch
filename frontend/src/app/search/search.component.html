@@ -1,59 +1,94 @@
 @if (showFigure$ | async) {
-  <figure class="art-showcase">
+<figure class="art-showcase">
     <img src="schwarzsee.jpg" alt="Sketch of the landscape in Schwarzsee" />
     <figcaption>© ChatGPT</figcaption>
-  </figure>
+</figure>
 }
+@if (filteredResults$ | async; as result) {
+@if(!result.elasticAvailable){
+<div class="error-container">
+    <p><span class="error-title">Achtung:</span> Leider isch grad d Wörtesuechmaschyna düri! Du chasch üs
+        das über
+        <a href="https://github.com/Softcom-Technologies-Organization/SenslerdeutschesWoerterbuch/issues"
+            target="_blank" target="_blank">GitHub Issues</a> mäude.
+    </p>
+</div>
+}
+
 <div class="search-box">
     <mat-form-field>
-      <mat-label>Suechi</mat-label>
-      <input matInput type="text" placeholder="Probiers ifach us..." [formControl]="searchControl"/>
+        <mat-label>Suechi</mat-label>
+        <input matInput type="text" placeholder="Probiers ifach us..." [formControl]="searchControl" />
     </mat-form-field>
 
     <mat-form-field class="tag-filter-drowpdown" appearance="fill">
-      <mat-label>
-        <mat-icon aria-label="Label icon">label</mat-icon>
-           Aaziige na Tag
+        <mat-label>
+            <mat-icon aria-label="Label icon">label</mat-icon>
+            Aaziige na Tag
         </mat-label>
-      <mat-select (selectionChange)="onTagsChanged($event.value)" multiple>
-        <mat-option *ngFor="let tag of tags" [value]="tag">
-          {{ tag | tagTranslation }}
-        </mat-option>
-      </mat-select>
+        <mat-select (selectionChange)="onTagsChanged($event.value)" multiple>
+            <mat-option *ngFor="let tag of tags" [value]="tag">
+                {{ tag | tagTranslation }}
+            </mat-option>
+        </mat-select>
     </mat-form-field>
 
-    <button (click)="randomWordSearch()" class="random-search-button">
-      <mat-icon aria-label="Dice icon" fontSet="material-icons-outlined">casino</mat-icon>
-      <span>Yyrgend iis Wort</span>
+    <button (click)="randomWordSearch()" matButton="tonal" class="random-search-button">
+        <mat-icon aria-label="Dice icon" fontSet="material-icons-outlined">casino</mat-icon>
+        <span>Yyrgend iis Wort</span>
     </button>
-  
+
 </div>
-@if (filteredResults$ | async; as results) {
-  @for (result of results; track result.id) {
-    <mat-card>
-      <mat-card-header class="result-header">
+
+@for (hit of result.hits; track hit.id) {
+<mat-card>
+    <mat-card-header class="result-header">
         <mat-card-title>
-          <a [routerLink]="['/', 'word', result.id]" class="result-link">
-            {{ result.title }}
-          </a>
+            <a [routerLink]="['/', 'word', hit.id]" class="result-link">
+                {{ hit.title }}
+            </a>
         </mat-card-title>
 
-        @if (result.tags && result.tags.length > 0) {
-          <span class="result-tags">
+        @if (hit.tags && hit.tags.length > 0) {
+        <span class="result-tags">
             <mat-icon>label</mat-icon>
-            {{ result.tags | tagTranslation }}
-          </span>
+            {{ hit.tags | tagTranslation }}
+        </span>
         }
-      </mat-card-header>
+    </mat-card-header>
 
-      <mat-divider class="card-divider"></mat-divider>
+    <mat-divider class="card-divider"></mat-divider>
 
-      <mat-card-content>
-        {{ result.description }}
-      </mat-card-content>
-    </mat-card>
-  }
+    <mat-card-content>
+        {{ hit.description }}
+    </mat-card-content>
+</mat-card>
 }
+
+@if (result.nbHits == 0 && result.searchTerm != '' ) {
+<div class="no-searchresult-msg" data-testid="no-searchresult-msg">
+    <h2 class="no-searchresult-title">Wier hii leider <span>{{result.nbHits}}</span> Ergäbnis für di
+        Suechbegrüff
+        gfunne.</h2>
+    <div class="no-searchresult-conent">
+        Für e Suechbegrüff <span>&laquo;{{result.searchTerm}}&raquo;</span> hiimer nüt gfunne.
+        <ul>
+            <li>We du zgfüh hesch das wort fehlt
+                no, chasch das Wort gärn über
+                <a href="https://github.com/Softcom-Technologies-Organization/SenslerdeutschesWoerterbuch/issues"
+                    target="_blank">GitHub Issues</a>
+                ischücke.
+            </li>
+            <li>U schüsch musch ifach nach amena andere Wort sueche.</li>
+        </ul>
+    </div>
+</div>
+}
+
+}
+
+
 <div class="sponsored">
-  <p>Unterstützt va <a href="https://softcom.pro/inscription-seislermaess/?lang=de" target="_blank">Softcom Technologies SA</a></p>
+    <p>Unterstützt va <a href="https://softcom.pro/inscription-seislermaess/?lang=de" target="_blank">Softcom
+            Technologies SA</a></p>
 </div>
