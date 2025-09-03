@@ -21,7 +21,7 @@ test('search functionality without autocomplete', async ({ page }, testInfo) => 
    * details page "vom Bäcker hergestellter Zopf"
    * Note: The Autocomplete component from Angular Material defaults to role=combobox. Seems weird, but it is what it is.
    */
-  const searchField = page.getByRole('textbox', { name: 'Suechi' })
+  const searchField = page.getByRole('textbox', { name: 'Suechi' });
   await expect(searchField).toBeVisible();
   await searchField.fill('beckertrütscha');
   await page.screenshot({ path: `${getScreenshotDir(testInfo)}/suggestions.png` });
@@ -194,12 +194,12 @@ test('make a random search with a tag filter and check if one result is displaye
 
 test('display message if no result is found but elastic works', async ({ page }, testInfo) => {
   await page.goto('/');
-  const searchField = page.getByRole('textbox', { name: 'Suechi' })
-  await expect(searchField).toBeVisible()
-  await searchField.fill('adsfadsfasdf')
-  await page.screenshot({ path: `${getScreenshotDir(testInfo)}/search-input.png` })
-  const zeroResultMsg = page.getByTestId('no-searchresult-msg')
-  await expect(zeroResultMsg).toBeVisible()
-  await page.screenshot({ path: `${getScreenshotDir(testInfo)}/no-result-message.png` })
+  const searchField = page.getByRole('textbox', { name: 'Suechi' });
+  await expect(searchField).toBeVisible();
+  await searchField.fill('adsfadsfasdf');
+  await page.screenshot({ path: `${getScreenshotDir(testInfo)}/search-input.png` });
+  const zeroResultMsg = page.getByTestId('no-searchresult-msg');
+  await expect(zeroResultMsg).toBeVisible();
+  await page.screenshot({ path: `${getScreenshotDir(testInfo)}/no-result-message.png` });
 });
 // test('display message when elastic is unavailable', async ({ page }, testInfo) => { })

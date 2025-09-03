@@ -181,7 +181,6 @@ export class SearchService {
             hits: []
           } as SearchResult;
         }), catchError(err => {
-          console.error(err)
           return of({
             elasticAvailable: false,
           } as SearchResult);
@@ -232,7 +231,6 @@ export class SearchService {
           hits: []
         } as SearchResult;
       }), catchError(err => {
-        console.error(err)
         return of({
           elasticAvailable: false,
         } as SearchResult);
@@ -289,7 +287,6 @@ export class SearchService {
           hits: []
         } as SearchResult;
       }), catchError(err => {
-        console.error(err)
         return of({
           elasticAvailable: false,
         } as SearchResult);
