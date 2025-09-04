@@ -41,22 +41,25 @@ import { TagTranslationPipe } from "../pipes/tag-translation.pipe";
 })
 
 export class SearchComponent implements OnInit {
-  results$!: Observable<SearchResult[]>;
+  results$!: Observable<SearchResult>;
   showFigure$!: Observable<boolean>;
+  esAvailable$!: Observable<boolean>;
   readonly searchTermSubject = new BehaviorSubject<string>('');
   readonly subscriptions = new Subscription();
   searchControl = new FormControl('');
 
   tags: string[] = ['curse-word'];
   selectedTags: { [tag: string]: boolean } = {};
-  filteredResults$!: Observable<SearchResult[]>;
+  filteredResults$!: Observable<SearchResult>;
   readonly selectedTagsSubject = new BehaviorSubject<string[]>([]);
 
   private exactMatchMode = false;
 
-  constructor(readonly searchService: SearchService) {}
+  constructor(readonly searchService: SearchService) { }
 
   ngOnInit() {
+    this.esAvailable$ = this.searchService.checkAvailability();
+
     this.results$ = this.searchTermSubject.pipe(
       debounceTime(300),
       switchMap((term: string) => {
@@ -64,8 +67,8 @@ export class SearchComponent implements OnInit {
         const exact = this.exactMatchMode;
         this.exactMatchMode = false;
         return this.searchService.search(term, exact);
-     }),
-     shareReplay(1)
+      }),
+      shareReplay(1)
     );
 
     this.subscriptions.add(
@@ -78,19 +81,21 @@ export class SearchComponent implements OnInit {
       })
     );
 
+
     this.showFigure$ = this.results$.pipe(
-      map(results => !results || results.length === 0)
+      map(results => !results.hits || results.hits.length === 0)
     );
 
     this.filteredResults$ = combineLatest([
       this.results$,
       this.selectedTagsSubject.asObservable().pipe(startWith([]))
     ]).pipe(
-      map(([results, selectedTags] : [SearchResult[], string[]]) => {
+      map(([results, selectedTags]: [SearchResult, string[]]) => {
         if (!selectedTags.length) return results;
-        return results.filter(result =>
+        results.hits = results.hits.filter(result =>
           result.tags?.some(tag => selectedTags.includes(tag))
         );
+        return results;
       })
     );
 
@@ -102,11 +107,10 @@ export class SearchComponent implements OnInit {
 
   randomWordSearch() {
     const randomResult$ = this.searchService.getRandomResult(this.selectedTagsSubject.value);
-
     this.subscriptions.add(
       randomResult$.subscribe(result => {
-        if (result.length > 0) {
-          const term = result[0].title;
+        if (result.hits.length > 0) {
+          const term = result.hits[0].title;
           this.exactMatchMode = true;
           this.searchControl.setValue(term);
         }

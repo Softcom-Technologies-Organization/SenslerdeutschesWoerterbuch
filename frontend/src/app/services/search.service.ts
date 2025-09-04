@@ -1,13 +1,18 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { map, Observable } from 'rxjs';
+import { catchError, map, Observable, of } from 'rxjs';
 import { environment } from '../../environments/environment';
 
 export interface SearchResult {
-  id: string;
-  title: string;
-  description?: string;
-  tags?: string[];
+  elasticAvailable: boolean,
+  nbHits: number,
+  searchTerm: string;
+  hits: Array<{
+    id: string;
+    title: string;
+    description?: string;
+    tags?: string[];
+  }>
 }
 
 interface ElasticsearchResponse {
@@ -36,7 +41,7 @@ export class SearchService {
 
   lastSearchTerm: string = '';
 
-  constructor(readonly http: HttpClient) {}
+  constructor(readonly http: HttpClient) { }
 
   private getHeaders(): HttpHeaders {
     const credentials = btoa(`${this.username}:${this.password}`);
@@ -110,28 +115,34 @@ export class SearchService {
     };
   }
 
-  search(query: string, exactMatch : boolean = false): Observable<any[]> {
+  public checkAvailability(): Observable<boolean> {
+    return this.http.get(`${this.apiUrl}`, { headers: this.getHeaders() }).pipe(
+      map(() => true),
+      catchError(() => of(false))
+    );
+  }
+  public search(query: string, exactMatch: boolean = false): Observable<SearchResult> {
     // Track the search term for analytics
     if (window.plausible) {
-      window.plausible('Search', { 
-        props: { 
-          term: query 
+      window.plausible('Search', {
+        props: {
+          term: query
         }
       });
     }
     const body = this.getDefautSearchBody(query);
-    
+
     // in the search, also match words in the description
-      if (exactMatch) {
-        body.size = 1;
-        body.query = {
-          term: {
-            'term.keyword': {
-              value: query
-            }
+    if (exactMatch) {
+      body.size = 1;
+      body.query = {
+        term: {
+          'term.keyword': {
+            value: query
           }
-        };
-      } else {
+        }
+      };
+    } else {
       body.query.bool.should.push({
         match: {
           'formatted-description': {
@@ -147,20 +158,34 @@ export class SearchService {
     return this.http.post<ElasticsearchResponse>(`${this.apiUrl}_search`, body, {
       headers: this.getHeaders(),
     })
-    .pipe(
-      map(response => {
-        if (response && response.hits && response.hits.hits) {
-          return response.hits.hits.map(hit => ({
-            id: hit._id,
-            title: hit._source['term'], 
-            description: hit._source['formatted-description'],
-            tags: hit._source['tags'] || [],
-            ...hit._source
-          } as SearchResult));
-        }
-        return [];
-      })
-    );
+      .pipe(
+        map(response => {
+          if (response && response.hits && response.hits.hits) {
+            return {
+              nbHits: response.hits.total.value,
+              elasticAvailable: true,
+              searchTerm: this.lastSearchTerm,
+              hits: response.hits.hits.map(hit => ({
+                id: hit._id,
+                title: hit._source['term'],
+                description: hit._source['formatted-description'],
+                tags: hit._source['tags'] || [],
+                ...hit._source
+              }))
+            } as SearchResult;
+          }
+          return {
+            elasticAvailable: true,
+            nbHits: response.hits.total.value,
+            searchTerm: this.lastSearchTerm,
+            hits: []
+          } as SearchResult;
+        }), catchError(err => {
+          return of({
+            elasticAvailable: false,
+          } as SearchResult);
+        })
+      );
   }
 
   public getById(id: string): Observable<any> {
@@ -180,7 +205,7 @@ export class SearchService {
         },
       },
     };
-  
+
     return this.http.post<ElasticsearchResponse>(`${this.apiUrl}_search`, body, {
       headers: this.getHeaders(),
     }).pipe(
@@ -188,31 +213,44 @@ export class SearchService {
         if (response && response.hits && response.hits.hits.length > 0) {
           const hit = response.hits.hits[0];
           return {
-            id: hit._id,
-            title: hit._source['term'],
-            description: hit._source['formatted-description'],
-            tags: hit._source['tags'] || [],
-            ...hit._source,
+            nbHits: response.hits.total.value,
+            searchTerm: this.lastSearchTerm,
+            hits: response.hits.hits.map(hit => ({
+              id: hit._id,
+              title: hit._source['term'],
+              description: hit._source['formatted-description'],
+              tags: hit._source['tags'] || [],
+              ...hit._source,
+            }))
           } as SearchResult;
         }
-        return null;
+        return {
+          elasticAvailable: true,
+          nbHits: response.hits.total.value,
+          searchTerm: this.lastSearchTerm,
+          hits: []
+        } as SearchResult;
+      }), catchError(err => {
+        return of({
+          elasticAvailable: false,
+        } as SearchResult);
       })
     );
   }
 
-  getRandomResult(tags : string[] = []): Observable<SearchResult[]> {
-    
+  getRandomResult(tags: string[] = []): Observable<SearchResult> {
+
     // Build tag filters if tags are provided
     const tagFilters = tags.length > 0
       ? {
-          bool: {
+        bool: {
           must: tags.map(tag => ({
             term: { 'tags.keyword': tag }
           }))
         }
       }
-      : { 
-        match_all: {} 
+      : {
+        match_all: {}
       };
 
     // Construct the body for random result search
@@ -231,14 +269,27 @@ export class SearchService {
     }).pipe(
       map(response => {
         if (response?.hits?.hits) {
-          return response.hits.hits.map(hit => ({
-            id: hit._id,
-            title: hit._source['term'],
-            description: hit._source['formatted-description'],
-            ...hit._source
-          } as SearchResult));
+          return {
+            nbHits: response.hits.total.value,
+            searchTerm: this.lastSearchTerm,
+            hits: response.hits.hits.map(hit => ({
+              id: hit._id,
+              title: hit._source['term'],
+              description: hit._source['formatted-description'],
+              ...hit._source
+            }))
+          } as SearchResult;
         }
-        return [];
+        return {
+          elasticAvailable: true,
+          nbHits: response.hits.total.value,
+          searchTerm: this.lastSearchTerm,
+          hits: []
+        } as SearchResult;
+      }), catchError(err => {
+        return of({
+          elasticAvailable: false,
+        } as SearchResult);
       })
     );
   }

@@ -21,7 +21,7 @@ export class WordPageComponent implements OnInit {
     private route: ActivatedRoute,
     private searchService: SearchService,
     readonly destroyRef: DestroyRef,
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.route.params
@@ -38,36 +38,36 @@ export class WordPageComponent implements OnInit {
     this.loading = true;
     this.error = false;
 
-  this.searchService.getById(id).pipe(
-    switchMap((response: any) => {
-      this.wordEntry = response._source;
-      const description = this.wordEntry["formatted-description"] || null;
+    this.searchService.getById(id).pipe(
+      switchMap((response: any) => {
+        this.wordEntry = response._source;
+        const description = this.wordEntry["formatted-description"] || null;
 
-      // Check if the description matches "s. another-word."
-      const match = description?.match(/^\s*s\.\s(\S+)\.$/i);
-      if (match) {
-        const linkedWord = match[1]; // Extract "another-word"
-        return this.searchService.getByTerm(linkedWord).pipe(
-          map((linkedResult: SearchResult | null) => {
-            if (linkedResult) {
-              this.synonymId = linkedResult.id;
-            }
-            return response; // Pass the original response along
-          })
-        );
-      }
-      return [response]; // If no match, return the original response as an observable
-    })
-  ).subscribe({
-    next: (response) => {
-      this.wordEntry = response._source || response;
-      this.loading = false;
-    },
-    error: (err) => {
-      console.error('Error fetching word:', err);
-      this.error = true;
-      this.loading = false;
-    },
-  });
+        // Check if the description matches "s. another-word."
+        const match = description?.match(/^\s*s\.\s(\S+)\.$/i);
+        if (match) {
+          const linkedWord = match[1]; // Extract "another-word"
+          return this.searchService.getByTerm(linkedWord).pipe(
+            map((linkedResult: SearchResult | null) => {
+              if (linkedResult) {
+                this.synonymId = linkedResult.hits[0].id;
+              }
+              return response; // Pass the original response along
+            })
+          );
+        }
+        return [response]; // If no match, return the original response as an observable
+      })
+    ).subscribe({
+      next: (response) => {
+        this.wordEntry = response._source || response;
+        this.loading = false;
+      },
+      error: (err) => {
+        console.error('Error fetching word:', err);
+        this.error = true;
+        this.loading = false;
+      },
+    });
   }
 }

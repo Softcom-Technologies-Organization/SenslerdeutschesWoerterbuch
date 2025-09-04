@@ -1,6 +1,6 @@
 import { test, expect, TestInfo } from '@playwright/test';
 
-function getScreenshotDir(testInfo : TestInfo) : string {
+function getScreenshotDir(testInfo: TestInfo): string {
   return `test-results/${testInfo.title}`;
 }
 
@@ -15,13 +15,13 @@ test('search functionality without autocomplete', async ({ page }, testInfo) => 
 
   await page.goto('/');
   await page.screenshot({ path: `${getScreenshotDir(testInfo)}/landing.png` });
-  
+
   /**
    * Search for "beckertrütscha" and expect to find the entry "Becker·trǜtscha", which should contain as description visible on the
    * details page "vom Bäcker hergestellter Zopf"
    * Note: The Autocomplete component from Angular Material defaults to role=combobox. Seems weird, but it is what it is.
    */
-  const searchField = page.getByRole('textbox', { name: 'Suechi' })
+  const searchField = page.getByRole('textbox', { name: 'Suechi' });
   await expect(searchField).toBeVisible();
   await searchField.fill('beckertrütscha');
   await page.screenshot({ path: `${getScreenshotDir(testInfo)}/suggestions.png` });
@@ -95,11 +95,11 @@ test('make a random search and check if one result is displayed', async ({ page 
   await page.goto('/');
   const searchField = page.getByRole('textbox', { name: 'Suechi' });
   const randomSearchButton = page.getByRole('button', { name: 'Yyrgend iis Wort' });
-  
+
   // Ensure the search field is empty before starting
   let searchFieldInputValue = await searchField.inputValue();
   expect(searchFieldInputValue.length).toBe(0);
-  
+
   // Perform a random search
   await page.screenshot({ path: `${getScreenshotDir(testInfo)}/before-research.png` });
   await expect(randomSearchButton).toBeVisible();
@@ -110,7 +110,7 @@ test('make a random search and check if one result is displayed', async ({ page 
     expect(value.length).toBeGreaterThan(0);
   }).toPass();
   await page.screenshot({ path: `${getScreenshotDir(testInfo)}/after-research.png` });
-  
+
   searchFieldInputValue = await searchField.inputValue();
   expect(searchFieldInputValue.length).toBeGreaterThan(0);
 
@@ -125,16 +125,16 @@ test('make a random search and check if one result is displayed', async ({ page 
 
 test('search functionality with filter', async ({ page }, testInfo) => {
   // Increase timeout for GitHub Actions
-  test.setTimeout(60000);  
+  test.setTimeout(60000);
   await page.goto('/');
-  
+
   const tagFilter = page.getByRole('combobox', { name: 'Aaziige na Tag' });
   await tagFilter.click();
   const tagOption = page.getByRole('option', { name: 'Schimpfwort' });
   await expect(tagOption).toBeVisible();
   await tagOption.click(); // Select the "Schimpfwort" tag
-  await tagFilter.press('Escape');  
-  
+  await tagFilter.press('Escape');
+
   const searchField = page.getByRole('textbox', { name: 'Suechi' })
   await expect(searchField).toBeVisible();
   await searchField.fill('Flaag');
@@ -153,7 +153,7 @@ test('make a random search with a tag filter and check if one result is displaye
   const searchField = page.getByRole('textbox', { name: 'Suechi' });
   const tagFilter = page.getByRole('combobox', { name: 'Aaziige na Tag' });
   const randomSearchButton = page.getByRole('button', { name: 'Yyrgend iis Wort' });
-  
+
   // Ensure the search field is empty before starting
   let searchFieldInputValue = await searchField.inputValue();
   expect(searchFieldInputValue.length).toBe(0);
@@ -165,7 +165,7 @@ test('make a random search with a tag filter and check if one result is displaye
 
   // Wait for the filter indicator or results to update, e.g., a chip or result count change
   await page.screenshot({ path: `${getScreenshotDir(testInfo)}/tag-filter-applied.png` });
-  
+
   // Close the combobox by pressing Escape
   await tagFilter.press('Escape');
 
@@ -175,7 +175,7 @@ test('make a random search with a tag filter and check if one result is displaye
   await randomSearchButton.click();
   await page.waitForTimeout(1000); // Wait for the random search to complete
   await page.screenshot({ path: `${getScreenshotDir(testInfo)}/after-research.png` });
-  
+
   searchFieldInputValue = await searchField.inputValue();
   expect(searchFieldInputValue.length).toBeGreaterThan(0);
 
@@ -190,4 +190,15 @@ test('make a random search with a tag filter and check if one result is displaye
   // Check the presence of a tag chip
   const tagChip = page.getByText('Schimpfwort', { exact: true });
   await expect(tagChip).toBeVisible();
+});
+
+test('display message if no result is found but elastic works', async ({ page }, testInfo) => {
+  await page.goto('/');
+  const searchField = page.getByRole('textbox', { name: 'Suechi' });
+  await expect(searchField).toBeVisible();
+  await searchField.fill('adsfadsfasdf');
+  await page.screenshot({ path: `${getScreenshotDir(testInfo)}/search-input.png` });
+  const zeroResultMsg = page.getByTestId('no-searchresult-msg');
+  await expect(zeroResultMsg).toBeVisible();
+  await page.screenshot({ path: `${getScreenshotDir(testInfo)}/no-result-message.png` });
 });
