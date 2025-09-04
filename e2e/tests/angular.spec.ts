@@ -202,4 +202,3 @@ test('display message if no result is found but elastic works', async ({ page },
   await expect(zeroResultMsg).toBeVisible();
   await page.screenshot({ path: `${getScreenshotDir(testInfo)}/no-result-message.png` });
 });
-// test('display message when elastic is unavailable', async ({ page }, testInfo) => { })
