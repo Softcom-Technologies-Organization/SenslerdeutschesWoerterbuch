@@ -1,4 +1,5 @@
 @use '@angular/material' as mat;
+@use 'col';
 
 html {
   color-scheme: light dark;
@@ -27,4 +28,14 @@ mat-card-content a {
   &:hover {
     text-decoration: underline;
   }
+}
+
+
+.error-container {
+  margin-bottom: 1rem;
+  border: light-dark(col.$gray, col.$dark-gray);
+  background-color: light-dark(col.$light-gray, col.$darker-gray);
+  color: light-dark(col.$very-dark-gray, col.$very-light-gray);
+  border-radius: 4px;
+  padding: 16px;
 }
