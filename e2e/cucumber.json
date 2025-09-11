@@ -1,0 +1,11 @@
+{
+    "default": {
+        "format": [
+            "summary",
+            "html:test-results/cucumber.html"
+        ],
+        "formatOptions": {
+            "snippetInterface": "synchronous"
+        }
+    }
+}

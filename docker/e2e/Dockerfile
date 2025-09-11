@@ -12,6 +12,7 @@ RUN npm ci
 # Copy test files 
 COPY ./e2e/playwright.config.ts ./
 COPY ./e2e/tests ./tests
+COPY ./e2e/features ./features
 
 # Command to run tests
-CMD ["sh", "-c", "npx playwright test && exit $?"]
+CMD ["sh", "-c", "npx playwright test ; playwright_exit=$? ; npm run test ; cucumber_exit=$? ; if [ $playwright_exit -ne 0 ] || [ $cucumber_exit -ne 0 ]; then echo '❌ E2E tests failed!'; exit 1; else echo '✅ All e2e tests passed!'; exit 0; fi"]
