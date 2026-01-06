@@ -8,4 +8,4 @@ urllib3==2.6.0
 pdfplumber==0.11.5
 
 # General
-python-dotenv==1.0.1
+python-dotenv==1.2.1
