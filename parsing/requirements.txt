@@ -1,5 +1,5 @@
 # For Elasticsearch
-certifi==2025.1.31
+certifi==2026.1.4
 elastic-transport==9.2.1
 elasticsearch==9.2.1
 urllib3==2.6.2
