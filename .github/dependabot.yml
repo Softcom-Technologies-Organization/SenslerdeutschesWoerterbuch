@@ -13,25 +13,29 @@ updates:
     schedule:
       interval: "weekly"
     groups:
-      # grouping all Angular related packages together in a PR for minor and patch updates
+      # Minor and patch version updates for Angular dependencies are grouped into a single pull request.
       angular:
+        applies-to: version-updates
         patterns:
           - "@angular/*"
         update-types:
           - "minor"
           - "patch"
-      # grouping all other npm packages together in a PR for patch updates
-      npm-developer-updates:
-        dependency-type: "development"
+      # Minor and patch security updates for Angular dependencies are also grouped together into a single pull request.
+      angular-security-updates:
+        applies-to: security-updates
+        patterns:
+          - "@angular/*"
         update-types:
           - "minor"
           - "patch"
-      npm-production-updates:
-        dependency-type: "production"
-        update-types:
-          - "minor"
-          - "patch"
-      # major updates will happen in individual PRs
+
+    # Dependabot won't automatically open pull requests for major updates for Angular.
+    ignore:
+      - dependency-name: "@angular/*"
+        update-types: ["version-update:semver-major"]
+
+    # other package updates will happen in individual PRs
 
   # Python packages
   - package-ecosystem: "pip"
