@@ -12,6 +12,26 @@ updates:
       - "/e2e"
     schedule:
       interval: "weekly"
+    groups:
+      # grouping all Angular related packages together in a PR for minor and patch updates
+      angular:
+        patterns:
+          - "@angular/*"
+        update-types:
+          - "minor"
+          - "patch"
+      # grouping all other npm packages together in a PR for patch updates
+      npm-developer-updates:
+        dependency-type: "development"
+        update-types:
+          - "minor"
+          - "patch"
+      npm-production-updates:
+        dependency-type: "production"
+        update-types:
+          - "minor"
+          - "patch"
+      # major updates will happen in individual PRs
 
   # Python packages
   - package-ecosystem: "pip"
@@ -20,6 +40,12 @@ updates:
       - "/parsing"
     schedule:
       interval: "weekly"
+    groups:
+      python-dependencies:
+        update-types:
+          - "minor"
+          - "patch"
+    # major updates will happen in individual PRs
 
   # Docker images
   - package-ecosystem: "docker"
@@ -30,12 +56,24 @@ updates:
       - "/docker/e2e"
     schedule:
       interval: "weekly"
+    groups:
+      docker-images:
+        update-types:
+          - "minor"
+          - "patch"
+    # major updates will happen in individual PRs
 
   # Docker Compose
   - package-ecosystem: "docker-compose"
     directory: "/"
     schedule:
       interval: "weekly"
+    groups:
+      docker-compose:
+        update-types:
+          - "minor"
+          - "patch"
+    # major updates will happen in individual PRs
 
   # GitHub Actions
   - package-ecosystem: "github-actions"
@@ -44,3 +82,8 @@ updates:
     directory: "/"
     schedule:
       interval: "weekly"
+    # group all GitHub Actions updates together in a single PR since they are usually small
+    groups:
+      github-actions:
+        patterns:
+          - "*"
