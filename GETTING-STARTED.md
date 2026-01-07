@@ -31,7 +31,7 @@ npx playwright test
 
 GitHub Actions are used to run the tests automatically. To test and debug them locally we suggest using https://github.com/nektos/act. After downloading the binary you can use it with a simple command.
 ```
-bin/act --seceret-file .env
+bin/act --secret-file .env
 ```
 
 ## Deploying
