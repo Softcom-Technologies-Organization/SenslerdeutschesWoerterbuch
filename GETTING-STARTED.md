@@ -57,7 +57,7 @@ Then update the Container App
 
 ```
 az containerapp update \
-  --resource-group rg-SeislerdütschesWörterbuech-prod \
+  --resource-group rg-SeislerdeutschesWoerterbuech-prod \
   --name wb-test \
   --yaml containerapp-deploy.yaml
 ```
