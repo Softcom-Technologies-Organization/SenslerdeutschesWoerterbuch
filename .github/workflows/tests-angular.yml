@@ -10,6 +10,8 @@ on:
 jobs:
   angular-tests:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     timeout-minutes: 5
     defaults:
       run:
