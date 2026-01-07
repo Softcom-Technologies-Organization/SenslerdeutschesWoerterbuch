@@ -18,6 +18,7 @@ updates:
         applies-to: version-updates
         patterns:
           - "@angular/*"
+          - "@angular-devkit/*"
         update-types:
           - "minor"
           - "patch"
@@ -26,13 +27,20 @@ updates:
         applies-to: security-updates
         patterns:
           - "@angular/*"
+          - "@angular-devkit/*"
         update-types:
           - "minor"
+          - "patch"
+      # Group all patch updates into a single PR to reduce noise.
+      patch-updates:
+        update-types:
           - "patch"
 
     # Dependabot won't automatically open pull requests for major updates for Angular.
     ignore:
       - dependency-name: "@angular/*"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "@angular-devkit/*"
         update-types: ["version-update:semver-major"]
 
     # other package updates will happen in individual PRs
