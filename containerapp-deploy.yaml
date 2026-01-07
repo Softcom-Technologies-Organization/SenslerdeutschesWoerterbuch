@@ -1,6 +1,6 @@
 location: Switzerland North
 properties:
-  managedEnvironmentId: /subscriptions/3c92b75f-68ec-4277-9ea8-daffa476f206/resourceGroups/rg-SeislerdütschesWörterbuech-prod/providers/Microsoft.App/managedEnvironments/managedEnvironment-rgSeislerdtsche-a893
+  managedEnvironmentId: /subscriptions/3c92b75f-68ec-4277-9ea8-daffa476f206/resourceGroups/rg-SeislerdeutschesWoerterbuech-prod/providers/Microsoft.App/managedEnvironments/managedEnvironment-rgSeislerdtsche-a893
 
   configuration:
     secrets:
