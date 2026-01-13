@@ -54,6 +54,22 @@ services:
     networks:
       - sw-network
 
+  db:
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    networks:
+      - sw-network
+
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 8080:8080
+    networks:
+      - sw-network
+
 networks:
   sw-network:
     driver: bridge
