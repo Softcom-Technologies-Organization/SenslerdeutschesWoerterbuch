@@ -1,0 +1,10 @@
+asgiref==3.11.0
+Django==6.0.1
+gitdb==4.0.12
+GitPython==3.1.41
+gunicorn==23.0.0
+packaging==25.0
+psycopg2-binary==2.9.11
+setuptools==78.1.1
+smmap==5.0.2
+sqlparse==0.5.5
