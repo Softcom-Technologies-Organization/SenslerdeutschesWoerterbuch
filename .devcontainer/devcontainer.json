@@ -1,0 +1,15 @@
+{
+  "name": "Versatile DevContainer",
+  "dockerComposeFile": "../docker-compose.yml",
+  "service": "workspace",
+  "workspaceFolder": "/workspace",
+  "runServices": ["workspace", "db"],
+  "features": {
+    "ghcr.io/devcontainers/features/docker-outside-of-docker:1": {
+      "version": "latest",
+      "enableNonRootDocker": "true",
+      "moby": "false"
+    }
+  },
+  "postCreateCommand": "pip install -r admin-app/requirements.txt"
+}

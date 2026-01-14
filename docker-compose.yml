@@ -1,6 +1,23 @@
 name: senslerdeutsches-woerterbuch
 
 services:
+  workspace:
+    image: mcr.microsoft.com/devcontainers/python:3.12
+    env_file: # Is this really needed here?
+      - .env
+    volumes: # Again, reall needed?
+      - .:/workspace:cached
+      
+    # Map BOTH ports so you can see both apps
+    ports:
+      - "8000:8000" # Django
+      - "4200:4200" # Angular
+      
+    # Keeps the container alive so you can open terminals inside it
+    command: sleep infinity
+    networks:
+      - sw-network
+
   elasticsearch:
     build:
       context: .
@@ -29,6 +46,15 @@ services:
     networks:
       - sw-network
 
+  admin-app:
+    build:
+      context: .
+      dockerfile: docker/admin-app/Dockerfile
+    environment:
+      - POSTGRES_HOST=db
+    ports:
+      - "8002:8000"
+
   proxy:
     build:
       context: .
@@ -56,15 +82,14 @@ services:
 
   db:
     image: postgres
-    restart: always
     environment:
+      POSTGRES_DB: ${POSTGRES_NAME}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     networks:
       - sw-network
 
   adminer:
     image: adminer
-    restart: always
     ports:
       - 8080:8080
     networks:
