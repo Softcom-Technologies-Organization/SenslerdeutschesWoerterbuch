@@ -155,7 +155,7 @@ export class SearchService {
     }
 
     body.explain = true; // This will include detailed scoring explanations
-    return this.http.post<ElasticsearchResponse>(`${this.apiUrl}_search`, body, {
+    return this.http.post<ElasticsearchResponse>(`${this.apiUrl}dictionary/_search`, body, {
       headers: this.getHeaders(),
     })
       .pipe(
@@ -206,7 +206,7 @@ export class SearchService {
       },
     };
 
-    return this.http.post<ElasticsearchResponse>(`${this.apiUrl}_search`, body, {
+    return this.http.post<ElasticsearchResponse>(`${this.apiUrl}dictionary/_search`, body, {
       headers: this.getHeaders(),
     }).pipe(
       map(response => {
@@ -264,7 +264,7 @@ export class SearchService {
       }
     };
 
-    return this.http.post<ElasticsearchResponse>(`${this.apiUrl}_search`, body, {
+    return this.http.post<ElasticsearchResponse>(`${this.apiUrl}dictionary/_search`, body, {
       headers: this.getHeaders()
     }).pipe(
       map(response => {

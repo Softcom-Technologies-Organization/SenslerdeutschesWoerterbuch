@@ -8,3 +8,5 @@ psycopg2-binary==2.9.11
 setuptools==78.1.1
 smmap==5.0.2
 sqlparse==0.5.5
+whitenoise==6.11.0
+opensearch-py==3.1.0

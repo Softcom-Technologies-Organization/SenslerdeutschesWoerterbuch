@@ -1,6 +1,6 @@
 export const environment = {
   production: true,
-  proxyUrl: '/elastic/',
+  proxyUrl: '/opensearch/',
   elasticUsername: 'dictionary_reader',
   elasticPassword: 'thisisgonnabepublic',
 };

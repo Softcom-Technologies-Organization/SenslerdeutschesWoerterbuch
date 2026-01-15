@@ -10,4 +10,5 @@ export const routes: Routes = [
   { path: 'word/:id', component: WordPageComponent, pathMatch: 'full' },
   { path: 'about', component: AboutComponent },
   { path: 'feedback', component: FeedbackComponent },
+  { path: '**', redirectTo: 'search' }
 ];

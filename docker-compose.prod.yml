@@ -1,24 +1,88 @@
 services:
+  traefik:
+    image: traefik:latest
+    command:
+      - "--api.insecure=true"
+      - "--providers.docker=true"
+      - "--entrypoints.web.address=:80"
+      - "--entrypoints.websecure.address=:443"
+    ports:
+      - "80:80"
+      - "443:443"
+      - "8080:8080"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+      - sw-network
+
   admin-app:
     build:
       context: .
       dockerfile: docker/admin-app/Dockerfile
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.admin-app.rule=Host(`admin-app.localhost`)"
+      - "traefik.http.services.admin-app.loadbalancer.server.port=8000"
+    env_file:
+      - .env
     networks:
       - sw-network
 
-  proxy:
+  public-app:
     build:
       context: .
-      dockerfile: docker/proxy/Dockerfile
-    environment:
-      - ELASTICSEARCH_URL=http://elasticsearch:9200
-    ports:
-      - "${PROXY_PORT}:80"
-    volumes:
-      - ./docker/proxy/logs/nginx:/var/log/nginx
+      dockerfile: docker/public-app/Dockerfile
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.public-app.rule=Host(`localhost`)"
+      - "traefik.http.services.public-app.loadbalancer.server.port=80"
     networks:
       - sw-network
+
+  db:
+    image: postgres
+    environment:
+      POSTGRES_DB: ${POSTGRES_NAME}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    networks:
+      - sw-network
+
+  opensearch:
+    build:
+      context: .
+      dockerfile: docker/opensearch/Dockerfile
+    environment:
+      - discovery.type=single-node
+      - plugins.security.disabled=false
+      - plugins.security.ssl.http.enabled=false
+      - OPENSEARCH_INITIAL_ADMIN_PASSWORD=${OPENSEARCH_ADMIN_PASSWORD}
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.opensearch.rule=Host(`localhost`) && PathPrefix(`/opensearch`)"
+      - "traefik.http.middlewares.opensearch-strip.stripprefix.prefixes=/opensearch"
+      - "traefik.http.routers.opensearch.middlewares=opensearch-strip"
+      - "traefik.http.services.opensearch.loadbalancer.server.port=9200"
+    networks:
+      - sw-network
+
+  # elasticsearch:
+  #   build:
+  #     context: .
+  #     dockerfile: docker/elasticsearch/Dockerfile
+  #   environment:
+  #     - ELASTIC_PASSWORD=${ELASTIC_ADMIN_PASSWORD}
+  #     - xpack.security.enabled=true
+  #     - xpack.security.http.ssl.enabled=false
+  #     - xpack.security.transport.ssl.enabled=false
+  #     - discovery.type=single-node
+  #   volumes:
+  #     - elasticsearch-data:/usr/share/elasticsearch/data
+  #   networks:
+  #     - sw-network
 
 networks:
   sw-network:
     driver: bridge
+
+volumes: # Delete?
+  elasticsearch-data:
