@@ -9,7 +9,10 @@
       "version": "latest",
       "enableNonRootDocker": "true",
       "moby": "false"
+    },
+    "ghcr.io/devcontainers/features/node:1": {
+      "version": "lts"
     }
   },
-  "postCreateCommand": "pip install -r admin-app/requirements.txt"
+  "postCreateCommand": "pip install -r admin-app/requirements.txt && npm install -g @angular/cli"
 }
