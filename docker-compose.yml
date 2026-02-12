@@ -37,6 +37,9 @@ services:
       - plugins.security.disabled=false
       - plugins.security.ssl.http.enabled=false
       - OPENSEARCH_INITIAL_ADMIN_PASSWORD=${OPENSEARCH_ADMIN_PASSWORD}
+    # TODO: Is this required for a local setup or can it be improved with traefik or the manual proxy file?
+    ports:
+      - 9200:9200
     networks:
       - sw-network
 

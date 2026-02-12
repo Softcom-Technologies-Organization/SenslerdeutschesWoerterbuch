@@ -1,11 +1,11 @@
-@if (showFigure$ | async) {
+@if (searchTerm.trim() === '') {
 <figure class="art-showcase">
   <img src="schwarzsee.jpg" alt="Sketch of the landscape in Schwarzsee" />
   <figcaption>© ChatGPT</figcaption>
 </figure>
 }
-@if (filteredResults$ | async; as result) {
-@if(!result.elasticAvailable){
+
+@if (searchEngineDown) {
 <div class="error-container">
   <p><span class="error-title">Achtung:</span> Leider isch grad d Wörtersuechmaschyna düri! Du chasch üs
     das über
@@ -40,38 +40,32 @@
 
 </div>
 
-@for (hit of result.hits; track hit.id) {
-<mat-card>
-  <mat-card-header class="result-header">
-    <mat-card-title>
-      <a [routerLink]="['/', 'word', hit.id]" class="result-link">
-        {{ hit.title }}
-      </a>
-    </mat-card-title>
+@if (result?.hits?.hits) {
+  @for (hit of result.hits.hits; track hit._id) {
+  <mat-card>
+    <mat-card-header class="result-header">
+      <mat-card-title>
+        <a [routerLink]="['/', 'word', hit._id]" class="result-link">
+          {{ hit._source.term }}
+        </a>
+      </mat-card-title>
 
-    @if (hit.tags && hit.tags.length > 0) {
-    <span class="result-tags">
-      <mat-icon>label</mat-icon>
-      {{ hit.tags | tagTranslation }}
-    </span>
-    }
-  </mat-card-header>
+      <span class="result-tags">
+        <mat-icon>label</mat-icon>
+      </span>
+    </mat-card-header>
 
-  <mat-divider class="card-divider"></mat-divider>
+    <mat-divider class="card-divider"></mat-divider>
 
-  <mat-card-content>
-    {{ hit.description }}
-  </mat-card-content>
-</mat-card>
-}
-
-@if (result.nbHits == 0 && result.searchTerm != '' ) {
+    <mat-card-content>
+      {{ hit._source["formatted-description"] }}
+    </mat-card-content>
+  </mat-card>
+  }
+@if (result.hits.total.value === 0 && searchTerm.trim() != '') {
 <div class="no-searchresult-msg" data-testid="no-searchresult-msg">
-  <h2 class="no-searchresult-title">Wier hii leider <span>{{result.nbHits}}</span> Ergäbnis für di
-    Suechbegrüff
-    gfunne.</h2>
   <div class="no-searchresult-content">
-    Für e Suechbegrüff <span>&laquo;{{result.searchTerm}}&raquo;</span> hiimer nüt gfunne.
+    Für e Suechbegrüff <span>&laquo; {{ searchTerm }} &raquo;</span> hiimer nüt gfunne.
     <ul>
       <li>We du zgfüh hesch das wort fehlt
         no, chasch das Wort gärn über
@@ -84,9 +78,7 @@
   </div>
 </div>
 }
-
 }
-
 
 <div class="sponsored">
   <p>Unterstützt va <a href="https://softcom.pro/inscription-seislermaess/?lang=de" target="_blank">Softcom
