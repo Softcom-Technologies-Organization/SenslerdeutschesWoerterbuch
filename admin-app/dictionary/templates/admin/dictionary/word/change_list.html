@@ -1,0 +1,11 @@
+{% extends "admin/change_list.html" %}
+
+{% block object-tools-items %}
+    {{ block.super }}
+    <li>
+        <a href="{% url 'admin:dictionary_word_sync_search' %}" class="addlink">Sync Search</a>
+    </li>
+    <li>
+        <a href="{% url 'admin:dictionary_word_init_search' %}" class="addlink" style="background-color: #ba2121;" onclick="return confirm('Are you sure? This will delete and recreate the index.')">Init Search</a>
+    </li>
+{% endblock %}
