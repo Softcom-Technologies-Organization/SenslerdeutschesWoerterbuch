@@ -52,9 +52,12 @@
 
       <span class="result-tags">
         <mat-icon>label</mat-icon>
+        @for (tag of hit._source.tags; track tag) {
+          <span class="result-tag">{{ tag.display_name || tag.name}}</span>
+        }
       </span>
     </mat-card-header>
-
+    
     <mat-divider class="card-divider"></mat-divider>
 
     <mat-card-content>
@@ -65,9 +68,9 @@
 @if (result.hits.total.value === 0 && searchTerm.trim() != '') {
 <div class="no-searchresult-msg" data-testid="no-searchresult-msg">
   <div class="no-searchresult-content">
-    Für e Suechbegrüff <span>&laquo; {{ searchTerm }} &raquo;</span> hiimer nüt gfunne.
+    Für e Suechbegrüff <span>&laquo; {{ searchTerm }} &raquo;</span>, mit de usgwäuhte Tags, hiimer nüt gfunne.
     <ul>
-      <li>We du zgfüh hesch das wort fehlt
+      <li>We du zgfüh hesch das Wort fehlt
         no, chasch das Wort gärn über
         <a href="https://github.com/Softcom-Technologies-Organization/SenslerdeutschesWoerterbuch/issues"
           target="_blank">GitHub Issues</a>

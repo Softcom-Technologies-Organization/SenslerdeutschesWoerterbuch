@@ -29,7 +29,7 @@ class Command(BaseCommand):
                         "term": word.term,
                         "description": word.description,
                         "source": word.source,
-                        "tags": [tag.name for tag in word.tags.all()]
+                        "tags": [{"name": tag.name, "display_name": tag.display_name or tag.name} for tag in word.tags.all()]
                     }
                 }
 

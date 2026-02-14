@@ -42,7 +42,7 @@ def search(request):
         query["bool"]["must"].append({"match_all": {}})
 
     if tags:
-        query["bool"]["filter"].append({"terms": {"tags.keyword": tags}})
+        query["bool"]["filter"].append({"terms": {"tags.name.keyword": tags}})
         
     final_query = query
     if random_mode:

@@ -24,5 +24,5 @@ class Word(models.Model):
             "term": self.term,
             "description": self.description,
             "source": self.source,
-            "tags": list(self.tags.values_list('name', flat=True)),
+            "tags": [{"name": tag.name, "display_name": tag.display_name or tag.name} for tag in self.tags.all()],
         }
