@@ -3,9 +3,10 @@ from django.db import models
 
 class Tag(models.Model):
     name = models.CharField(max_length=100, unique=True)
+    display_name = models.CharField(max_length=100, default='', blank=True)
 
     def __str__(self):
-        return self.name
+        return self.display_name or self.name
 
 
 class Word(models.Model):

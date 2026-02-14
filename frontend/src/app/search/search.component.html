@@ -28,7 +28,7 @@
     </mat-label>
     <mat-select (selectionChange)="onTagsChanged($event.value)" multiple>
       <mat-option *ngFor="let tag of tags" [value]="tag">
-        {{ tag | tagTranslation }}
+        {{ tag.display_name || tag.name }}
       </mat-option>
     </mat-select>
   </mat-form-field>
@@ -45,7 +45,7 @@
   <mat-card>
     <mat-card-header class="result-header">
       <mat-card-title>
-        <a [routerLink]="['/', 'word', hit._id]" class="result-link">
+        <a [routerLink]="['/', 'word', hit._source.id]" class="result-link">
           {{ hit._source.term }}
         </a>
       </mat-card-title>
@@ -58,7 +58,7 @@
     <mat-divider class="card-divider"></mat-divider>
 
     <mat-card-content>
-      {{ hit._source["formatted-description"] }}
+      {{ hit._source["description"] }}
     </mat-card-content>
   </mat-card>
   }

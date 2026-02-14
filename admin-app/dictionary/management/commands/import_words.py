@@ -13,34 +13,32 @@ class Command(BaseCommand):
             with open(file_path, 'r', encoding='utf-8') as f:
                 words_data = json.load(f)
             
+            self.stdout.write('Deleting all existing words...')
+            Word.objects.all().delete()
+
             imported_count = 0
             for item in words_data:
-                word, created = Word.objects.get_or_create(
+                word = Word.objects.create(
                     term=item['term'][:200],
-                    defaults={
-                        'description': item.get('formatted-description', ''),
-                        'source': item.get('source', '')
-                    }
+                    description=item.get('description', ''),
+                    source=item.get('sources', '')
                 )
-                # Handle tags
+
                 if item.get('tags'):
                     for tag_name in item['tags']:
-                        # Get or create the tag
                         tag, tag_created = Tag.objects.get_or_create(name=tag_name)
-                        # Add the tag to the word
                         word.tags.add(tag)
 
-                if created:
-                    imported_count += 1
+                imported_count += 1
             
             self.stdout.write(
-                self.style.SUCCESS(f'Successfully imported {imported_count} new words')
+                self.style.SUCCESS(f'Successfully imported {imported_count} words')
             )
         except FileNotFoundError:
-            self.stdout.write(
+            self.stderr.write(
                 self.style.ERROR(f'File not found: {file_path}')
             )
         except json.JSONDecodeError:
-            self.stdout.write(
+            self.stderr.write(
                 self.style.ERROR('Invalid JSON format in words.json')
             )

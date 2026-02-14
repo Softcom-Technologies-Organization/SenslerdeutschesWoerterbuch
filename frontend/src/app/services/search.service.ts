@@ -1,43 +1,44 @@
-import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { catchError, map, Observable, of } from 'rxjs';
-import { environment } from '../../environments/environment';
-
-export interface SearchResult {
-  elasticAvailable: boolean,
-  nbHits: number,
-  searchTerm: string;
-  hits: Array<{
-    id: string;
-    title: string;
-    description?: string;
-    tags?: string[];
-  }>
-}
+import { catchError, map, Observable, of, timeout } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
 })
 export class SearchService {
-  readonly apiUrl = 'http://localhost:8000/dictionary/search/';
-  readonly username = environment.elasticUsername;
-  readonly password = environment.elasticPassword;
-
+  readonly apiUrl = '/api/dictionary/search/';
   lastSearchTerm: string = '';
 
   constructor(readonly http: HttpClient) { }
 
-  private getHeaders(): HttpHeaders {
-    const credentials = btoa(`${this.username}:${this.password}`);
-    return new HttpHeaders({
-      'Content-Type': 'application/json',
-      Authorization: `Basic ${credentials}`,
-    });
+  public search(term: string, tags: string[] = [], random: boolean = false): Observable<any> {
+    let params = new HttpParams().set('term', term);
+    if (tags && tags.length > 0) {
+      tags.forEach(tag => params = params.append('tags', tag));
+    }
+    if (random) {
+      params = params.set('random', 'true');
+    }
+    return this.http.get<any>(this.apiUrl + 'query', { params: params });
   }
 
-  public searchByTerm(term: string): Observable<any> {
-    let params = new HttpParams().set('q', term);
-    return this.http.get<any>(this.apiUrl, { params: params });
+  public checkSearchEngineStatus(): Observable<boolean> {
+    return this.http.get<{ status: string }>(this.apiUrl + 'status').pipe(
+      timeout(500),
+      map(response => response.status === 'available'),
+      catchError(() => of(false))
+    );
   }
 
+  public searchRandom(tags: string[]): Observable<any> {
+    let params = new HttpParams();
+    if (tags && tags.length > 0) {
+      tags.forEach(tag => params = params.append('tags', tag));
+    }
+    return this.http.get<any>(this.apiUrl + 'random', { params: params });
+  }
+
+  public getTags(): Observable<any[]> {
+    return this.http.get<any[]>(this.apiUrl + 'tags');
+  }
 }

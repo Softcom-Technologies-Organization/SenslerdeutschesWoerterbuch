@@ -4,7 +4,6 @@ import time
 from django.core.management.base import BaseCommand
 from django.conf import settings
 from opensearchpy import OpenSearch
-from opensearchpy.exceptions import ConnectionError
 
 class Command(BaseCommand):
     help = 'Initialize OpenSearch indices, roles, and users'
@@ -23,7 +22,6 @@ class Command(BaseCommand):
         # Paths to your config files (assuming they are in dictionary/search_config/)
         BASE_DIR = settings.BASE_DIR
         INDEX_CONFIG = BASE_DIR / 'dictionary' / 'search_config' / 'index.json'
-        BULK_DATA = BASE_DIR / 'dictionary' / 'search_config' / 'bulk_data.ndjson'
 
         self.stdout.write(f"Connecting to OpenSearch at {URL}...")
         
@@ -51,15 +49,6 @@ class Command(BaseCommand):
                 config = json.load(f)
             client.indices.create(index=INDEX_NAME, body=config)
             self.stdout.write(self.style.SUCCESS(f"Created index '{INDEX_NAME}'"))
-
-        # 4. Bulk Import
-        if os.path.exists(BULK_DATA):
-            self.stdout.write("Importing bulk data...")
-            with open(BULK_DATA, 'r') as f:
-                data = f.read()
-            # Note: error handling omitted for brevity, check 'errors' key in response
-            client.bulk(body=data) 
-            self.stdout.write(self.style.SUCCESS("Bulk data imported."))
 
         # 5. Security: Create Role (OpenSearch API)
         # OpenSearch stores security settings in a different plugin endpoint than Elastic
