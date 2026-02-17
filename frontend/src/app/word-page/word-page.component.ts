@@ -2,6 +2,7 @@ import { Component, OnInit, inject } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { MatDividerModule } from '@angular/material/divider';
 import { HttpClient } from '@angular/common/http';
+import { environment } from '../../environments/environment';
 
 @Component({
   selector: 'app-word-page',
@@ -13,7 +14,10 @@ export class WordPageComponent implements OnInit {
   private route = inject(ActivatedRoute);
   private http = inject(HttpClient);
   
-  readonly apiUrl = '/api/dictionary/word/';
+  readonly baseUrl = environment.apiUrl;
+  readonly searchEndpoints = '/dictionary/word/';
+  readonly apiUrl = this.baseUrl + this.searchEndpoints;
+
   wordEntry: any = null;
   loading = true;
   error = false;

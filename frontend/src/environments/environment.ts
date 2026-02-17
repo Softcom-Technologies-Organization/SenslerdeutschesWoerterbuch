@@ -1,6 +1,4 @@
 export const environment = {
   production: true,
-  proxyUrl: '/opensearch/',
-  elasticUsername: 'dictionary_reader',
-  elasticPassword: 'thisisgonnabepublic',
+  apiUrl: 'https://backend.senslerdeutsches-woerterbuch.ch',
 };

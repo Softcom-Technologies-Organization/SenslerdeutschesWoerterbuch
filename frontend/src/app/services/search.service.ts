@@ -1,12 +1,16 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { catchError, map, Observable, of, timeout } from 'rxjs';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root',
 })
 export class SearchService {
-  readonly apiUrl = '/api/dictionary/search/';
+  readonly baseUrl = environment.apiUrl;
+  readonly searchEndpoints = '/dictionary/search/';
+  readonly apiUrl = this.baseUrl + this.searchEndpoints;
+
   lastSearchTerm: string = '';
 
   constructor(readonly http: HttpClient) { }
