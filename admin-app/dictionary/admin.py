@@ -17,6 +17,7 @@ class WordAdmin(admin.ModelAdmin):
         custom_urls = [
             path('sync-search/', self.admin_site.admin_view(self.sync_search), name='dictionary_word_sync_search'),
             path('init-search/', self.admin_site.admin_view(self.init_search), name='dictionary_word_init_search'),
+            path('import-words/', self.admin_site.admin_view(self.import_words), name='dictionary_word_import_words'),
         ]
         return custom_urls + urls
 
@@ -36,6 +37,15 @@ class WordAdmin(admin.ModelAdmin):
             self.message_user(request, f"Init successful: {out.getvalue()}", messages.SUCCESS)
         except Exception as e:
             self.message_user(request, f"Init failed: {str(e)}", messages.ERROR)
+        return HttpResponseRedirect("../")
+    
+    def import_words(self, request):
+        try:
+            out = io.StringIO()
+            call_command('import_words', stdout=out)
+            self.message_user(request, f"Import successful: {out.getvalue()}", messages.SUCCESS)
+        except Exception as e:
+            self.message_user(request, f"Import failed: {str(e)}", messages.ERROR)
         return HttpResponseRedirect("../")
 
 @admin.register(Tag)
