@@ -5,7 +5,7 @@ import { RouterModule } from '@angular/router';
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatFormFieldModule } from '@angular/material/form-field';
-import { BehaviorSubject, combineLatest, debounceTime, distinctUntilChanged, filter, map, merge, startWith, Subject, Subscription, switchMap } from 'rxjs';
+import { BehaviorSubject, catchError, combineLatest, debounceTime, distinctUntilChanged, filter, map, merge, of, startWith, Subject, Subscription, switchMap } from 'rxjs';
 import { MatInputModule } from '@angular/material/input';
 import { MatCardModule } from '@angular/material/card';
 import { MatDividerModule } from '@angular/material/divider';
@@ -55,13 +55,19 @@ export class SearchComponent implements OnInit, OnDestroy {
   constructor(readonly searchService: SearchService) { }
 
   ngOnInit() {
-    this.searchService.getTags().subscribe(tags => {
-      this.tags = tags;
-    });
+    this.subscriptions.add(
+      this.searchService.getTags().subscribe({
+        next: (tags) => this.tags = tags,
+        error: () => this.tags = []
+      })
+    );
 
-    this.searchService.checkSearchEngineStatus().subscribe(available => {
-      this.searchEngineDown = !available;
-    });
+    this.subscriptions.add(
+      this.searchService.checkSearchEngineStatus().subscribe({
+        next: (available) => this.searchEngineDown = !available,
+        error: () => this.searchEngineDown = true
+      })
+    );
 
     if (this.searchService.lastSearchTerm) {
       this.searchControl.setValue(this.searchService.lastSearchTerm);
@@ -104,7 +110,12 @@ export class SearchComponent implements OnInit, OnDestroy {
     this.subscriptions.add(merge(inputSearch$, randomSearch$).pipe(
       switchMap(params => {
         this.searchService.lastSearchTerm = params.term;
-        return this.searchService.search(params.term, params.tags, params.random);
+        return this.searchService.search(params.term, params.tags, params.random).pipe(
+          catchError(err => {
+            // Return a fallback result so the outer stream stays alive
+            return of({ hits: { total: 0, hits: [] }, error: err });
+          })
+        );
       })
     ).subscribe({
       next: (res) => this.result = res,
