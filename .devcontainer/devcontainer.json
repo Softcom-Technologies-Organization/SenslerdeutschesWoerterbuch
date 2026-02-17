@@ -1,9 +1,12 @@
 {
   "name": "Versatile DevContainer",
-  "dockerComposeFile": "../docker-compose.yml",
+  "dockerComposeFile": [
+    "../docker-compose.yml",
+    "../docker-compose.dev.yml"
+
+  ],
   "service": "workspace",
   "workspaceFolder": "/workspace",
-  "runServices": ["workspace", "db"],
   "features": {
     "ghcr.io/devcontainers/features/docker-outside-of-docker:1": {
       "version": "latest",

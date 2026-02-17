@@ -18,8 +18,8 @@ for i in range(30):
             dbname=os.environ.get('POSTGRES_NAME'),
             user=os.environ.get('POSTGRES_USER'),
             password=os.environ.get('POSTGRES_PASSWORD'),
-            host=os.environ.get('POSTGRES_HOST'),
-            port=os.environ.get('POSTGRES_PORT')
+            host=os.environ.get('POSTGRES_HOST', 'db'),
+            port=os.environ.get('POSTGRES_PORT', '5432')
         )
         print("--> Database is ready!")
         sys.exit(0)

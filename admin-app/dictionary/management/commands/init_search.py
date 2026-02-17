@@ -11,7 +11,8 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         # 1. Configuration
         HOST = os.getenv('OPENSEARCH_HOST', 'opensearch')
-        URL = f"http://{HOST}:9200"
+        PORT = '9200'
+        URL = f"http://{HOST}:{PORT}"
         AUTH = ('admin', os.getenv('OPENSEARCH_ADMIN_PASSWORD', 'ComplexPassword123!'))
         
         INDEX_NAME = os.getenv('ELASTIC_INDEX', 'dictionary')

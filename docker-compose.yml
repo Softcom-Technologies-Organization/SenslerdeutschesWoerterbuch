@@ -1,30 +1,11 @@
 name: senslerdeutsches-woerterbuch
 
 services:
-  workspace:
-    build:
-      context: .
-      dockerfile: docker/workspace/Dockerfile
-    env_file:
-      - .env
-    volumes:
-      - .:/workspace:cached
-    command: sleep infinity
-    networks:
-      - sw-network
-
   db:
-    image: postgres
+    image: postgres:15
     environment:
       POSTGRES_DB: ${POSTGRES_NAME}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-    networks:
-      - sw-network
-
-  adminer:
-    image: adminer
-    ports:
-      - 8080:8080
     networks:
       - sw-network
 
@@ -37,23 +18,6 @@ services:
       - plugins.security.disabled=false
       - plugins.security.ssl.http.enabled=false
       - OPENSEARCH_INITIAL_ADMIN_PASSWORD=${OPENSEARCH_ADMIN_PASSWORD}
-    # TODO: Is this required for a local setup or can it be improved with traefik or the manual proxy file?
-    ports:
-      - 9200:9200
-    networks:
-      - sw-network
-
-  e2e:
-    profiles:
-      - test
-    build:
-      context: .
-      dockerfile: docker/e2e/Dockerfile
-    environment:
-      - FRONTEND_URL=${PROXY_URL}
-    volumes:
-      - ./e2e/playwright-report:/app/playwright-report
-      - ./e2e/test-results:/app/test-results
     networks:
       - sw-network
 
