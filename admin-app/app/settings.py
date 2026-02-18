@@ -26,7 +26,12 @@ SECRET_KEY = 'django-insecure-*(y*rt1moh0rb$lyzh^n2wy%i2ha!)fy93py1x1qec)*bb)7%c
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    'localhost',
+    '127.0.0.1',
+    'backend',           # Used by the E2E container
+    'backend.localhost', # Used by your Windows browser/Admin panel
+]
 
 
 # Application definition
@@ -136,5 +141,6 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:4200",
     "http://frontend.localhost",
+    "http://frontend",
     "https://frontend.senslerdeutsches-woerterbuch.ch",
 ]

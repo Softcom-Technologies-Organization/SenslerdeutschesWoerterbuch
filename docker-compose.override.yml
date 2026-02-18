@@ -16,7 +16,11 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
     networks:
-      - sw-network
+      sw-network:
+        aliases:
+          - frontend # This lets E2E hit Treafik using the service name
+          - backend # This lets E2E hit Treafik using the service name
+
 
   backend:
     build:
@@ -24,7 +28,7 @@ services:
       dockerfile: docker/admin-app/Dockerfile
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.backend.rule=Host(`${BACKEND_DOMAIN}`)"
+      - "traefik.http.routers.backend.rule=Host(`${BACKEND_DOMAIN}`) || Host(`backend`)"
       - "traefik.http.routers.backend.entrypoints=web"
       - "traefik.http.services.backend.loadbalancer.server.port=8000"
     environment:
@@ -52,7 +56,7 @@ services:
         NG_ENV: ${NG_ENV}
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.frontend.rule=Host(`${FRONTEND_DOMAIN}`)"
+      - "traefik.http.routers.frontend.rule=Host(`${FRONTEND_DOMAIN}`) || Host(`frontend`)"
       - "traefik.http.routers.frontend.entrypoints=web"
       - "traefik.http.services.frontend.loadbalancer.server.port=80"
     networks:
@@ -65,7 +69,7 @@ services:
       context: .
       dockerfile: docker/e2e/Dockerfile
     environment:
-      - FRONTEND_URL=${PROXY_URL}
+      - FRONTEND_DOMAIN=frontend
     volumes:
       - ./e2e/playwright-report:/app/playwright-report
       - ./e2e/test-results:/app/test-results

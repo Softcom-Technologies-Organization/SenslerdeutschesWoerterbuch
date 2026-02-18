@@ -12,7 +12,8 @@ dotenv.config({ path: path.resolve(__dirname, '.env') });
 const IS_DOCKER = process.env.IS_DOCKER === 'true';
 let frontendUrl =  'http://localhost:4200';
 if (IS_DOCKER) {
-  frontendUrl = `http://${process.env.FRONTEND_DOMAIN}`;
+  // Now process.env.FRONTEND_DOMAIN is "frontend.localhost"
+  frontendUrl = `http://${process.env.FRONTEND_DOMAIN}`; 
 }
 const IS_CI = !!process.env.CI;
 
