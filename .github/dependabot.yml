@@ -83,7 +83,7 @@ updates:
     schedule:
       interval: "weekly"
     patterns:
-      - "mcr.microsoft.com/playwright"
+      - "mcr.microsoft.com/playwright*"
     multi-ecosystem-group: "playwright"
 
   # Other Docker images
