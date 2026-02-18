@@ -10,7 +10,7 @@ class Tag(models.Model):
 
 
 class Word(models.Model):
-    term = models.CharField(max_length=200, unique=True)
+    term = models.CharField(max_length=200)
     description = models.TextField(blank=True)
     source = models.TextField(blank=True)
     tags = models.ManyToManyField(Tag, blank=True)

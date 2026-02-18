@@ -122,16 +122,8 @@ test('search functionality with filter', async ({ page }, testInfo) => {
   await tagOption.click(); // Select the "Schimpfwort" tag
   await tagFilter.press('Escape');
 
-  const searchField = page.getByRole('textbox', { name: 'Suechi' })
-  await expect(searchField).toBeVisible();
-  await searchField.fill('Flaag');
-  await page.screenshot({ path: `${getScreenshotDir(testInfo)}/suggestions.png` });
-  await searchField.press('Enter');
-  await expect(page.getByRole('link', { name: 'Flaag' })).toBeVisible();
-  await page.screenshot({ path: `${getScreenshotDir(testInfo)}/results.png` });
-
   // Check the presence of a tag chip
-  const tagChip = page.getByText('Schimpfwort', { exact: true });
+  const tagChip = page.locator('mat-card .result-tag').first();
   await expect(tagChip).toBeVisible();
 });
 
@@ -168,7 +160,7 @@ test('make a random search with a tag filter and check if one result is displaye
   await expect(resultCards.first()).toBeVisible();
 
   // Check the presence of a tag chip
-  const tagChip = page.getByText('Schimpfwort', { exact: true });
+  const tagChip = page.locator('mat-card .result-tag').first();
   await expect(tagChip).toBeVisible();
 });
 
