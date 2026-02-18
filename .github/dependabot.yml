@@ -83,7 +83,7 @@ updates:
     schedule:
       interval: "weekly"
     patterns:
-      - "playwright"
+      - "mcr.microsoft.com/playwright*"
     multi-ecosystem-group: "playwright"
 
   # Other Docker images
@@ -102,7 +102,7 @@ updates:
           - "patch"
     ignore:
       # Ignore playwright in this ecosystem entry since it's handled by the multi-ecosystem group
-      - dependency-name: "playwright"
+      - dependency-name: "mcr.microsoft.com/playwright"
     # major updates will happen in individual PRs
 
   # Docker Compose
