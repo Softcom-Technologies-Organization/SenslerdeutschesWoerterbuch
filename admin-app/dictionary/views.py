@@ -89,8 +89,17 @@ def check_searchengine_status(request):
     try:
         client = get_client()
         if client.ping():
-            return JsonResponse({'status': 'available'})
+            index_name = 'dictionary'
+            index_exists = client.indices.exists(index=index_name)
+            doc_count = 0
+            
+            if index_exists:
+                # client.count returns a dict like {'count': 5, '_shards': ...}
+                count_response = client.count(index=index_name)
+                doc_count = count_response.get('count', 0)
+
+            return JsonResponse({'status': 'available', 'indexExists': index_exists, 'docCount': doc_count})
         else:
-            return JsonResponse({'status': 'unavailable'}, status=503)
+            return JsonResponse({'status': 'unavailable', 'indexExists': False, 'docCount': 0}, status=503)
     except Exception as e:
-        return JsonResponse({'status': 'unavailable', 'error': str(e)}, status=503)
+        return JsonResponse({'status': 'unavailable', 'error': str(e), 'indexExists': False, 'docCount': 0}, status=503)

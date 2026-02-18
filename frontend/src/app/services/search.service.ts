@@ -27,9 +27,9 @@ export class SearchService {
   }
 
   public checkSearchEngineStatus(): Observable<boolean> {
-    return this.http.get<{ status: string }>(this.apiUrl + 'status').pipe(
+    return this.http.get<{ status: string, indexExists: boolean, docCount: number }>(this.apiUrl + 'status').pipe(
       timeout(500),
-      map(response => response.status === 'available'),
+      map(response => response.status === 'available' && response.indexExists && response.docCount > 0),
       catchError(() => of(false))
     );
   }
