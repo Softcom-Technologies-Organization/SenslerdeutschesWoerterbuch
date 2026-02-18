@@ -29,6 +29,12 @@ npm install
 npx playwright test
 ```
 
+If it is the first time, install Playwright first.
+```
+npx playwright install-deps && npx playwright install --with-deps
+
+```
+
 GitHub Actions are used to run the tests automatically. To test and debug them locally we suggest using https://github.com/nektos/act. After downloading the binary you can use it with a simple command.
 ```
 bin/act --secret-file .env

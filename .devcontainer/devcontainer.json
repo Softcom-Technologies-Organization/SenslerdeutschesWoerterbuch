@@ -17,5 +17,12 @@
       "version": "lts"
     }
   },
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-playwright.playwright" 
+      ]
+    }
+  },
   "postCreateCommand": "pip install -r admin-app/requirements.txt && npm install -g @angular/cli"
 }

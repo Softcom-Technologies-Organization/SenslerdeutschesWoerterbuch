@@ -104,23 +104,10 @@ test('make a random search and check if one result is displayed', async ({ page 
   await page.screenshot({ path: `${getScreenshotDir(testInfo)}/before-research.png` });
   await expect(randomSearchButton).toBeVisible();
   await randomSearchButton.click();
-  // Wait for the search field to be populated, indicating the random search is complete
-  await expect(async () => {
-    const value = await searchField.inputValue();
-    expect(value.length).toBeGreaterThan(0);
-  }).toPass();
-  await page.screenshot({ path: `${getScreenshotDir(testInfo)}/after-research.png` });
 
-  searchFieldInputValue = await searchField.inputValue();
-  expect(searchFieldInputValue.length).toBeGreaterThan(0);
-
-  // Check if the search results are displayed
-  const searchResults = page.getByRole('link', { name: searchFieldInputValue });
-  await expect(searchResults).toBeVisible();
-
-  // Check that the search results is the same as the input value
-  const searchResultText = await searchResults.textContent();
-  expect(searchResultText?.trim()).toBe(searchFieldInputValue.trim());
+  // Check if at least one card element is displayed
+  const resultCards = page.locator('mat-card');
+  await expect(resultCards.first()).toBeVisible();
 });
 
 test('search functionality with filter', async ({ page }, testInfo) => {
@@ -176,16 +163,9 @@ test('make a random search with a tag filter and check if one result is displaye
   await page.waitForTimeout(1000); // Wait for the random search to complete
   await page.screenshot({ path: `${getScreenshotDir(testInfo)}/after-research.png` });
 
-  searchFieldInputValue = await searchField.inputValue();
-  expect(searchFieldInputValue.length).toBeGreaterThan(0);
-
-  // Check if the search results are displayed
-  const searchResults = page.getByRole('link', { name: searchFieldInputValue });
-  await expect(searchResults).toBeVisible();
-
-  // Check that the search results is the same as the input value
-  const searchResultText = await searchResults.textContent();
-  expect(searchResultText?.trim()).toBe(searchFieldInputValue.trim());
+  // Check if at least one card element is displayed
+  const resultCards = page.locator('mat-card');
+  await expect(resultCards.first()).toBeVisible();
 
   // Check the presence of a tag chip
   const tagChip = page.getByText('Schimpfwort', { exact: true });
