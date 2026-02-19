@@ -18,16 +18,20 @@ jobs:
       - name: Approve pull request
         if: |
           steps.metadata.outputs.update-type == 'version-update:semver-minor' ||
-          steps.metadata.outputs.update-type == 'version-update:semver-patch'
+          steps.metadata.outputs.update-type == 'version-update:semver-patch' ||
+          (steps.metadata.outputs.package-ecosystem == 'pip' &&
+           (steps.metadata.outputs.update-type == '' || steps.metadata.outputs.update-type == 'null'))
         run: gh pr review --approve "$PR_URL"
         env:
           PR_URL: ${{ github.event.pull_request.html_url }}
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.DEPENDABOT_APPROVER_AND_AUTOMERGE_TOKEN }}
       - name: Enable auto-merge for minor and patch updates
         if: |
           steps.metadata.outputs.update-type == 'version-update:semver-minor' ||
-          steps.metadata.outputs.update-type == 'version-update:semver-patch'
+          steps.metadata.outputs.update-type == 'version-update:semver-patch' ||
+          (steps.metadata.outputs.package-ecosystem == 'pip' &&
+           (steps.metadata.outputs.update-type == '' || steps.metadata.outputs.update-type == 'null'))
         run: gh pr merge --auto --merge "$PR_URL"
         env:
           PR_URL: ${{ github.event.pull_request.html_url }}
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.DEPENDABOT_APPROVER_AND_AUTOMERGE_TOKEN }}
