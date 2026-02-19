@@ -4,8 +4,24 @@
 # https://docs.github.com/code-security/dependabot/dependabot-version-updates/configuration-options-for-the-dependabot.yml-file
 
 version: 2
+
+multi-ecosystem-groups:
+  # Playwright updates are grouped across npm and Docker to keep them in sync
+  playwright:
+    schedule:
+      interval: "weekly"
+
 updates:
-  # npm packages
+  # Playwright npm package - grouped with Docker image
+  - package-ecosystem: "npm"
+    directory: "/e2e"
+    schedule:
+      interval: "weekly"
+    patterns:
+      - "@playwright/test"
+    multi-ecosystem-group: "playwright"
+
+  # Other npm packages
   - package-ecosystem: "npm"
     directories:
       - "/frontend"
@@ -42,6 +58,8 @@ updates:
         update-types: ["version-update:semver-major"]
       - dependency-name: "@angular-devkit/*"
         update-types: ["version-update:semver-major"]
+      # Ignore playwright in this ecosystem entry since it's handled by the multi-ecosystem group
+      - dependency-name: "@playwright/test"
 
     # other package updates will happen in individual PRs
 
@@ -59,7 +77,16 @@ updates:
           - "patch"
     # major updates will happen in individual PRs
 
-  # Docker images
+  # Playwright Docker image - grouped with npm package
+  - package-ecosystem: "docker"
+    directory: "/docker/e2e"
+    schedule:
+      interval: "weekly"
+    patterns:
+      - "mcr.microsoft.com/playwright*"
+    multi-ecosystem-group: "playwright"
+
+  # Other Docker images
   - package-ecosystem: "docker"
     directories:
       - "/docker/backend"
@@ -73,6 +100,9 @@ updates:
         update-types:
           - "minor"
           - "patch"
+    ignore:
+      # Ignore playwright in this ecosystem entry since it's handled by the multi-ecosystem group
+      - dependency-name: "mcr.microsoft.com/playwright"
     # major updates will happen in individual PRs
 
   # Docker Compose
