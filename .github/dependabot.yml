@@ -77,13 +77,12 @@ updates:
           - "patch"
     # major updates will happen in individual PRs
 
-  # Playwright Docker image - grouped with npm package
+  # Playwright Docker image in e2e - grouped with npm package
   - package-ecosystem: "docker"
     directory: "/docker/e2e"
     schedule:
       interval: "weekly"
-    patterns:
-      - "mcr.microsoft.com/playwright*"
+    patterns: ["*"]
     multi-ecosystem-group: "playwright"
 
   # Other Docker images
@@ -92,7 +91,6 @@ updates:
       - "/docker/backend"
       - "/docker/elasticsearch"
       - "/docker/proxy"
-      - "/docker/e2e"
     schedule:
       interval: "weekly"
     groups:
@@ -100,9 +98,6 @@ updates:
         update-types:
           - "minor"
           - "patch"
-    ignore:
-      # Ignore playwright in this ecosystem entry since it's handled by the multi-ecosystem group
-      - dependency-name: "mcr.microsoft.com/playwright"
     # major updates will happen in individual PRs
 
   # Docker Compose
