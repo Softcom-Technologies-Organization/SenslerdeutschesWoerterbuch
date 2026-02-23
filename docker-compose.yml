@@ -22,6 +22,8 @@ services:
     environment:
       POSTGRES_DB: ${POSTGRES_NAME}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
     networks:
       - sw-network
 
@@ -34,6 +36,8 @@ services:
       - plugins.security.disabled=false
       - plugins.security.ssl.http.enabled=false
       - OPENSEARCH_INITIAL_ADMIN_PASSWORD=${OPENSEARCH_ADMIN_PASSWORD}
+    volumes:
+      - opensearch-data:/usr/share/opensearch/data
     networks:
       - sw-network
 
@@ -123,3 +127,7 @@ services:
 networks:
   sw-network:
     driver: bridge # ??
+
+volumes:
+  postgres-data:
+  opensearch-data:
