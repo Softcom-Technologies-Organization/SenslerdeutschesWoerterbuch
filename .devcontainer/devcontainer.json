@@ -1,6 +1,9 @@
 {
   "name": "Versatile DevContainer",
-  "dockerComposeFile": "../docker-compose.yml",
+  "dockerComposeFile": [
+    "../docker-compose.yml",
+    "docker-compose.yml"
+  ],
   "service": "workspace",
   "runServices": [
     "workspace",
@@ -21,7 +24,7 @@
   "customizations": {
     "vscode": {
       "extensions": [
-        "ms-playwright.playwright" 
+        "ms-playwright.playwright"
       ]
     }
   },
