@@ -26,13 +26,13 @@ E2e tests are using Playwright.
 ```
 cd e2e
 npm install
+npx playwright install --with-deps
 npx playwright test
 ```
 
-If it is the first time, install Playwright first.
+If running the local docker setup, use the following command.
 ```
-npx playwright install-deps && npx playwright install --with-deps
-
+docker compose --profile test run --rm e2e
 ```
 
 GitHub Actions are used to run the tests automatically. To test and debug them locally we suggest using https://github.com/nektos/act. After downloading the binary you can use it with a simple command.
