@@ -23,7 +23,7 @@ test('search functionality without autocomplete', async ({ page }, testInfo) => 
    */
   const searchField = page.getByRole('textbox', { name: 'Suechi' });
   await expect(searchField).toBeVisible();
-  await searchField.fill('beckertrütscha');
+  await searchField.fill('beckertrǜtscha');
   await page.screenshot({ path: `${getScreenshotDir(testInfo)}/suggestions.png` });
   await searchField.press('Enter');
   await expect(page.getByRole('link', { name: 'Becker·trǜtscha' })).toBeVisible();
