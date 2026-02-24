@@ -3,6 +3,7 @@ import json
 import os
 from pathlib import Path
 
+from django.conf import settings
 from opensearchpy import OpenSearch
 from opensearchpy.helpers import bulk
 

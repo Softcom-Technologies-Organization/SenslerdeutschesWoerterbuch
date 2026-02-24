@@ -49,10 +49,7 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
     networks:
-      sw-network:
-        aliases:
-          - frontend # This lets E2E hit Treafik using the service name
-          - backend # This lets E2E hit Treafik using the service name
+      - sw-network
 
   backend:
     build:
@@ -108,11 +105,16 @@ services:
     build:
       context: .
       dockerfile: docker/e2e/Dockerfile
+    profiles:
+      - test
     environment:
       - FRONTEND_DOMAIN=${FRONTEND_DOMAIN}
+      - PLAYWRIGHT_OUTPUT_DIR=/app/.container-artifacts/test-results
+      - PLAYWRIGHT_HTML_DIR=/app/.container-artifacts/html-report
     volumes:
       - ./e2e/playwright-report:/app/playwright-report
       - ./e2e/test-results:/app/test-results
+      - ./e2e/container-artifacts:/app/.container-artifacts
     networks:
       - sw-network
 

@@ -1,8 +1,20 @@
+import re
 from django.shortcuts import get_object_or_404
 from django.http import HttpResponse, JsonResponse
 from opensearchpy import exceptions as os_exc
 from .models import Word, Tag
 from .opensearch_helper import get_client, get_index_name, get_index_status
+
+
+def _sanitize_query(raw: str) -> str:
+    """Strip whitespace and remove characters that could break query parsing."""
+    text = raw.strip()[:200]  # limit length
+    # Remove characters that are special in query_string syntax (safety net)
+    text = re.sub(r'[+\-=&|><!(){}\[\]^"~*?:\\/]', ' ', text)
+    # Collapse multiple spaces
+    text = re.sub(r'\s+', ' ', text).strip()
+    return text
+
 
 def check_searchengine_status(request):
     try:
@@ -18,7 +30,8 @@ def check_searchengine_status(request):
         return JsonResponse({'status': 'unavailable', 'error': str(e), 'indexExists': False, 'docCount': 0}, status=503)
 
 def search(request):
-    query_term = request.GET.get('term', '')
+    raw_term = request.GET.get('term', '')
+    query_term = _sanitize_query(raw_term)
     tags = request.GET.getlist('tags')
     random_mode = request.GET.get('random') == 'true'
     client = get_client()
@@ -31,7 +44,53 @@ def search(request):
     }
 
     if query_term:
-        query["bool"]["must"].append({"query_string": {"query": query_term}})
+        # Use a bool/should with field-specific match queries so that
+        # the custom analyzers (edge_ngram, phonetic, asciifolding) are
+        # actually used.  Each clause has a different boost so that exact
+        # term matches rank highest, then fuzzy, then phonetic, then
+        # description.
+        query["bool"]["must"].append({
+            "bool": {
+                "should": [
+                    {
+                        "match": {
+                            "term": {
+                                "query": query_term,
+                                "boost": 10,
+                                "analyzer": "term_search_analyzer"
+                            }
+                        }
+                    },
+                    {
+                        "match": {
+                            "term": {
+                                "query": query_term,
+                                "fuzziness": "AUTO",
+                                "boost": 5,
+                                "analyzer": "term_search_analyzer"
+                            }
+                        }
+                    },
+                    {
+                        "match": {
+                            "term.phonetic": {
+                                "query": query_term,
+                                "boost": 2
+                            }
+                        }
+                    },
+                    {
+                        "match": {
+                            "formatted-description": {
+                                "query": query_term,
+                                "boost": 1
+                            }
+                        }
+                    }
+                ],
+                "minimum_should_match": 1
+            }
+        })
     else:
         query["bool"]["must"].append({"match_all": {}})
 
@@ -49,7 +108,12 @@ def search(request):
         }
 
     try:
-        resp = client.search(index=get_index_name(), body={"query": final_query})
+        # log the final query for debugging purposes
+        print("Final OpenSearch query:", final_query)
+        resp = client.search(
+            index=get_index_name(),
+            body={"query": final_query, "size": 10}
+        )
         return JsonResponse(resp)
     except (os_exc.ConnectionTimeout, os_exc.ConnectionError, TimeoutError):
         return JsonResponse({"detail": "Search temporarily unavailable"}, status=503)
