@@ -1,44 +1,19 @@
-import os
 from django.shortcuts import get_object_or_404
 from django.http import HttpResponse, JsonResponse
-from opensearchpy import OpenSearch, exceptions as os_exc
+from opensearchpy import exceptions as os_exc
 from .models import Word, Tag
-
-
-def get_client():
-    host = os.getenv('OPENSEARCH_HOST', 'opensearch')
-    port = int(os.getenv('OPENSEARCH_PORT', '9200'))
-    username = os.getenv('OPENSEARCH_ADMIN_USERNAME', 'admin')
-    password = os.getenv('OPENSEARCH_ADMIN_PASSWORD', 'admin')
-    auth = (username, password)
-    return OpenSearch(
-        hosts=[{'host': host, 'port': port}],
-        http_auth=auth,
-        use_ssl=False,
-        verify_certs=False,
-        # Timeout to not freeze the app if OpenSearch is not available, and no retries to fail fast
-        timeout=2,
-        max_retries=0,
-        retry_on_timeout=False
-    )
-
+from .opensearch_helper import get_client, get_index_name, get_index_status
 
 def check_searchengine_status(request):
     try:
         client = get_client()
-        if client.ping():
-            index_name = 'dictionary'
-            index_exists = client.indices.exists(index=index_name)
-            doc_count = 0
-            
-            if index_exists:
-                # client.count returns a dict like {'count': 5, '_shards': ...}
-                count_response = client.count(index=index_name)
-                doc_count = count_response.get('count', 0)
-
-            return JsonResponse({'status': 'available', 'indexExists': index_exists, 'docCount': doc_count})
-        else:
+        if not client.ping():
             return JsonResponse({'status': 'unavailable', 'indexExists': False, 'docCount': 0}, status=503)
+
+        index_exists, doc_count = get_index_status(client, get_index_name())
+        return JsonResponse({'status': 'available', 'indexExists': index_exists, 'docCount': doc_count})
+    except (os_exc.ConnectionTimeout, os_exc.ConnectionError, TimeoutError):
+        return JsonResponse({'status': 'unavailable', 'indexExists': False, 'docCount': 0}, status=503)
     except Exception as e:
         return JsonResponse({'status': 'unavailable', 'error': str(e), 'indexExists': False, 'docCount': 0}, status=503)
 
@@ -74,7 +49,7 @@ def search(request):
         }
 
     try:
-        resp = client.search(index='dictionary', body={"query": final_query})
+        resp = client.search(index=get_index_name(), body={"query": final_query})
         return JsonResponse(resp)
     except (os_exc.ConnectionTimeout, os_exc.ConnectionError, TimeoutError):
         return JsonResponse({"detail": "Search temporarily unavailable"}, status=503)
