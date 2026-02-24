@@ -19,6 +19,7 @@ services:
       start_period: 10s
 
   opensearch:
+    image: ${ACR_REGISTRY}/opensearch:${IMAGE_TAG:-latest}
     build:
       context: .
       dockerfile: docker/opensearch/Dockerfile
@@ -40,30 +41,56 @@ services:
       - "--providers.docker=true"
       - "--providers.docker.exposedbydefault=false"
       - "--entrypoints.web.address=:80"
+      - "--entrypoints.websecure.address=:443"
+      - "--certificatesresolvers.letsencrypt.acme.email=${ACME_EMAIL}"
+      - "--certificatesresolvers.letsencrypt.acme.storage=/letsencrypt/acme.json"
+      - "--certificatesresolvers.letsencrypt.acme.httpchallenge.entrypoint=web"
       - "--log.level=${TRAEFIK_LOG_LEVEL}"
       - "--accesslog=${TRAEFIK_ACCESS_LOG}"
+    environment:
+      # Set these in production .env to enable HTTP→HTTPS redirect:
+      # TRAEFIK_ENTRYPOINTS_WEB_HTTP_REDIRECTIONS_ENTRYPOINT_TO=websecure
+      # TRAEFIK_ENTRYPOINTS_WEB_HTTP_REDIRECTIONS_ENTRYPOINT_SCHEME=https
+      - TRAEFIK_ENTRYPOINTS_WEB_HTTP_REDIRECTIONS_ENTRYPOINT_TO
+      - TRAEFIK_ENTRYPOINTS_WEB_HTTP_REDIRECTIONS_ENTRYPOINT_SCHEME
     ports:
       - "80:80"
+      - "443:443"
       - "8080:8080"
       - "8000:8000"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
+      - letsencrypt:/letsencrypt
     networks:
       - sw-network
 
   backend:
+    image: ${ACR_REGISTRY}/backend:${IMAGE_TAG:-latest}
     build:
       context: .
       dockerfile: docker/admin-app/Dockerfile
     labels:
       - "traefik.enable=true"
+      # HTTP routers
       - "traefik.http.routers.backend.rule=Host(`${BACKEND_DOMAIN}`)"
       - "traefik.http.routers.backend.entrypoints=web"
       - "traefik.http.services.backend.loadbalancer.server.port=8000"
-      # Routing for frontend
+      # HTTPS routers
+      - "traefik.http.routers.backend-secure.rule=Host(`${BACKEND_DOMAIN}`)"
+      - "traefik.http.routers.backend-secure.entrypoints=websecure"
+      - "traefik.http.routers.backend-secure.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.backend-secure.service=backend"
+      # API routing for frontend (HTTP)
       - traefik.http.routers.backend_api.rule=Host(`${FRONTEND_DOMAIN}`) && PathPrefix(`/api`)
       - traefik.http.routers.backend_api.entrypoints=web
       - traefik.http.routers.backend_api.middlewares=strip-api
+      # API routing for frontend (HTTPS)
+      - traefik.http.routers.backend_api-secure.rule=Host(`${FRONTEND_DOMAIN}`) && PathPrefix(`/api`)
+      - traefik.http.routers.backend_api-secure.entrypoints=websecure
+      - traefik.http.routers.backend_api-secure.tls.certresolver=letsencrypt
+      - traefik.http.routers.backend_api-secure.middlewares=strip-api
+      - traefik.http.routers.backend_api-secure.service=backend
+      # Middleware
       - traefik.http.middlewares.strip-api.stripprefix.prefixes=/api
     environment:
       # Enable unbuffered output for better logging in Docker
@@ -89,14 +116,21 @@ services:
         condition: service_healthy
 
   frontend:
+    image: ${ACR_REGISTRY}/frontend:${IMAGE_TAG:-latest}
     build:
       context: .
       dockerfile: docker/public-app/Dockerfile
     labels:
       - "traefik.enable=true"
+      # HTTP router
       - "traefik.http.routers.frontend.rule=Host(`${FRONTEND_DOMAIN}`)"
       - "traefik.http.routers.frontend.entrypoints=web"
       - "traefik.http.services.frontend.loadbalancer.server.port=80"
+      # HTTPS router
+      - "traefik.http.routers.frontend-secure.rule=Host(`${FRONTEND_DOMAIN}`)"
+      - "traefik.http.routers.frontend-secure.entrypoints=websecure"
+      - "traefik.http.routers.frontend-secure.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.frontend-secure.service=frontend"
     networks:
       - sw-network
 
@@ -124,3 +158,4 @@ networks:
 volumes:
   postgres-data:
   opensearch-data:
+  letsencrypt:
