@@ -3,9 +3,7 @@ WORKDIR /app
 COPY ./frontend/package*.json ./
 RUN npm ci
 COPY ./frontend/ ./
-ARG NG_ENV=production
-# The additional -- are actually required to pass the argument to the command
-RUN npm run build -- --configuration=production,$NG_ENV
+RUN npm run build -- --configuration=production
 
 FROM nginx:stable-alpine
 COPY ./docker/public-app/nginx.conf /etc/nginx/conf.d/default.conf

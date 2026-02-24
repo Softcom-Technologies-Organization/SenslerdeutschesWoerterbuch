@@ -5,12 +5,18 @@ services:
   db:
     image: postgres:15
     environment:
-      POSTGRES_DB: ${POSTGRES_NAME}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
     volumes:
       - postgres-data:/var/lib/postgresql/data
     networks:
       - sw-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER} -d ${DB_NAME}"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+      start_period: 10s
 
   opensearch:
     build:
@@ -30,12 +36,12 @@ services:
   traefik:
     image: traefik:v3.6
     command:
-      - "--api.insecure=true"
+      - "--api.insecure=${TRAEFIK_DASHBOARD}"
       - "--providers.docker=true"
       - "--providers.docker.exposedbydefault=false"
       - "--entrypoints.web.address=:80"
-      - "--log.level=DEBUG"
-      - "--accesslog=true"
+      - "--log.level=${TRAEFIK_LOG_LEVEL}"
+      - "--accesslog=${TRAEFIK_ACCESS_LOG}"
     ports:
       - "80:80"
       - "8080:8080"
@@ -54,35 +60,41 @@ services:
       dockerfile: docker/admin-app/Dockerfile
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.backend.rule=Host(`${BACKEND_DOMAIN}`) || Host(`backend`)"
+      - "traefik.http.routers.backend.rule=Host(`${BACKEND_DOMAIN}`)"
       - "traefik.http.routers.backend.entrypoints=web"
       - "traefik.http.services.backend.loadbalancer.server.port=8000"
+      # Routing for frontend
+      - traefik.http.routers.backend_api.rule=Host(`${FRONTEND_DOMAIN}`) && PathPrefix(`/api`)
+      - traefik.http.routers.backend_api.entrypoints=web
+      - traefik.http.routers.backend_api.middlewares=strip-api
+      - traefik.http.middlewares.strip-api.stripprefix.prefixes=/api
     environment:
       # Enable unbuffered output for better logging in Docker
       - PYTHONUNBUFFERED=1
-      - POSTGRES_HOST=db
-      - POSTGRES_NAME=${POSTGRES_NAME}
-      - POSTGRES_USER=${POSTGRES_USER}
-      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - DB_HOST=${DB_HOST}
+      - DB_PORT=${DB_PORT}
+      - DB_NAME=${DB_NAME}
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
       - DJANGO_SUPERUSER_USERNAME=${DJANGO_SUPERUSER_USERNAME}
       - DJANGO_SUPERUSER_EMAIL=${DJANGO_SUPERUSER_EMAIL}
       - DJANGO_SUPERUSER_PASSWORD=${DJANGO_SUPERUSER_PASSWORD}
+      - DJANGO_ALLOWED_HOSTS=${DJANGO_ALLOWED_HOSTS}
       - OPENSEARCH_HOST=${OPENSEARCH_HOST}
       - OPENSEARCH_ADMIN_PASSWORD=${OPENSEARCH_ADMIN_PASSWORD}
     networks:
       - sw-network
     depends_on:
-      - db
+      db:
+        condition: service_healthy
 
   frontend:
     build:
       context: .
       dockerfile: docker/public-app/Dockerfile
-      args:
-        NG_ENV: ${NG_ENV}
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.frontend.rule=Host(`${FRONTEND_DOMAIN}`) || Host(`frontend`)"
+      - "traefik.http.routers.frontend.rule=Host(`${FRONTEND_DOMAIN}`)"
       - "traefik.http.routers.frontend.entrypoints=web"
       - "traefik.http.services.frontend.loadbalancer.server.port=80"
     networks:
@@ -94,7 +106,7 @@ services:
       context: .
       dockerfile: docker/e2e/Dockerfile
     environment:
-      - FRONTEND_DOMAIN=frontend
+      - FRONTEND_DOMAIN=${FRONTEND_DOMAIN}
     volumes:
       - ./e2e/playwright-report:/app/playwright-report
       - ./e2e/test-results:/app/test-results

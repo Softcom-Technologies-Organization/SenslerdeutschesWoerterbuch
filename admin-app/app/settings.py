@@ -26,12 +26,9 @@ SECRET_KEY = 'django-insecure-*(y*rt1moh0rb$lyzh^n2wy%i2ha!)fy93py1x1qec)*bb)7%c
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = [
-    'localhost',
-    '127.0.0.1',
-    'backend',           # Used by the E2E container
-    'backend.localhost', # Used by your Windows browser/Admin panel
-]
+BASE_ALLOWED_HOSTS = ["localhost", "127.0.0.1"]
+env_allowed_hosts = [x.strip() for x in os.getenv("DJANGO_ALLOWED_HOSTS", "").split(",") if x.strip()]
+ALLOWED_HOSTS = list(dict.fromkeys(BASE_ALLOWED_HOSTS + env_allowed_hosts))
 
 
 # Application definition
@@ -87,11 +84,11 @@ WSGI_APPLICATION = 'app.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.environ.get('POSTGRES_NAME'),
-        'USER': os.environ.get('POSTGRES_USER'),
-        'PASSWORD': os.environ.get('POSTGRES_PASSWORD'),
-        'HOST': os.environ.get('POSTGRES_HOST'),
-        'PORT': os.environ.get('POSTGRES_PORT'),
+        'NAME': os.environ.get('DB_NAME'),
+        'USER': os.environ.get('DB_USER'),
+        'PASSWORD': os.environ.get('DB_PASSWORD'),
+        'HOST': os.environ.get('DB_HOST'),
+        'PORT': os.environ.get('DB_PORT'),
     }
 }
 
