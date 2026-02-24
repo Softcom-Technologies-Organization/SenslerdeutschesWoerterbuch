@@ -10,14 +10,14 @@ from .models import Word
 
 
 def get_index_name() -> str:
-    return os.getenv('ELASTIC_INDEX', 'dictionary')
+    return os.getenv('OPENSEARCH_INDEX_NAME')
 
 
 def get_client() -> OpenSearch:
-    host = os.getenv('OPENSEARCH_HOST', 'opensearch')
-    port = int(os.getenv('OPENSEARCH_PORT', '9200'))
-    username = os.getenv('OPENSEARCH_ADMIN_USERNAME', 'admin')
-    password = os.getenv('OPENSEARCH_ADMIN_PASSWORD', 'admin')
+    host = os.getenv('OPENSEARCH_HOST')
+    port = 9200
+    username = 'admin'
+    password = os.getenv('OPENSEARCH_ADMIN_PASSWORD')
     auth = (username, password)
     return OpenSearch(
         hosts=[{'host': host, 'port': port}],
@@ -31,7 +31,7 @@ def get_client() -> OpenSearch:
 
 
 def load_index_config() -> dict:
-    config_path = Path(__file__).resolve().parent / 'search_config' / 'index.json'
+    config_path = settings.BASE_DIR / 'dictionary' / 'static' / 'dictionary' / 'index.json'
     with open(config_path, 'r', encoding='utf-8') as config_file:
         return json.load(config_file)
 

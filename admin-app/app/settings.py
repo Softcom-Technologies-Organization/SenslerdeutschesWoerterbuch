@@ -21,10 +21,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-*(y*rt1moh0rb$lyzh^n2wy%i2ha!)fy93py1x1qec)*bb)7%c'
+SECRET_KEY = os.getenv("DJANGO_SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.getenv("DJANGO_DEBUG", "False")
 
 BASE_ALLOWED_HOSTS = ["localhost", "127.0.0.1"]
 env_allowed_hosts = [x.strip() for x in os.getenv("DJANGO_ALLOWED_HOSTS", "").split(",") if x.strip()]
@@ -135,6 +135,7 @@ STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+# TODO: Make configurable via env variable, similar to ALLOWED_HOSTS
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:4200",
     "http://frontend.localhost",
