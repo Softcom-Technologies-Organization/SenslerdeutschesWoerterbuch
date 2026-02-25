@@ -135,10 +135,6 @@ STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-# TODO: Make configurable via env variable, similar to ALLOWED_HOSTS
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:4200",
-    "http://frontend.localhost",
-    "http://frontend",
-    "https://frontend.senslerdeutsches-woerterbuch.ch",
-]
+BASE_CORS_ALLOWED_ORIGINS = ["http://localhost:4200", "http://frontend.localhost", "http://frontend"]
+env_cors_allowed_origins = [x.strip() for x in os.getenv("DJANGO_CORS_ALLOWED_ORIGINS", "").split(",") if x.strip()]
+CORS_ALLOWED_ORIGINS = list(dict.fromkeys(BASE_CORS_ALLOWED_ORIGINS + env_cors_allowed_origins))
