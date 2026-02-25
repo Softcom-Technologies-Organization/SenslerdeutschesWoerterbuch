@@ -1,6 +1,7 @@
 import re
 from django.shortcuts import get_object_or_404
 from django.http import HttpResponse, JsonResponse
+from django.views.decorators.http import require_http_methods
 from opensearchpy import exceptions as os_exc
 from .models import Word, Tag
 from .opensearch_helper import get_client, get_index_name, get_index_status
@@ -15,7 +16,7 @@ def _sanitize_query(raw: str) -> str:
     text = re.sub(r'\s+', ' ', text).strip()
     return text
 
-@require_GET
+@require_http_methods(["GET"])
 def check_searchengine_status(request):
     try:
         client = get_client()
@@ -29,7 +30,7 @@ def check_searchengine_status(request):
     except Exception as e:
         return JsonResponse({'status': 'unavailable', 'error': str(e), 'indexExists': False, 'docCount': 0}, status=503)
 
-@require_GET
+@require_http_methods(["GET"])
 def search(request):
     raw_term = request.GET.get('term', '')
     query_term = _sanitize_query(raw_term)
@@ -121,7 +122,7 @@ def search(request):
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=500)
 
-@require_GET    
+@require_http_methods(["GET"])
 def search_random(request):
     tags = request.GET.getlist('tags', [])
     if tags:
@@ -130,13 +131,13 @@ def search_random(request):
         word = Word.objects.order_by('?').first()
     return JsonResponse(word.to_dict() if word else None)
 
-@require_GET
+@require_http_methods(["GET"])
 def get_tags(request):
     tags = Tag.objects.all()
     tag_list = [{'name': tag.name, 'display_name': tag.display_name or tag.name} for tag in tags]
     return JsonResponse(tag_list, safe=False)
 
-@require_GET    
+@require_http_methods(["GET"])   
 def word_detail(request, pk):
     word = get_object_or_404(Word, pk=pk)
     return JsonResponse({
