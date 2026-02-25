@@ -64,7 +64,7 @@ services:
       - sw-network
 
   backend:
-    image: ${ACR_REGISTRY}/backend:${IMAGE_TAG:-latest}
+    image: ${ACR_REGISTRY}/django:${IMAGE_TAG:-latest}
     build:
       context: .
       dockerfile: docker/admin-app/Dockerfile
