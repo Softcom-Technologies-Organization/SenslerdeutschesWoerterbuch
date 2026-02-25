@@ -1,4 +1,4 @@
-FROM node:lts-alpine AS builder
+FROM --platform=$BUILDPLATFORM node:lts-alpine AS builder
 WORKDIR /app
 COPY ./frontend/package*.json ./
 RUN npm ci

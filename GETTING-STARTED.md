@@ -59,6 +59,17 @@ docker push seislerduetscheswoerterbuech.azurecr.io/backend:latest
 docker push seislerduetscheswoerterbuech.azurecr.io/proxy:latest
 ```
 
+The new commands are
+```
+docker build -t seislerduetscheswoerterbuech.azurecr.io/opensearch:latest -f docker/opensearch/Dockerfile . --no-cache
+docker build -t seislerduetscheswoerterbuech.azurecr.io/django:latest -f docker/admin-app/Dockerfile . --no-cache
+docker build -t seislerduetscheswoerterbuech.azurecr.io/frontend:latest -f docker/public-app/Dockerfile . --no-cache
+
+docker push seislerduetscheswoerterbuech.azurecr.io/opensearch:latest
+docker push seislerduetscheswoerterbuech.azurecr.io/django:latest
+docker push seislerduetscheswoerterbuech.azurecr.io/frontend:latest
+```
+
 Then update the Container App
 
 ```
