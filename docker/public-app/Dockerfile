@@ -6,8 +6,11 @@ COPY ./frontend/ ./
 RUN npm run build -- --configuration=production
 
 FROM nginx:stable-alpine
+RUN addgroup -S nonroot \
+    && adduser -S nonroot -G nonroot
 COPY ./docker/public-app/nginx.conf /etc/nginx/conf.d/default.conf
 COPY --from=builder /app/dist/senslerdeutsches-woerterbuch/browser /usr/share/nginx/html
+USER nonroot
 
 EXPOSE 80
 CMD ["nginx", "-g", "daemon off;"]

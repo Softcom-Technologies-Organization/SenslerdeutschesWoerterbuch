@@ -15,7 +15,7 @@ def _sanitize_query(raw: str) -> str:
     text = re.sub(r'\s+', ' ', text).strip()
     return text
 
-
+@require_GET
 def check_searchengine_status(request):
     try:
         client = get_client()
@@ -29,6 +29,7 @@ def check_searchengine_status(request):
     except Exception as e:
         return JsonResponse({'status': 'unavailable', 'error': str(e), 'indexExists': False, 'docCount': 0}, status=503)
 
+@require_GET
 def search(request):
     raw_term = request.GET.get('term', '')
     query_term = _sanitize_query(raw_term)
@@ -119,7 +120,8 @@ def search(request):
         return JsonResponse({"detail": "Search temporarily unavailable"}, status=503)
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=500)
-    
+
+@require_GET    
 def search_random(request):
     tags = request.GET.getlist('tags', [])
     if tags:
@@ -128,11 +130,13 @@ def search_random(request):
         word = Word.objects.order_by('?').first()
     return JsonResponse(word.to_dict() if word else None)
 
+@require_GET
 def get_tags(request):
     tags = Tag.objects.all()
     tag_list = [{'name': tag.name, 'display_name': tag.display_name or tag.name} for tag in tags]
     return JsonResponse(tag_list, safe=False)
-    
+
+@require_GET    
 def word_detail(request, pk):
     word = get_object_or_404(Word, pk=pk)
     return JsonResponse({
