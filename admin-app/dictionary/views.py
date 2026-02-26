@@ -110,8 +110,6 @@ def search(request):
         }
 
     try:
-        # log the final query for debugging purposes
-        print("Final OpenSearch query:", final_query)
         resp = client.search(
             index=get_index_name(),
             body={"query": final_query, "size": 10}
