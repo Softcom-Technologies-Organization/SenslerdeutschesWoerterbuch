@@ -48,9 +48,6 @@ services:
       - "--log.level=${TRAEFIK_LOG_LEVEL}"
       - "--accesslog=${TRAEFIK_ACCESS_LOG}"
     environment:
-      # Set these in production .env to enable HTTP→HTTPS redirect:
-      # TRAEFIK_ENTRYPOINTS_WEB_HTTP_REDIRECTIONS_ENTRYPOINT_TO=websecure
-      # TRAEFIK_ENTRYPOINTS_WEB_HTTP_REDIRECTIONS_ENTRYPOINT_SCHEME=https
       - TRAEFIK_ENTRYPOINTS_WEB_HTTP_REDIRECTIONS_ENTRYPOINT_TO
       - TRAEFIK_ENTRYPOINTS_WEB_HTTP_REDIRECTIONS_ENTRYPOINT_SCHEME
     ports:
@@ -62,6 +59,7 @@ services:
       - letsencrypt:/letsencrypt
     networks:
       - sw-network
+
 
   backend:
     image: ${ACR_REGISTRY}/django:${IMAGE_TAG:-latest}
@@ -80,7 +78,7 @@ services:
       - "traefik.http.routers.backend-secure.tls.certresolver=letsencrypt"
       - "traefik.http.routers.backend-secure.service=backend"
       # API routing for frontend (HTTP)
-      - traefik.http.routers.backend_api.rule=Host(`${FRONTEND_DOMAIN}`) && PathPrefix(`/api`)
+      - traefik.http.routers.backend_api.rule=(Host(`${FRONTEND_DOMAIN}`) || Host(`traefik`)) && PathPrefix(`/api`)
       - traefik.http.routers.backend_api.entrypoints=web
       - traefik.http.routers.backend_api.middlewares=strip-api
       # API routing for frontend (HTTPS)
@@ -124,7 +122,7 @@ services:
     labels:
       - "traefik.enable=true"
       # HTTP router
-      - "traefik.http.routers.frontend.rule=Host(`${FRONTEND_DOMAIN}`)"
+      - "traefik.http.routers.frontend.rule=Host(`${FRONTEND_DOMAIN}`) || Host(`traefik`)"
       - "traefik.http.routers.frontend.entrypoints=web"
       - "traefik.http.services.frontend.loadbalancer.server.port=80"
       # HTTPS router
@@ -143,7 +141,7 @@ services:
     profiles:
       - test
     environment:
-      - FRONTEND_DOMAIN=${FRONTEND_DOMAIN}
+      - FRONTEND_DOMAIN=http://traefik
       - PLAYWRIGHT_OUTPUT_DIR=/app/.container-artifacts/test-results
       - PLAYWRIGHT_HTML_DIR=/app/.container-artifacts/html-report
     volumes:
