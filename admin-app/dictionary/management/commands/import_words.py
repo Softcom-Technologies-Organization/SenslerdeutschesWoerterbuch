@@ -4,8 +4,18 @@ from django.core.management.base import BaseCommand
 from django.conf import settings
 from dictionary.models import Word, Tag
 
+
+TAG_DISPLAY_NAMES = {
+    'curse-word': 'Schimpfwort',
+}
+
+
 class Command(BaseCommand):
     help = 'Import words from a static JSON file'
+
+    @staticmethod
+    def get_tag_display_name(tag_name):
+        return TAG_DISPLAY_NAMES.get(tag_name, tag_name.replace('-', ' ').title())
 
     def handle(self, *args, **options):
         file_path = settings.BASE_DIR / 'dictionary' / 'static' / 'dictionary' / 'words.json'
@@ -27,7 +37,10 @@ class Command(BaseCommand):
 
                 if item.get('tags'):
                     for tag_name in item['tags']:
-                        tag, tag_created = Tag.objects.get_or_create(name=tag_name)
+                        tag, _ = Tag.objects.get_or_create(name=tag_name)
+                        if not tag.display_name:
+                            tag.display_name = self.get_tag_display_name(tag_name)
+                            tag.save(update_fields=['display_name'])
                         word.tags.add(tag)
 
                 imported_count += 1

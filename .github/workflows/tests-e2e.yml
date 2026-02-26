@@ -25,64 +25,38 @@ jobs:
         run: |
           cp .env.defaults .env
 
-          # Add a newline to ensure clean append
-          echo "" >> .env
-          
-          # Add sensitive values
-          echo "ELASTIC_ADMIN_PASSWORD=${{ secrets.ELASTIC_ADMIN_PASSWORD || 'changeme' }}" >> .env
-
       - name: Run setup and prepare environment
         run: |
-          docker compose up -d elasticsearch proxy backend
+          docker compose up -d --build opensearch traefik backend frontend
 
-      - name: Wait for proxy to be ready
+      - name: Wait for OpenSearch via backend and sync index
         run: |
-          echo "Waiting for proxy container to be ready..."
-          # First check if container is running
-          for i in {1..12}; do
-            if docker compose ps proxy | grep -q "Up"; then
-              echo "✅ Proxy container is running"
+          echo "Waiting for OpenSearch to be reachable from backend..."
+          for i in {1..24}; do
+            if docker compose exec -T backend python manage.py shell -c "from dictionary.opensearch_helper import get_client; import sys; sys.exit(0 if get_client().ping() else 1)"; then
+              echo "✅ OpenSearch reachable from backend"
               break
             fi
-            
-            if [ $i -eq 12 ]; then
-              echo "❌ Proxy container failed to start"
-              docker compose ps
-              docker compose logs proxy
-              exit 1
-            fi
-            
-            echo "Waiting for proxy... (attempt $i/12)"
-            sleep 5
-          done
 
-      - name: Check services through proxy
-        run: |
-          # Wait for elastic health endpoint
-          for i in {1..12}; do
-            echo "Checking backend via proxy (attempt $i/12)..."
-            HEALTH=$(docker compose exec -T proxy curl -s http://backend:8000/elastic-health || echo "failed")
-            echo "Elastic health: $HEALTH"
-            
-            if echo "$HEALTH" | grep -q "healthy" || echo "$HEALTH" | grep -q "status"; then
-              echo "✅ Elastic is responding"
-              break
-            fi
-            
-            if [ $i -eq 12 ]; then
-              echo "❌ Elastic is not responding properly"
+            if [ $i -eq 24 ]; then
+              echo "❌ OpenSearch is not reachable from backend"
+              docker compose logs opensearch
               docker compose logs backend
               exit 1
             fi
-            
+
+            echo "Waiting for OpenSearch... (attempt $i/24)"
             sleep 5
           done
-          
-          # Initialize Elasticsearch via backend
-          RESPONSE=$(docker compose exec -T proxy curl -s http://backend:8000/elastic-reset || echo "failed")
+
+          echo "Running import_words..."
+          docker compose exec -T backend python manage.py import_words
+
+          echo "Running sync_search..."
+          docker compose exec -T backend python manage.py sync_search
 
       - name: Run E2E tests
-        run: docker compose up e2e --exit-code-from e2e
+        run: docker compose run --rm --build e2e
         env:
           COMPOSE_DOCKER_CLI_BUILD: 1
           DOCKER_BUILDKIT: 1
