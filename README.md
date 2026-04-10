@@ -24,7 +24,7 @@ If you use VS Code, this is usually the quickest way to start because the worksp
 
 - Open this repository in VS Code
 - Install the **Dev Containers** extension (`ms-vscode-remote.remote-containers`) if it is not already installed
-- Hit `F1` an run **Dev Containers: Reopen in Container** from the Command Palette
+- Hit `F1` and run **Dev Containers: Reopen in Container** from the Command Palette
 - Continue with the regular **Quick start** steps below
 
 ## Quick start
