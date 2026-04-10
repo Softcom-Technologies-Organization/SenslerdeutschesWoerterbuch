@@ -26,7 +26,13 @@ E2e tests are using Playwright.
 ```
 cd e2e
 npm install
+npx playwright install --with-deps
 npx playwright test
+```
+
+If running the local docker setup, use the following command.
+```
+docker compose --profile test run --rm e2e
 ```
 
 GitHub Actions are used to run the tests automatically. To test and debug them locally we suggest using https://github.com/nektos/act. After downloading the binary you can use it with a simple command.
@@ -51,6 +57,17 @@ docker build -t seislerduetscheswoerterbuech.azurecr.io/proxy:latest -f docker/p
 docker push seislerduetscheswoerterbuech.azurecr.io/elasticsearch:latest
 docker push seislerduetscheswoerterbuech.azurecr.io/backend:latest
 docker push seislerduetscheswoerterbuech.azurecr.io/proxy:latest
+```
+
+The new commands are
+```
+docker build -t seislerduetscheswoerterbuech.azurecr.io/opensearch:latest -f docker/opensearch/Dockerfile . --no-cache
+docker build -t seislerduetscheswoerterbuech.azurecr.io/django:latest -f docker/admin-app/Dockerfile . --no-cache
+docker build -t seislerduetscheswoerterbuech.azurecr.io/frontend:latest -f docker/public-app/Dockerfile . --no-cache
+
+docker push seislerduetscheswoerterbuech.azurecr.io/opensearch:latest
+docker push seislerduetscheswoerterbuech.azurecr.io/django:latest
+docker push seislerduetscheswoerterbuech.azurecr.io/frontend:latest
 ```
 
 Then update the Container App

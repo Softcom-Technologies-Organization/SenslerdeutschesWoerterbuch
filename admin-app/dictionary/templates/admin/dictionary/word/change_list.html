@@ -1,0 +1,13 @@
+{% extends "admin/change_list.html" %}
+
+{% block object-tools-items %}
+{{ block.super }}
+<ul>
+    <li>
+        <a href="{% url 'admin:dictionary_word_import_words' %}" class="addlink">Import Words</a>
+    </li>
+    <li>
+        <a href="{% url 'admin:dictionary_word_sync_search' %}" class="addlink">Sync Search</a>
+    </li>
+</ul>
+{% endblock %}

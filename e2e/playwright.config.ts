@@ -1,23 +1,28 @@
-import { defineConfig, devices } from '@playwright/test';
+import { defineConfig, devices } from "@playwright/test";
 
 /**
  * Read environment variables from file.
  * https://github.com/motdotla/dotenv
  */
-import dotenv from 'dotenv';
-import path from 'path';
-dotenv.config({ path: path.resolve(__dirname, '.env') });
+import dotenv from "dotenv";
+import path from "path";
+dotenv.config({ path: path.resolve(__dirname, ".env") });
 
 // Determine execution environment
-const IS_DOCKER = process.env.IS_DOCKER === 'true';
-const FRONTEND_URL = process.env.FRONTEND_URL || 'http://127.0.0.1:4200';
+const IS_DOCKER = process.env.IS_DOCKER === "true";
+let frontendUrl = "http://localhost:4200";
+if (IS_DOCKER) {
+  // Now process.env.FRONTEND_DOMAIN is "frontend.localhost"
+  frontendUrl = process.env.FRONTEND_DOMAIN;
+}
 const IS_CI = !!process.env.CI;
 
 /**
  * See https://playwright.dev/docs/test-configuration.
  */
 export default defineConfig({
-  testDir: './tests',
+  testDir: "./tests",
+  outputDir: process.env.PLAYWRIGHT_OUTPUT_DIR ?? 'test-results',
   /* Run tests in files in parallel */
   fullyParallel: true,
   /* Fail the build on CI if you accidentally left test.only in the source code. */
@@ -27,66 +32,39 @@ export default defineConfig({
   /* Opt out of parallel tests on CI. */
   workers: process.env.CI ? 1 : undefined,
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
-  reporter: 'html',
+  reporter: [
+    [
+      "html",
+      {
+        host: "0.0.0.0",
+        port: 9323,
+        outputFolder: process.env.PLAYWRIGHT_HTML_DIR ?? 'playwright-report'
+      },
+    ],
+  ],
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
     /* Base URL to use in actions like `await page.goto('/')`. */
-    baseURL: FRONTEND_URL,
+    baseURL: frontendUrl,
 
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
-    trace: 'on-first-retry',
+    trace: "on-first-retry",
   },
 
   /* Configure projects for major browsers */
   projects: [
     {
-      name: 'chromium',
-      use: { ...devices['Desktop Chrome'] },
+      name: "chromium",
+      use: {
+        ...devices["Desktop Chrome"],
+        launchOptions: {
+          args: IS_DOCKER
+            ? [
+                `--host-resolver-rules=MAP ${process.env.FRONTEND_DOMAIN} traefik`,
+              ]
+            : [],
+        },
+      },
     },
-
-    /* Test against Firefox and Safari. */
-    // {
-    //   name: 'firefox',
-    //   use: { ...devices['Desktop Firefox'] },
-    // },
-
-    // {
-    //   name: 'webkit',
-    //   use: { ...devices['Desktop Safari'] },
-    // },
-
-    /* Test against mobile viewports. */
-    // {
-    //   name: 'Mobile Chrome',
-    //   use: { ...devices['Pixel 5'] },
-    // },
-    // {
-    //   name: 'Mobile Safari',
-    //   use: { ...devices['iPhone 12'] },
-    // },
-
-    /* Test against branded browsers. */
-    // {
-    //   name: 'Microsoft Edge',
-    //   use: { ...devices['Desktop Edge'], channel: 'msedge' },
-    // },
-    // {
-    //   name: 'Google Chrome',
-    //   use: { ...devices['Desktop Chrome'], channel: 'chrome' },
-    // },
   ],
-
-  /**
-   * Run your local dev server before starting the tests.
-   * If Playwright is used locally, ng serve is used.
-   * If Playwright is used in CI, use the frontend container.
-   */
-  ...(!IS_DOCKER && {
-    webServer: {
-      command: 'cd ../frontend && npm install && npx ng serve',
-      url: FRONTEND_URL,
-      reuseExistingServer: !process.env.CI,
-      timeout: 60000, // 1 minute
-    },
-  }),
 });

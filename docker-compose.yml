@@ -1,62 +1,160 @@
 name: senslerdeutsches-woerterbuch
 
 services:
-  elasticsearch:
-    build:
-      context: .
-      dockerfile: docker/elasticsearch/Dockerfile
+  # --- SHARED SERVICES ---
+  db:
+    image: postgres:15
     environment:
-      - ELASTIC_PASSWORD=${ELASTIC_ADMIN_PASSWORD}
-      - xpack.security.enabled=true
-      - xpack.security.http.ssl.enabled=false
-      - xpack.security.transport.ssl.enabled=false
-      - discovery.type=single-node # Required to disable SSL while keeping security enabled
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
     volumes:
-      - elasticsearch-data:/usr/share/elasticsearch/data # Persist user, role and indices locally
+      - postgres-data:/var/lib/postgresql/data
     networks:
       - sw-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER} -d ${DB_NAME}"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+      start_period: 10s
+
+  opensearch:
+    image: ${ACR_REGISTRY}/opensearch:${IMAGE_TAG:-latest}
+    build:
+      context: .
+      dockerfile: docker/opensearch/Dockerfile
+    environment:
+      - discovery.type=single-node
+      - plugins.security.disabled=false
+      - plugins.security.ssl.http.enabled=false
+      - OPENSEARCH_INITIAL_ADMIN_PASSWORD=${OPENSEARCH_ADMIN_PASSWORD}
+    volumes:
+      - opensearch-data:/usr/share/opensearch/data
+    networks:
+      - sw-network
+
+  # --- PRODUCTION SERVICES ---
+  traefik:
+    image: traefik:v3.6
+    command:
+      - "--api.insecure=${TRAEFIK_DASHBOARD}"
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--entrypoints.web.address=:80"
+      - "--entrypoints.websecure.address=:443"
+      - "--certificatesresolvers.letsencrypt.acme.email=${ACME_EMAIL}"
+      - "--certificatesresolvers.letsencrypt.acme.storage=/letsencrypt/acme.json"
+      - "--certificatesresolvers.letsencrypt.acme.httpchallenge.entrypoint=web"
+      - "--log.level=${TRAEFIK_LOG_LEVEL}"
+      - "--accesslog=${TRAEFIK_ACCESS_LOG}"
+    environment:
+      - TRAEFIK_ENTRYPOINTS_WEB_HTTP_REDIRECTIONS_ENTRYPOINT_TO
+      - TRAEFIK_ENTRYPOINTS_WEB_HTTP_REDIRECTIONS_ENTRYPOINT_SCHEME
+    ports:
+      - "80:80"
+      - "443:443"
+      - "8080:8080"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - letsencrypt:/letsencrypt
+    networks:
+      - sw-network
+
 
   backend:
+    image: ${ACR_REGISTRY}/django:${IMAGE_TAG:-latest}
     build:
       context: .
-      dockerfile: docker/backend/Dockerfile
-    env_file:
-      - .env
+      dockerfile: docker/admin-app/Dockerfile
+    labels:
+      - "traefik.enable=true"
+      # HTTP routers
+      - "traefik.http.routers.backend.rule=Host(`${BACKEND_DOMAIN}`)"
+      - "traefik.http.routers.backend.entrypoints=web"
+      - "traefik.http.services.backend.loadbalancer.server.port=8000"
+      # HTTPS routers
+      - "traefik.http.routers.backend-secure.rule=Host(`${BACKEND_DOMAIN}`)"
+      - "traefik.http.routers.backend-secure.entrypoints=websecure"
+      - "traefik.http.routers.backend-secure.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.backend-secure.service=backend"
+      # API routing for frontend (HTTP)
+      - traefik.http.routers.backend_api.rule=(Host(`${FRONTEND_DOMAIN}`) || Host(`traefik`)) && PathPrefix(`/api`)
+      - traefik.http.routers.backend_api.entrypoints=web
+      - traefik.http.routers.backend_api.middlewares=strip-api
+      # API routing for frontend (HTTPS)
+      - traefik.http.routers.backend_api-secure.rule=Host(`${FRONTEND_DOMAIN}`) && PathPrefix(`/api`)
+      - traefik.http.routers.backend_api-secure.entrypoints=websecure
+      - traefik.http.routers.backend_api-secure.tls.certresolver=letsencrypt
+      - traefik.http.routers.backend_api-secure.middlewares=strip-api
+      - traefik.http.routers.backend_api-secure.service=backend
+      # Middleware
+      - traefik.http.middlewares.strip-api.stripprefix.prefixes=/api
     environment:
-      - ELASTIC_URL=http://elasticsearch:9200
-    ports:
-      - "8001:8000"
+      # Enable unbuffered output for better logging in Docker
+      - PYTHONUNBUFFERED=1
+      - DB_HOST=${DB_HOST}
+      - DB_PORT=${DB_PORT}
+      - DB_NAME=${DB_NAME}
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DJANGO_SUPERUSER_USERNAME=${DJANGO_SUPERUSER_USERNAME}
+      - DJANGO_SUPERUSER_EMAIL=${DJANGO_SUPERUSER_EMAIL}
+      - DJANGO_SUPERUSER_PASSWORD=${DJANGO_SUPERUSER_PASSWORD}
+      - DJANGO_ALLOWED_HOSTS=${DJANGO_ALLOWED_HOSTS}
+      - DJANGO_CORS_ALLOWED_ORIGINS=${DJANGO_CORS_ALLOWED_ORIGINS}
+      - DJANGO_CSRF_TRUSTED_ORIGINS=${DJANGO_CSRF_TRUSTED_ORIGINS}
+      - DJANGO_SECRET_KEY=${DJANGO_SECRET_KEY}
+      - DJANGO_DEBUG=${DJANGO_DEBUG}
+      - OPENSEARCH_HOST=${OPENSEARCH_HOST}
+      - OPENSEARCH_ADMIN_PASSWORD=${OPENSEARCH_ADMIN_PASSWORD}
+      - OPENSEARCH_INDEX_NAME=${OPENSEARCH_INDEX_NAME}
+    networks:
+      - sw-network
+    depends_on:
+      db:
+        condition: service_healthy
+
+  frontend:
+    image: ${ACR_REGISTRY}/frontend:${IMAGE_TAG:-latest}
+    build:
+      context: .
+      dockerfile: docker/public-app/Dockerfile
+    labels:
+      - "traefik.enable=true"
+      # HTTP router
+      - "traefik.http.routers.frontend.rule=Host(`${FRONTEND_DOMAIN}`) || Host(`traefik`)"
+      - "traefik.http.routers.frontend.entrypoints=web"
+      - "traefik.http.services.frontend.loadbalancer.server.port=80"
+      # HTTPS router
+      - "traefik.http.routers.frontend-secure.rule=Host(`${FRONTEND_DOMAIN}`)"
+      - "traefik.http.routers.frontend-secure.entrypoints=websecure"
+      - "traefik.http.routers.frontend-secure.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.frontend-secure.service=frontend"
     networks:
       - sw-network
 
-  proxy:
-    build:
-      context: .
-      dockerfile: docker/proxy/Dockerfile
-    environment:
-      - ELASTICSEARCH_URL=http://elasticsearch:9200
-    ports:
-      - "${PROXY_PORT}:80"
-    volumes:
-      - ./docker/proxy/logs/nginx:/var/log/nginx
-    networks:
-      - sw-network
-
+  # --- TEST SERVICES ---
   e2e:
     build:
       context: .
       dockerfile: docker/e2e/Dockerfile
+    profiles:
+      - test
     environment:
-      - FRONTEND_URL=${PROXY_URL}
+      - FRONTEND_DOMAIN=http://traefik
+      - PLAYWRIGHT_OUTPUT_DIR=/app/.container-artifacts/test-results
+      - PLAYWRIGHT_HTML_DIR=/app/.container-artifacts/html-report
     volumes:
       - ./e2e/playwright-report:/app/playwright-report
       - ./e2e/test-results:/app/test-results
+      - ./e2e/container-artifacts:/app/.container-artifacts
     networks:
       - sw-network
 
 networks:
   sw-network:
-    driver: bridge
 
 volumes:
-  elasticsearch-data:
+  postgres-data:
+  opensearch-data:
+  letsencrypt:

@@ -1,3 +1,4 @@
+To run the app, run `ng serve`. If it is the first time, you first need to install the dependencies with `npm install`.
 # SenslerdeutschesWoerterbuch
 
 This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 19.0.2.
