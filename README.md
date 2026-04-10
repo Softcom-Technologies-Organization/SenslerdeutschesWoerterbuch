@@ -4,25 +4,76 @@ The goal of this project is to create a digital version of the popular book. It 
 
 Ja, as weri passend ù witzig di ganzi Dokumentation ùf Seislerdütsch z mache. Aber fǜr möglichst offe z syy, isch Englisch awä glych di besseri Wau. 😉
 
+## Prerequisites
+
+Before you start, make sure the following tools are available:
+
+- Install Docker Desktop (Windows/macOS) or Docker Engine (Linux)
+- Make sure the `docker compose` command works in your terminal
+- Optional but recommended for the fastest setup: Visual Studio Code + Dev Containers extension (`ms-vscode-remote.remote-containers`)
+
+You can verify this with:
+
+```shell
+docker compose --version
+```
+
+## Quick start with Dev Containers (recommended)
+
+If you use VS Code, this is usually the quickest way to start because the workspace is preconfigured.
+
+- Open this repository in VS Code
+- Install the **Dev Containers** extension (`ms-vscode-remote.remote-containers`) if it is not already installed
+- Hit `F1` an run **Dev Containers: Reopen in Container** from the Command Palette
+- Continue with the regular **Quick start** steps below
+
 ## Quick start
 
-After cloning the repository you need to create a `.env` file.
+After cloning the repository you need to create a `.env` file from the defaults:
 
-```
+```shell
 cp .env.defaults .env
 ```
 
-You then have to set a password for the admin user of the Elasticsearch container. You can do this by uncommenting the last line in the new `.env` file and set a password for`ELASTIC_ADMIN_PASSWORD=<password>`.
+The `.env` file contains all necessary configuration, including the OpenSearch admin password (`OPENSEARCH_ADMIN_PASSWORD`) and domain settings for local development (defaults: `backend.localhost` and `frontend.localhost`).
 
-That's it. Now you can run everything locally with Docker.
+Now you can run everything locally with Docker:
 
+```shell
+docker compose up
 ```
-docker compose up elasticsearch proxy backend
-```
 
-The first time it might take a few minutes to download all the images. After everything is up and running you need to initially setup the words in the elastic container by calling `http://localhost:8001/elastic-reset`. You can use `http://localhost:8001/elastic-health` to check if Elasticsearch is ready. If yes it should return that it's health and status is green.
+The first time it might take a few minutes to download and build all the images. Once all services are up and running, you can access the application in your browser:
 
-After that you can access the application in your browser at `http://localhost:4202`.
+- **Frontend (Search)**: http://frontend.localhost/search
+- **Backend Admin**: http://backend.localhost/admin
+- **Traefik Dashboard** (for debugging): http://localhost:8080/dashboard
+
+All services are automatically initialized (migrations, database setup, etc.) when first started.
+
+### Initial Setup
+
+The dictionary data must be imported and synced once after the first start:
+
+1. Log in to the backend admin at http://backend.localhost/admin (see your `.env` file for the credentials)
+2. Go to http://backend.localhost/admin/dictionary/word/
+3. Click **IMPORT WORDS** in the top-right corner — this saves the words to the database
+4. Click **SYNC SEARCH** in the top-right corner — this syncs the words to OpenSearch so they are searchable in the frontend
+
+To verify everything works, open http://frontend.localhost/search — you should see words and be able to search or filter by tags.
+
+## Troubleshooting
+
+### Windows: Docker entrypoint fails
+
+If the Docker services fail to start with errors related to `entrypoint.sh`, the issue is likely **line ending format**. On Windows, Git may have converted the file to CRLF (Windows line endings), but Docker containers expect LF (Unix line endings).
+
+**Solution:**
+1. Open `docker/admin-app/entrypoint.sh` in VS Code
+2. Look at the bottom-right corner of the editor for the line ending indicator (shows `CRLF` or `LF`)
+3. Click it and select **LF**
+4. Save the file
+5. Rebuild and restart: `docker compose up --build`
 
 ## Contributing
 
