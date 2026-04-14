@@ -70,18 +70,23 @@ To verify everything works, open **http://frontend.localhost/search** — you sh
 
 ### Localhost domains not resolving (*.localhost)
 
-If you get "Unable to reach backend.localhost" or similar errors:
+This project uses Traefik host-based routing, so hostnames must resolve locally.
 
-**Windows:**
-1. Open `C:\Windows\System32\drivers\etc\hosts` in an editor (requires admin privileges)
-2. Add these two lines:
-   ```
-   127.0.0.1 backend.localhost
+1. Check `.env` for `FRONTEND_DOMAIN` and `BACKEND_DOMAIN` (defaults: `frontend.localhost`, `backend.localhost`).
+2. Add matching hosts entries:
+
+   ```text
    127.0.0.1 frontend.localhost
+   127.0.0.1 backend.localhost
    ```
-3. Save and refresh your browser
 
-**macOS/Linux:** These usually work without modification. If not, try accessing by IP: `http://127.0.0.1:8080` for backend, etc.
+3. Open:
+   - `http://frontend.localhost/search`
+   - `http://backend.localhost/admin`
+
+Notes:
+- `http://127.0.0.1/...` is not a reliable fallback here, because Traefik routes by hostname.
+- On macOS, Docker Desktop 4.48.0 had a DNS regression (`https://github.com/docker/for-mac/issues/7786`); update to 4.49.0+ if needed.
 
 ### Port already in use
 
