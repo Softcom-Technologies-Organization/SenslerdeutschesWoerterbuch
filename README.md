@@ -59,7 +59,7 @@ The dictionary data must be imported and synced once after the first start:
 
 1. Log in to the backend admin at **http://backend.localhost/admin**
    - **Default username**: `admin`
-   - **Default password**: Check your `.env` file for `OPENSEARCH_ADMIN_PASSWORD` (default is `admin`)
+   - **Default password**: Check your `.env` file for `DJANGO_SUPERUSER_PASSWORD` (default is `ChangeMeInProduction!`)
 2. Go to **http://backend.localhost/admin/dictionary/word/**
 3. Click **IMPORT WORDS** in the top-right corner — this saves the words to the database
 4. Click **SYNC SEARCH** in the top-right corner — this syncs the words to OpenSearch so they are searchable in the frontend
