@@ -8,28 +8,14 @@ Ja, as weri passend ù witzig di ganzi Dokumentation ùf Seislerdütsch z mache.
 
 Before you start, make sure the following tools are available:
 
-- Install Docker Desktop (Windows/macOS) or Docker Engine (Linux)
-- Make sure the `docker compose` command works in your terminal
+- Docker Desktop (Windows/macOS) or Docker Engine (Linux)
+- `docker compose` command available in your terminal (verify with: `docker compose --version`)
+- At least 4GB RAM available for Docker (8GB+ recommended)
 - Optional but recommended for the fastest setup: Visual Studio Code + Dev Containers extension (`ms-vscode-remote.remote-containers`)
 
-You can verify this with:
+## Initial Setup
 
-```shell
-docker compose --version
-```
-
-## Quick start with Dev Containers (recommended)
-
-If you use VS Code, this is usually the quickest way to start because the workspace is preconfigured.
-
-- Open this repository in VS Code
-- Install the **Dev Containers** extension (`ms-vscode-remote.remote-containers`) if it is not already installed
-- Hit `F1` and run **Dev Containers: Reopen in Container** from the Command Palette
-- Continue with the regular **Quick start** steps below
-
-## Quick start
-
-After cloning the repository you need to create a `.env` file from the defaults:
+After cloning the repository, create a `.env` file from the defaults:
 
 ```shell
 cp .env.defaults .env
@@ -37,32 +23,123 @@ cp .env.defaults .env
 
 The `.env` file contains all necessary configuration, including the OpenSearch admin password (`OPENSEARCH_ADMIN_PASSWORD`) and domain settings for local development (defaults: `backend.localhost` and `frontend.localhost`).
 
+## Quick start with Dev Containers (recommended)
+
+If you use VS Code, this is usually the quickest way to start because the workspace is preconfigured:
+
+- Open this repository in VS Code
+- Install the **Dev Containers** extension (`ms-vscode-remote.remote-containers`) if it is not already installed
+- Hit `F1` and run **Dev Containers: Reopen in Container** from the Command Palette
+- Continue with the steps below to start the services
+
+## Quick start
+
 Now you can run everything locally with Docker:
 
 ```shell
 docker compose up
 ```
 
-The first time it might take a few minutes to download and build all the images. Once all services are up and running, you can access the application in your browser:
+The first startup will take **2-5 minutes** to download and build all container images. You'll know all services are ready when you see messages like:
+- `opensearch_1 | Node is initialized`
+
+Once ready, you can access the application in your browser:
 
 - **Frontend (Search)**: http://frontend.localhost/search
 - **Backend Admin**: http://backend.localhost/admin
 - **Traefik Dashboard** (for debugging): http://localhost:8080/dashboard
 
+> **Note for Windows/macOS users**: If the `*.localhost` domains don't resolve, you may need to add them to your hosts file or use `127.0.0.1` instead. See [Troubleshooting](#troubleshooting) for details.
+
 All services are automatically initialized (migrations, database setup, etc.) when first started.
 
-### Initial Setup
+### Data Import (First Time Only)
 
 The dictionary data must be imported and synced once after the first start:
 
-1. Log in to the backend admin at http://backend.localhost/admin (see your `.env` file for the credentials)
-2. Go to http://backend.localhost/admin/dictionary/word/
+1. Log in to the backend admin at **http://backend.localhost/admin**
+   - **Default username**: `admin`
+   - **Default password**: Check your `.env` file for `OPENSEARCH_ADMIN_PASSWORD` (default is `admin`)
+2. Go to **http://backend.localhost/admin/dictionary/word/**
 3. Click **IMPORT WORDS** in the top-right corner — this saves the words to the database
 4. Click **SYNC SEARCH** in the top-right corner — this syncs the words to OpenSearch so they are searchable in the frontend
 
-To verify everything works, open http://frontend.localhost/search — you should see words and be able to search or filter by tags.
+To verify everything works, open **http://frontend.localhost/search** — you should see words and be able to search or filter by tags.
 
 ## Troubleshooting
+
+### Localhost domains not resolving (*.localhost)
+
+If you get "Unable to reach backend.localhost" or similar errors:
+
+**Windows:**
+1. Open `C:\Windows\System32\drivers\etc\hosts` in an editor (requires admin privileges)
+2. Add these two lines:
+   ```
+   127.0.0.1 backend.localhost
+   127.0.0.1 frontend.localhost
+   ```
+3. Save and refresh your browser
+
+**macOS/Linux:** These usually work without modification. If not, try accessing by IP: `http://127.0.0.1:8080` for backend, etc.
+
+### Port already in use
+
+If you get errors like "Port 80 is already in use" or "Address already in use":
+
+```shell
+# Stop all containers
+docker compose down
+
+# Stop only the conflicting service (replace SERVICE_NAME):
+docker compose stop SERVICE_NAME
+
+# Or restart Docker to release all ports
+```
+
+If the port is still in use afterwards, the conflict is likely caused by a native service running on your machine instead of another container.
+
+This project binds the host ports `80`, `443`, and `8080`, so check whether one of those is already occupied.
+
+**macOS/Linux:**
+
+```shell
+lsof -i :80
+lsof -i :443
+lsof -i :8080
+```
+
+**Windows:**
+
+```powershell
+netstat -ano | findstr :80
+netstat -ano | findstr :443
+netstat -ano | findstr :8080
+```
+
+Typical causes are system web servers, reverse proxies, security software, or macOS features such as AirPlay Receiver.
+
+You have three options:
+
+1. Stop or disable the native service that owns the port.
+2. Reconfigure that native service to use a different port.
+3. Change the host-side port mapping in [docker-compose.yml](docker-compose.yml).
+
+For example, if port `80` is occupied, you can change the Traefik mapping from `80:80` to `8081:80`, then access the app via `http://frontend.localhost:8081/search` and `http://backend.localhost:8081/admin`.
+
+If you change `443`, update the mapping in the same way and use the new host port in your browser.
+
+### Services fail to start
+
+Check that you have enough disk space and RAM:
+
+```shell
+# See container logs
+docker compose logs -f
+
+# Check Docker's resource usage
+docker stats
+```
 
 ### Windows: Docker entrypoint fails
 
@@ -77,8 +154,14 @@ If the Docker services fail to start with errors related to `entrypoint.sh`, the
 
 ## Contributing
 
-Every contribution to the project is more than welcome! You can submit bugs or feature requests, or even contribute code. Everything is tracked as issue on the repository. Feel free to read through them and create your own.
+Every contribution to the project is more than welcome! 
 
-If you want to start coding, you can find more information in the [Getting Started Guide](GETTING-STARTED.md).
+**To start developing:**
+- See the [Getting Started Guide](GETTING-STARTED.md) for architecture details and development workflows
+- Check the [Issues](https://github.com/sprachlabor/seislerdeutscheswoerterbuch/issues) for bugs or feature requests to work on
 
-If you have any questions, please use Issues to ask them.
+**To submit changes:**
+- Create a pull request with a clear description of what you've changed
+- Make sure existing tests pass: `npm test` (frontend) and `npm run e2e` (end-to-end)
+
+If you have any questions, please open an issue to ask them.
