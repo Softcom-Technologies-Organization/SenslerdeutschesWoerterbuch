@@ -49,7 +49,7 @@ Once ready, you can access the application in your browser:
 - **Backend Admin**: http://backend.localhost/admin
 - **Traefik Dashboard** (for debugging): http://localhost:8080/dashboard
 
-> **Note for Windows/macOS users**: If the `*.localhost` domains don't resolve, you may need to add them to your hosts file or use `127.0.0.1` instead. See [Troubleshooting](#troubleshooting) for details.
+> **Note for Windows/macOS users**: If the `*.localhost` domains don't resolve, fix local hostname resolution (for example, by adding the entries to your hosts file). See [Troubleshooting](#troubleshooting) for details.
 
 All services are automatically initialized (migrations, database setup, etc.) when first started.
 
