@@ -3,7 +3,7 @@
 
 html {
   color-scheme: light dark;
-  @include mat.theme((color: mat.$red-palette,
+  @include mat.theme((color: mat.$green-palette,
       typography: 'Noto Sans',
       density: 0));
 }
