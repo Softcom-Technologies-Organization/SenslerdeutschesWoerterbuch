@@ -27,26 +27,45 @@ class Command(BaseCommand):
             self.stdout.write('Deleting all existing words...')
             Word.objects.all().delete()
 
-            imported_count = 0
+            # Collect all unique tag names and resolve them upfront
+            all_tag_names = set()
             for item in words_data:
-                word = Word.objects.create(
+                if item.get('tags'):
+                    all_tag_names.update(item['tags'])
+
+            tag_map = {}
+            for tag_name in all_tag_names:
+                tag, _ = Tag.objects.get_or_create(
+                    name=tag_name,
+                    defaults={'display_name': self.get_tag_display_name(tag_name)},
+                )
+                if not tag.display_name:
+                    tag.display_name = self.get_tag_display_name(tag_name)
+                    tag.save(update_fields=['display_name'])
+                tag_map[tag_name] = tag
+
+            # Bulk-create all Word rows in one query
+            words_to_create = [
+                Word(
                     term=item['term'][:200],
                     description=item.get('description', ''),
-                    source=item.get('sources', '')
+                    source=item.get('sources', ''),
                 )
+                for item in words_data
+            ]
+            created_words = Word.objects.bulk_create(words_to_create)
 
-                if item.get('tags'):
-                    for tag_name in item['tags']:
-                        tag, _ = Tag.objects.get_or_create(name=tag_name)
-                        if not tag.display_name:
-                            tag.display_name = self.get_tag_display_name(tag_name)
-                            tag.save(update_fields=['display_name'])
-                        word.tags.add(tag)
+            # Bulk-create all M2M through-table rows
+            WordTag = Word.tags.through
+            word_tags = []
+            for word, item in zip(created_words, words_data):
+                for tag_name in item.get('tags') or []:
+                    word_tags.append(WordTag(word_id=word.pk, tag_id=tag_map[tag_name].pk))
+            if word_tags:
+                WordTag.objects.bulk_create(word_tags)
 
-                imported_count += 1
-            
             self.stdout.write(
-                self.style.SUCCESS(f'Successfully imported {imported_count} words')
+                self.style.SUCCESS(f'Successfully imported {len(created_words)} words')
             )
         except FileNotFoundError:
             self.stderr.write(
