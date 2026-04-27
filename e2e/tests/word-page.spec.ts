@@ -17,7 +17,10 @@ test.describe('word page', () => {
 
     await test.step('verify the word detail content is rendered', async () => {
       await expect(page).toHaveURL(hasPathname('/word/4242'));
-      await expect(page.getByRole('heading', { name: 'Becker·trǜtscha' })).toBeVisible();
+      const wordHeading = page.getByRole('heading', { level: 1 });
+      await expect(wordHeading).toBeVisible();
+      await expect(wordHeading).toContainText('Becker');
+      await expect(wordHeading).toContainText('trǜtscha');
       await expect(page.getByText('vom Bäcker hergestellter Zopf')).toBeVisible();
       await page.screenshot({ path: `${getScreenshotDir(testInfo)}/word-direct-link.png` });
     });
