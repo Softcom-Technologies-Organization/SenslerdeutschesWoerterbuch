@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { getScreenshotDir, mockSearchBootstrap, mockSearchEngineDown, mockWordDetails } from './helpers';
+import { getScreenshotDir, hasPathname, mockSearchBootstrap, mockSearchEngineDown, mockWordDetails } from './helpers';
 
 test.describe('search page', () => {
   test('search functionality without autocomplete', async ({ page }, testInfo) => {
@@ -137,7 +137,7 @@ test.describe('search page', () => {
       await expect(page.getByRole('link', { name: 'Becker·trǜtscha' })).toBeVisible();
 
       await page.getByRole('link', { name: 'Becker·trǜtscha' }).click();
-      await expect(page).toHaveURL(/.*\/word\/4242/);
+      await expect(page).toHaveURL(hasPathname('/word/4242'));
     });
 
     await test.step('return to search and verify the last query is restored', async () => {
@@ -145,7 +145,7 @@ test.describe('search page', () => {
       await logoLink.click();
 
       const searchField = page.getByRole('textbox', { name: 'Suechi' });
-      await expect(page).toHaveURL(/.*\/search/);
+      await expect(page).toHaveURL(hasPathname('/search'));
       await expect(searchField).toHaveValue('beckertrǜtscha');
       await expect(page.getByRole('link', { name: 'Becker·trǜtscha' })).toBeVisible();
       await page.screenshot({ path: `${getScreenshotDir(testInfo)}/search-restored.png` });

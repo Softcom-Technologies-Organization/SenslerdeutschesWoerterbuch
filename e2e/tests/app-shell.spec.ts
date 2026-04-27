@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { getScreenshotDir } from './helpers';
+import { getScreenshotDir, hasPathname } from './helpers';
 
 test.describe('app shell and navigation', () => {
   test('has title', async ({ page }) => {
@@ -24,7 +24,7 @@ test.describe('app shell and navigation', () => {
     });
 
     await test.step('verify the info page content', async () => {
-      await expect(page).toHaveURL(/.*\/about/);
+      await expect(page).toHaveURL(hasPathname('/about'));
       await expect(page.getByRole('heading', { name: 'Über das Projekt' })).toBeVisible();
       await page.screenshot({ path: `${getScreenshotDir(testInfo)}/info-page.png` });
     });
@@ -42,7 +42,7 @@ test.describe('app shell and navigation', () => {
     });
 
     await test.step('verify the feedback page content', async () => {
-      await expect(page).toHaveURL(/.*\/feedback/);
+      await expect(page).toHaveURL(hasPathname('/feedback'));
       await expect(page.getByRole('heading', { name: 'Fragen, Hinweise oder Verbesserungsvorschläge?' })).toBeVisible();
       await page.screenshot({ path: `${getScreenshotDir(testInfo)}/feedback-page.png` });
     });
@@ -55,7 +55,7 @@ test.describe('app shell and navigation', () => {
       const infoButton = page.locator('mat-toolbar').getByRole('link', { name: 'Infos' });
       await expect(infoButton).toBeVisible();
       await infoButton.click();
-      await expect(page).toHaveURL(/.*\/about/);
+      await expect(page).toHaveURL(hasPathname('/about'));
     });
 
     await test.step('return to search with the toolbar logo', async () => {
@@ -65,7 +65,7 @@ test.describe('app shell and navigation', () => {
     });
 
     await test.step('verify the search page is visible again', async () => {
-      await expect(page).toHaveURL(/.*\/search/);
+      await expect(page).toHaveURL(hasPathname('/search'));
       await expect(page.getByRole('textbox', { name: 'Suechi' })).toBeVisible();
       await page.screenshot({ path: `${getScreenshotDir(testInfo)}/back-to-home.png` });
     });
@@ -77,7 +77,7 @@ test.describe('app shell and navigation', () => {
     });
 
     await test.step('verify the app redirects back to search', async () => {
-      await expect(page).toHaveURL(/.*\/search/);
+      await expect(page).toHaveURL(hasPathname('/search'));
       await expect(page.getByRole('textbox', { name: 'Suechi' })).toBeVisible();
       await page.screenshot({ path: `${getScreenshotDir(testInfo)}/unknown-route-redirect.png` });
     });

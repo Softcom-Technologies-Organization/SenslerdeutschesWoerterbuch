@@ -14,6 +14,13 @@ export function getScreenshotDir(testInfo: TestInfo): string {
 }
 
 /**
+ * Builds a Playwright URL predicate that matches an exact pathname without using a regex.
+ */
+export function hasPathname(pathname: string) {
+  return (url: URL): boolean => url.pathname === pathname;
+}
+
+/**
  * Mocks the search page bootstrap requests, including tag loading, search backend status,
  * and a deterministic query response for the known test word.
  */

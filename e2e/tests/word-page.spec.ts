@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { getScreenshotDir, mockWordDetails } from './helpers';
+import { getScreenshotDir, hasPathname, mockWordDetails } from './helpers';
 
 test.describe('word page', () => {
   test('load word details from a direct deep link', async ({ page }, testInfo) => {
@@ -16,7 +16,7 @@ test.describe('word page', () => {
     });
 
     await test.step('verify the word detail content is rendered', async () => {
-      await expect(page).toHaveURL(/.*\/word\/4242/);
+      await expect(page).toHaveURL(hasPathname('/word/4242'));
       await expect(page.getByRole('heading', { name: 'Becker·trǜtscha' })).toBeVisible();
       await expect(page.getByText('vom Bäcker hergestellter Zopf')).toBeVisible();
       await page.screenshot({ path: `${getScreenshotDir(testInfo)}/word-direct-link.png` });
