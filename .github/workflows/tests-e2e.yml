@@ -66,13 +66,15 @@ jobs:
         uses: actions/upload-artifact@v6
         with:
           name: playwright-report
-          path: ./e2e/playwright-report/
+          path: ./e2e/container-artifacts/html-report/
           retention-days: 30
 
-      - name: Save test screenshots
+      - name: Save test artifacts
         if: always()
         uses: actions/upload-artifact@v6
         with:
-          name: test-screenshots
-          path: ./e2e/test-results/
+          name: test-artifacts
+          path: |
+            ./e2e/test-results/
+            ./e2e/container-artifacts/test-results/
           retention-days: 7
