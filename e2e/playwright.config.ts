@@ -8,13 +8,29 @@ import dotenv from "dotenv";
 import path from "path";
 dotenv.config({ path: path.resolve(__dirname, ".env") });
 
+function getHostname(value: string): string {
+  try {
+    return new URL(value).hostname;
+  } catch {
+    return value;
+  }
+}
+
 // Determine execution environment
 const IS_DOCKER = process.env.IS_DOCKER === "true";
 let frontendUrl = "http://localhost:4200";
 if (IS_DOCKER) {
   // Now process.env.FRONTEND_DOMAIN is "frontend.localhost"
-  frontendUrl = process.env.FRONTEND_DOMAIN;
+  frontendUrl = process.env.FRONTEND_DOMAIN ?? "http://traefik";
 }
+const dockerResolvedHosts = Array.from(
+  new Set(
+    [process.env.FRONTEND_DOMAIN, process.env.BACKEND_BASE_URL]
+      .filter((value): value is string => Boolean(value))
+      .map(getHostname)
+      .filter(hostname => hostname !== 'traefik')
+  )
+);
 const IS_CI = !!process.env.CI;
 
 /**
@@ -58,9 +74,9 @@ export default defineConfig({
       use: {
         ...devices["Desktop Chrome"],
         launchOptions: {
-          args: IS_DOCKER
+          args: IS_DOCKER && dockerResolvedHosts.length > 0
             ? [
-                `--host-resolver-rules=MAP ${process.env.FRONTEND_DOMAIN} traefik`,
+                `--host-resolver-rules=${dockerResolvedHosts.map(hostname => `MAP ${hostname} traefik`).join(',')}`,
               ]
             : [],
         },

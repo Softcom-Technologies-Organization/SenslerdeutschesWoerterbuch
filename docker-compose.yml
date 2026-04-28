@@ -141,6 +141,9 @@ services:
       - test
     environment:
       - FRONTEND_DOMAIN=http://traefik
+      - BACKEND_BASE_URL=http://backend.localhost
+      - DJANGO_SUPERUSER_USERNAME=${DJANGO_SUPERUSER_USERNAME}
+      - DJANGO_SUPERUSER_PASSWORD=${DJANGO_SUPERUSER_PASSWORD}
       - PLAYWRIGHT_OUTPUT_DIR=/app/.container-artifacts/test-results
       - PLAYWRIGHT_HTML_DIR=/app/.container-artifacts/html-report
     volumes:

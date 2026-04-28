@@ -1,4 +1,4 @@
-import { Page, Route, TestInfo } from '@playwright/test';
+import { expect, Page, Route, TestInfo } from '@playwright/test';
 
 type WordDetails = {
   id: number;
@@ -6,11 +6,42 @@ type WordDetails = {
   formattedDescription: string;
 };
 
+const backendBaseUrl = process.env.BACKEND_BASE_URL ?? 'http://backend.localhost';
+const backendAdminUsername = process.env.DJANGO_SUPERUSER_USERNAME ?? 'admin';
+const backendAdminPassword = process.env.DJANGO_SUPERUSER_PASSWORD ?? 'ChangeMeInProduction!';
+
 /**
  * Builds a per-test screenshot directory path based on the Playwright test title.
  */
 export function getScreenshotDir(testInfo: TestInfo): string {
   return `test-results/${testInfo.title}`;
+}
+
+/**
+ * Builds an absolute backend URL from a backend-relative pathname.
+ */
+export function getBackendUrl(pathname: string): string {
+  return new URL(pathname, backendBaseUrl).toString();
+}
+
+/**
+ * Returns the configured Django superuser username for backend admin tests.
+ */
+export function getBackendAdminUsername(): string {
+  return backendAdminUsername;
+}
+
+/**
+ * Signs into Django admin using the configured superuser credentials.
+ */
+export async function loginToBackendAdmin(page: Page) {
+  await page.goto(getBackendUrl('/admin'));
+
+  await expect(page).toHaveURL(hasPathname('/admin/login/'));
+  await page.getByLabel('Username').fill(backendAdminUsername);
+  await page.getByLabel('Password').fill(backendAdminPassword);
+  await page.getByRole('button', { name: 'Log in' }).click();
+  await expect(page).toHaveURL(hasPathname('/admin/'));
 }
 
 /**
