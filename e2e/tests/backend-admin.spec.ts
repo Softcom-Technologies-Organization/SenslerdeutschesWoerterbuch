@@ -16,6 +16,26 @@ test.describe('backend admin', () => {
     });
   });
 
+  test('backend admin login fails with invalid credentials', async ({ page }, testInfo) => {
+    await test.step('open the backend admin login page', async () => {
+      await page.goto(getBackendUrl('/admin'));
+      await expect(page).toHaveURL(hasPathname('/admin/login/'));
+    });
+
+    await test.step('submit an invalid username and password', async () => {
+      await page.getByLabel('Username').fill('not-a-real-admin');
+      await page.getByLabel('Password').fill('definitely-wrong-password');
+      await page.getByRole('button', { name: 'Log in' }).click();
+    });
+
+    await test.step('verify login is rejected and the error is shown', async () => {
+      await expect(page).toHaveURL(hasPathname('/admin/login/'));
+      await expect(page.getByText('Please enter the correct username and password for a staff account.')).toBeVisible();
+      await expect(page.getByLabel('Username')).toHaveValue('not-a-real-admin');
+      await page.screenshot({ path: `${getScreenshotDir(testInfo)}/backend-admin-login-failure.png` });
+    });
+  });
+
   test('backend admin login succeeds with configured superuser', async ({ page }, testInfo) => {
     await test.step('sign into Django admin', async () => {
       await loginToBackendAdmin(page);
