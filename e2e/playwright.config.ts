@@ -16,12 +16,20 @@ function getHostname(value: string): string {
   }
 }
 
+function requireEnv(name: string, value: string | undefined): string {
+  if (!value) {
+    throw new Error(`Missing required env var: ${name}`);
+  }
+
+  return value;
+}
+
 // Determine execution environment
 const IS_DOCKER = process.env.IS_DOCKER === "true";
 let frontendUrl = "http://localhost:4200";
 if (IS_DOCKER) {
   // Now process.env.FRONTEND_DOMAIN is "frontend.localhost"
-  frontendUrl = process.env.FRONTEND_DOMAIN ?? "http://traefik";
+  frontendUrl = requireEnv("FRONTEND_DOMAIN", process.env.FRONTEND_DOMAIN);
 }
 const dockerResolvedHosts = Array.from(
   new Set(
@@ -31,6 +39,9 @@ const dockerResolvedHosts = Array.from(
       .filter(hostname => hostname !== 'traefik')
   )
 );
+const hostResolverRules = dockerResolvedHosts
+  .map(hostname => "MAP " + hostname + " traefik")
+  .join(',');
 const IS_CI = !!process.env.CI;
 
 /**
@@ -74,9 +85,9 @@ export default defineConfig({
       use: {
         ...devices["Desktop Chrome"],
         launchOptions: {
-          args: IS_DOCKER && dockerResolvedHosts.length > 0
+          args: IS_DOCKER && hostResolverRules.length > 0
             ? [
-                `--host-resolver-rules=${dockerResolvedHosts.map(hostname => `MAP ${hostname} traefik`).join(',')}`,
+                `--host-resolver-rules=${hostResolverRules}`,
               ]
             : [],
         },
