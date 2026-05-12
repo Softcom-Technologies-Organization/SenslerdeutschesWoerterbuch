@@ -1,11 +1,11 @@
 # For Elasticsearch
-certifi==2026.1.4
-elastic-transport==9.2.1
-elasticsearch==9.3.0
-urllib3==2.6.3
+certifi==2026.4.22
+elastic-transport==9.4.0
+elasticsearch==9.4.0
+urllib3==2.7.0
 
 # For PDF parsing
 pdfplumber==0.11.9
 
 # General
-python-dotenv==1.2.1
+python-dotenv==1.2.2
