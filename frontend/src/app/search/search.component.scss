@@ -72,7 +72,7 @@ form {
   background: col.$red-neutral-90;
 
   &:hover {
-    box-shadow: var(--mdc-elevated-card-container-elevation, var(--mat-sys-level1))
+    box-shadow: var(--mat-card-elevated-container-elevation, var(--mat-sys-level1))
   }
 
   span {
