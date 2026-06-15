@@ -1,24 +1,34 @@
-@if (searchTerm.trim() === '') {
-<figure class="art-showcase">
-  <img src="schwarzsee.jpg" alt="Sketch of the landscape in Schwarzsee" />
-  <figcaption>© ChatGPT</figcaption>
-</figure>
+@if (searchTerm.trim() === "") {
+  <figure class="art-showcase">
+    <img src="schwarzsee.jpg" alt="Sketch of the landscape in Schwarzsee" />
+    <figcaption>© ChatGPT</figcaption>
+  </figure>
 }
 
 @if (searchEngineDown) {
-<div class="error-container">
-  <p><span class="error-title">Achtung:</span> Leider isch grad d Wörtersuechmaschyna düri! Du chasch üs
-    das über
-    <a href="https://github.com/Softcom-Technologies-Organization/SenslerdeutschesWoerterbuch/issues"
-      target="_blank">GitHub Issues</a> mäude.
-  </p>
-</div>
+  <div class="error-container">
+    <p>
+      <span class="error-title">Achtung:</span> Leider isch grad d
+      Wörtersuechmaschyna düri! Du chasch üs das über
+      <a
+        href="https://github.com/Softcom-Technologies-Organization/SenslerdeutschesWoerterbuch/issues"
+        target="_blank"
+        >GitHub Issues</a
+      >
+      mäude.
+    </p>
+  </div>
 }
 
 <div class="search-box">
   <mat-form-field>
     <mat-label>Suechi</mat-label>
-    <input matInput type="text" placeholder="Probiers ifach us..." [formControl]="searchControl" />
+    <input
+      matInput
+      type="text"
+      placeholder="Probiers ifach us..."
+      [formControl]="searchControl"
+    />
   </mat-form-field>
 
   <mat-form-field class="tag-filter-drowpdown" appearance="fill">
@@ -27,63 +37,80 @@
       Aaziige na Tag
     </mat-label>
     <mat-select (selectionChange)="onTagsChanged($event.value)" multiple>
-      <mat-option *ngFor="let tag of tags" [value]="tag">
-        {{ tag.display_name || tag.name }}
-      </mat-option>
+      @for (tag of tags; track tag) {
+        <mat-option [value]="tag">
+          {{ tag.display_name || tag.name }}
+        </mat-option>
+      }
     </mat-select>
   </mat-form-field>
 
-  <button (click)="randomWordSearch()" matButton="tonal" class="random-search-button">
-    <mat-icon aria-label="Dice icon" fontSet="material-icons-outlined">casino</mat-icon>
+  <button
+    (click)="randomWordSearch()"
+    matButton="tonal"
+    class="random-search-button"
+  >
+    <mat-icon aria-label="Dice icon" fontSet="material-icons-outlined"
+      >casino</mat-icon
+    >
     <span>Yyrgend iis Wort</span>
   </button>
-
 </div>
 
 @if (result?.hits?.hits) {
   @for (hit of result.hits.hits; track hit._id) {
-  <mat-card>
-    <mat-card-header class="result-header">
-      <mat-card-title>
-        <a [routerLink]="['/', 'word', hit._source.id]" class="result-link">
-          {{ hit._source.term }}
-        </a>
-      </mat-card-title>
+    <mat-card>
+      <mat-card-header class="result-header">
+        <mat-card-title>
+          <a [routerLink]="['/', 'word', hit._source.id]" class="result-link">
+            {{ hit._source.term }}
+          </a>
+        </mat-card-title>
 
-      <span class="result-tags">
-        <mat-icon>label</mat-icon>
-        @for (tag of hit._source.tags; track tag) {
-          <span class="result-tag">{{ tag.display_name || tag.name}}</span>
-        }
-      </span>
-    </mat-card-header>
-    
-    <mat-divider class="card-divider"></mat-divider>
+        <span class="result-tags">
+          <mat-icon>label</mat-icon>
+          @for (tag of hit._source.tags; track tag) {
+            <span class="result-tag">{{ tag.display_name || tag.name }}</span>
+          }
+        </span>
+      </mat-card-header>
 
-    <mat-card-content>
-      {{ hit._source["description"] }}
-    </mat-card-content>
-  </mat-card>
+      <mat-divider class="card-divider"></mat-divider>
+
+      <mat-card-content>
+        {{ hit._source["description"] }}
+      </mat-card-content>
+    </mat-card>
   }
-@if (result.hits.total.value === 0 && searchTerm.trim() != '') {
-<div class="no-searchresult-msg" data-testid="no-searchresult-msg">
-  <div class="no-searchresult-content">
-    Für e Suechbegrüff <span>&laquo; {{ searchTerm }} &raquo;</span>, mit de usgwäuhte Tags, hiimer nüt gfunne.
-    <ul>
-      <li>We du zgfüh hesch das Wort fehlt
-        no, chasch das Wort gärn über
-        <a href="https://github.com/Softcom-Technologies-Organization/SenslerdeutschesWoerterbuch/issues"
-          target="_blank">GitHub Issues</a>
-        ischücke.
-      </li>
-      <li>U schüsch musch ifach nach amena andere Wort sueche.</li>
-    </ul>
-  </div>
-</div>
-}
+  @if (result.hits.total.value === 0 && searchTerm.trim() != "") {
+    <div class="no-searchresult-msg" data-testid="no-searchresult-msg">
+      <div class="no-searchresult-content">
+        Für e Suechbegrüff <span>&laquo; {{ searchTerm }} &raquo;</span>, mit de
+        usgwäuhte Tags, hiimer nüt gfunne.
+        <ul>
+          <li>
+            We du zgfüh hesch das Wort fehlt no, chasch das Wort gärn über
+            <a
+              href="https://github.com/Softcom-Technologies-Organization/SenslerdeutschesWoerterbuch/issues"
+              target="_blank"
+              >GitHub Issues</a
+            >
+            ischücke.
+          </li>
+          <li>U schüsch musch ifach nach amena andere Wort sueche.</li>
+        </ul>
+      </div>
+    </div>
+  }
 }
 
 <div class="sponsored">
-  <p>Unterstützt va <a href="https://softcom.pro/inscription-seislermaess/?lang=de" target="_blank">Softcom
-      Technologies SA</a></p>
+  <p>
+    Unterstützt va
+    <a
+      href="https://softcom.pro/inscription-seislermaess/?lang=de"
+      target="_blank"
+      >Softcom Technologies SA</a
+    >
+  </p>
 </div>
