@@ -1,11 +1,25 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { SearchService } from '../services/search.service';
-import { CommonModule } from '@angular/common';
+
 import { RouterModule } from '@angular/router';
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatFormFieldModule } from '@angular/material/form-field';
-import { BehaviorSubject, catchError, combineLatest, debounceTime, distinctUntilChanged, filter, map, merge, of, startWith, Subject, Subscription, switchMap } from 'rxjs';
+import {
+  BehaviorSubject,
+  catchError,
+  combineLatest,
+  debounceTime,
+  distinctUntilChanged,
+  filter,
+  map,
+  merge,
+  of,
+  startWith,
+  Subject,
+  Subscription,
+  switchMap,
+} from 'rxjs';
 import { MatInputModule } from '@angular/material/input';
 import { MatCardModule } from '@angular/material/card';
 import { MatDividerModule } from '@angular/material/divider';
@@ -17,7 +31,6 @@ import { MatIconModule } from '@angular/material/icon';
   selector: 'app-search',
   standalone: true,
   imports: [
-    CommonModule,
     RouterModule,
     FormsModule,
     MatAutocompleteModule,
@@ -28,7 +41,7 @@ import { MatIconModule } from '@angular/material/icon';
     ReactiveFormsModule,
     MatButtonModule,
     MatIconModule,
-    MatSelectModule
+    MatSelectModule,
   ],
   templateUrl: './search.component.html',
   styleUrl: './search.component.scss',
@@ -52,21 +65,21 @@ export class SearchComponent implements OnInit, OnDestroy {
     return this.searchControl.value ?? '';
   }
 
-  constructor(readonly searchService: SearchService) { }
+  constructor(readonly searchService: SearchService) {}
 
   ngOnInit() {
     this.subscriptions.add(
       this.searchService.getTags().subscribe({
-        next: (tags) => this.tags = tags,
-        error: () => this.tags = []
-      })
+        next: (tags) => (this.tags = tags),
+        error: () => (this.tags = []),
+      }),
     );
 
     this.subscriptions.add(
       this.searchService.checkSearchEngineStatus().subscribe({
-        next: (available) => this.searchEngineDown = !available,
-        error: () => this.searchEngineDown = true
-      })
+        next: (available) => (this.searchEngineDown = !available),
+        error: () => (this.searchEngineDown = true),
+      }),
     );
 
     if (this.searchService.lastSearchTerm) {
@@ -74,16 +87,18 @@ export class SearchComponent implements OnInit, OnDestroy {
     }
 
     this.subscriptions.add(
-      this.searchControl.valueChanges.pipe(
-        startWith(this.searchControl.value),
-        debounceTime(300),
-        distinctUntilChanged()
-      ).subscribe(term => this.searchTerm$.next(term ?? ''))
+      this.searchControl.valueChanges
+        .pipe(
+          startWith(this.searchControl.value),
+          debounceTime(300),
+          distinctUntilChanged(),
+        )
+        .subscribe((term) => this.searchTerm$.next(term ?? '')),
     );
 
     const inputSearch$ = combineLatest([
       this.searchTerm$,
-      this.selectedTagsSubject
+      this.selectedTagsSubject,
     ]).pipe(
       filter(() => {
         if (this.skipNextTermEmission) {
@@ -95,34 +110,40 @@ export class SearchComponent implements OnInit, OnDestroy {
       map(([term, tags]) => ({
         term: term ?? '',
         tags,
-        random: false
-      }))
+        random: false,
+      })),
     );
 
     const randomSearch$ = this.randomTrigger.pipe(
       map(() => ({
         term: '',
         tags: this.selectedTagsSubject.value,
-        random: true
-      }))
+        random: true,
+      })),
     );
 
-    this.subscriptions.add(merge(inputSearch$, randomSearch$).pipe(
-      switchMap(params => {
-        this.searchService.lastSearchTerm = params.term;
-        return this.searchService.search(params.term, params.tags, params.random).pipe(
-          catchError(err => {
-            // Return a fallback result so the outer stream stays alive
-            return of({ hits: { total: 0, hits: [] }, error: err });
-          })
-        );
-      })
-    ).subscribe({
-      next: (res) => this.result = res,
-      error: (err) => {
-        this.result = { hits: { total: 0, hits: [] }, error: err };
-      }
-    }));
+    this.subscriptions.add(
+      merge(inputSearch$, randomSearch$)
+        .pipe(
+          switchMap((params) => {
+            this.searchService.lastSearchTerm = params.term;
+            return this.searchService
+              .search(params.term, params.tags, params.random)
+              .pipe(
+                catchError((err) => {
+                  // Return a fallback result so the outer stream stays alive
+                  return of({ hits: { total: 0, hits: [] }, error: err });
+                }),
+              );
+          }),
+        )
+        .subscribe({
+          next: (res) => (this.result = res),
+          error: (err) => {
+            this.result = { hits: { total: 0, hits: [] }, error: err };
+          },
+        }),
+    );
   }
 
   randomWordSearch() {
@@ -133,7 +154,7 @@ export class SearchComponent implements OnInit, OnDestroy {
   }
 
   onTagsChanged(selected: any[]) {
-    this.selectedTags = selected.map(tag => tag?.name ?? tag);
+    this.selectedTags = selected.map((tag) => tag?.name ?? tag);
     this.selectedTagsSubject.next(this.selectedTags);
   }
 
