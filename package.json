@@ -1,0 +1,19 @@
+{
+  "name": "senslerdeutsches-woerterbuch-monorepo",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Root tooling for shared formatting (Prettier) and git hooks (Husky). The actual apps live in ./frontend and ./e2e.",
+  "scripts": {
+    "format": "prettier --write \"frontend/**/*.{ts,html,scss,css,json}\" \"e2e/**/*.{ts,json}\"",
+    "format:check": "prettier --check \"frontend/**/*.{ts,html,scss,css,json}\" \"e2e/**/*.{ts,json}\"",
+    "prepare": "husky"
+  },
+  "devDependencies": {
+    "husky": "^9.1.7",
+    "lint-staged": "^16.2.4",
+    "prettier": "^3.8.1"
+  },
+  "lint-staged": {
+    "{frontend,e2e}/**/*.{ts,html,scss,css,json}": "prettier --write"
+  }
+}
