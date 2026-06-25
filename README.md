@@ -66,6 +66,15 @@ The dictionary data must be imported and synced once after the first start:
 
 To verify everything works, open **http://frontend.localhost/search** — you should see words and be able to search or filter by tags.
 
+## Persistent data & backups
+
+Persistent state lives in Docker named volumes (see [docker-compose.yml](docker-compose.yml)):
+
+- `postgres-data` : the dictionary database
+- `media` : user-uploaded files, currently **audio pronunciations**
+
+> **Important:** uploaded audio lives only in the `media` volume. Any backup routine must include `media` alongside `postgres-data`, otherwise recordings are lost on a volume reset or redeploy.
+
 ## Troubleshooting
 
 ### Localhost domains not resolving (*.localhost)
