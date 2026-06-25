@@ -39,7 +39,7 @@ test.describe('search page', () => {
       await page.goto('/');
       const searchField = page.getByRole('textbox', { name: 'Suechi' });
       const searchFieldInputValue = await searchField.inputValue();
-      expect(searchFieldInputValue.length).toBe(0);
+      expect(searchFieldInputValue).toHaveLength(0);
     });
 
     await test.step('trigger a random search', async () => {
@@ -81,7 +81,7 @@ test.describe('search page', () => {
       await page.goto('/');
       const searchField = page.getByRole('textbox', { name: 'Suechi' });
       const searchFieldInputValue = await searchField.inputValue();
-      expect(searchFieldInputValue.length).toBe(0);
+      expect(searchFieldInputValue).toHaveLength(0);
     });
 
     await test.step('apply the Schimpfwort filter', async () => {
