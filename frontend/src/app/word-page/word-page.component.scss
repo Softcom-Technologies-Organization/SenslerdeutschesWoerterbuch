@@ -1,17 +1,13 @@
-.pronunciations {
-  h2 {
-    margin-bottom: 1rem;
-  }
+mat-divider {
+  margin: 1.5rem 0;
+}
 
+.pronunciations {
   .pronunciation {
     display: flex;
     align-items: center;
     gap: 0.75rem;
-    padding: 0.25rem 0;
-
-    & + .pronunciation {
-      margin-top: 0.75rem;
-    }
+    margin-top: 0.5rem;
 
     .pronunciation-label {
       min-width: 8rem;
