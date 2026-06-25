@@ -4,13 +4,21 @@ from django.urls import path
 from django.http import HttpResponseRedirect
 from django.core.management import call_command
 from django.contrib import messages
-from .models import Word, Tag
+from .models import Word, Tag, Pronunciation
+
+
+class PronunciationInline(admin.TabularInline):
+    model = Pronunciation
+    extra = 1
+    fields = ('audio_file', 'label', 'order')
+
 
 @admin.register(Word)
 class WordAdmin(admin.ModelAdmin):
     list_display = ('term', 'description', 'source')
     search_fields = ('term', 'description')
     filter_horizontal = ('tags',)
+    inlines = [PronunciationInline]
 
     def get_urls(self):
         urls = super().get_urls()
