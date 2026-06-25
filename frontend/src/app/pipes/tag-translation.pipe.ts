@@ -11,7 +11,7 @@ export class TagTranslationPipe implements PipeTransform {
     return this.translations[value] || value;
   }
 
-  private translations: Record<string, string> = {
+  private readonly translations: Record<string, string> = {
     'curse-word': 'Schimpfwort',
   };
 }
