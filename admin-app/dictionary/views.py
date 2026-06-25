@@ -145,5 +145,6 @@ def word_detail(request, pk):
         # Mapping description to formatted-description for frontend compatibility
         'formatted-description': word.description,
         'source': word.source,
-        'tags': [tag.name for tag in word.tags.all()]
+        'tags': [tag.name for tag in word.tags.all()],
+        'pronunciations': [p.to_dict() for p in word.pronunciations.all()],
     })

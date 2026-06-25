@@ -25,6 +25,21 @@
           <p>No definition</p>
         }
       </div>
+
+      @if (wordEntry.pronunciations?.length) {
+        <mat-divider></mat-divider>
+        <div class="word-section pronunciations">
+          <h2>Aussprache</h2>
+          @for (pronunciation of wordEntry.pronunciations; track pronunciation.url) {
+            <div class="pronunciation">
+              @if (pronunciation.label && wordEntry.pronunciations.length > 1) {
+                <span class="pronunciation-label">{{ pronunciation.label }}</span>
+              }
+              <audio controls preload="none" [src]="pronunciation.url"></audio>
+            </div>
+          }
+        </div>
+      }
     </div>
   }
 </div>

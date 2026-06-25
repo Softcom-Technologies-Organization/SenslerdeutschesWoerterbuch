@@ -109,6 +109,8 @@ services:
       - OPENSEARCH_INDEX_NAME=${OPENSEARCH_INDEX_NAME}
     networks:
       - sw-network
+    volumes:
+      - media:/app/media
     depends_on:
       db:
         condition: service_healthy
@@ -129,6 +131,8 @@ services:
       - "traefik.http.routers.frontend-secure.entrypoints=websecure"
       - "traefik.http.routers.frontend-secure.tls.certresolver=letsencrypt"
       - "traefik.http.routers.frontend-secure.service=frontend"
+    volumes:
+      - media:/usr/share/nginx/media:ro
     networks:
       - sw-network
 
@@ -159,3 +163,4 @@ volumes:
   postgres-data:
   opensearch-data:
   letsencrypt:
+  media:
