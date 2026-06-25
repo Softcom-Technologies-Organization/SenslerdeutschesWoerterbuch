@@ -109,7 +109,7 @@ jobs:
         run: npm ci
 
       - name: Setup Chrome
-        uses: browser-actions/setup-chrome@v2
+        uses: browser-actions/setup-chrome@086160e580d6e8c142ad5ba29009dcde677c6321 # v2
 
       - name: Run Angular Unit Tests
         run: npx ng test --no-watch --no-progress --browsers=ChromeHeadless
