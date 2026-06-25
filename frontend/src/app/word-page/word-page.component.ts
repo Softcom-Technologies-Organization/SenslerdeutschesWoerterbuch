@@ -13,7 +13,7 @@ import { environment } from '../../environments/environment';
 export class WordPageComponent implements OnInit {
   private route = inject(ActivatedRoute);
   private http = inject(HttpClient);
-  
+
   readonly baseUrl = environment.apiUrl;
   readonly searchEndpoints = '/dictionary/word/';
   readonly apiUrl = this.baseUrl + this.searchEndpoints;
@@ -21,10 +21,10 @@ export class WordPageComponent implements OnInit {
   wordEntry: any = null;
   loading = true;
   error = false;
-  synonymId: string = '';
+  synonymId = '';
 
   ngOnInit(): void {
-    this.route.paramMap.subscribe(params => {
+    this.route.paramMap.subscribe((params) => {
       const id = params.get('id');
       if (id) {
         this.loadWord(id);
@@ -43,7 +43,7 @@ export class WordPageComponent implements OnInit {
       error: () => {
         this.error = true;
         this.loading = false;
-      }
+      },
     });
   }
 }

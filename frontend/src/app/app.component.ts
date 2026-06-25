@@ -24,10 +24,7 @@ export class AppComponent {
     // add the github icon so that it can be used in a mat-icon following https://material.angular.io/components/icon/examples#icon-svg
     const iconRegistry = inject(MatIconRegistry);
     const sanitizer = inject(DomSanitizer);
-    iconRegistry.addSvgIconLiteral(
-      'github',
-      sanitizer.bypassSecurityTrustHtml(this.githubIcon),
-    );
+    iconRegistry.addSvgIconLiteral('github', sanitizer.bypassSecurityTrustHtml(this.githubIcon));
   }
   title = 'senslerdeutsches-woerterbuch';
 

@@ -1,4 +1,4 @@
-@if (searchTerm.trim() === "") {
+@if (searchTerm.trim() === '') {
   <figure class="art-showcase">
     <img src="schwarzsee.jpg" alt="Sketch of the landscape in Schwarzsee" />
     <figcaption>© ChatGPT</figcaption>
@@ -8,8 +8,8 @@
 @if (searchEngineDown) {
   <div class="error-container">
     <p>
-      <span class="error-title">Achtung:</span> Leider isch grad d
-      Wörtersuechmaschyna düri! Du chasch üs das über
+      <span class="error-title">Achtung:</span> Leider isch grad d Wörtersuechmaschyna düri! Du
+      chasch üs das über
       <a
         href="https://github.com/Softcom-Technologies-Organization/SenslerdeutschesWoerterbuch/issues"
         target="_blank"
@@ -23,12 +23,7 @@
 <div class="search-box">
   <mat-form-field>
     <mat-label>Suechi</mat-label>
-    <input
-      matInput
-      type="text"
-      placeholder="Probiers ifach us..."
-      [formControl]="searchControl"
-    />
+    <input matInput type="text" placeholder="Probiers ifach us..." [formControl]="searchControl" />
   </mat-form-field>
 
   <mat-form-field class="tag-filter-drowpdown" appearance="fill">
@@ -45,14 +40,8 @@
     </mat-select>
   </mat-form-field>
 
-  <button
-    (click)="randomWordSearch()"
-    matButton="tonal"
-    class="random-search-button"
-  >
-    <mat-icon aria-label="Dice icon" fontSet="material-icons-outlined"
-      >casino</mat-icon
-    >
+  <button (click)="randomWordSearch()" matButton="tonal" class="random-search-button">
+    <mat-icon aria-label="Dice icon" fontSet="material-icons-outlined">casino</mat-icon>
     <span>Yyrgend iis Wort</span>
   </button>
 </div>
@@ -78,15 +67,15 @@
       <mat-divider class="card-divider"></mat-divider>
 
       <mat-card-content>
-        {{ hit._source["description"] }}
+        {{ hit._source['description'] }}
       </mat-card-content>
     </mat-card>
   }
-  @if (result.hits.total.value === 0 && searchTerm.trim() != "") {
+  @if (result.hits.total.value === 0 && searchTerm.trim() !== '') {
     <div class="no-searchresult-msg" data-testid="no-searchresult-msg">
       <div class="no-searchresult-content">
-        Für e Suechbegrüff <span>&laquo; {{ searchTerm }} &raquo;</span>, mit de
-        usgwäuhte Tags, hiimer nüt gfunne.
+        Für e Suechbegrüff <span>&laquo; {{ searchTerm }} &raquo;</span>, mit de usgwäuhte Tags,
+        hiimer nüt gfunne.
         <ul>
           <li>
             We du zgfüh hesch das Wort fehlt no, chasch das Wort gärn über
@@ -107,9 +96,7 @@
 <div class="sponsored">
   <p>
     Unterstützt va
-    <a
-      href="https://softcom.pro/inscription-seislermaess/?lang=de"
-      target="_blank"
+    <a href="https://softcom.pro/inscription-seislermaess/?lang=de" target="_blank"
       >Softcom Technologies SA</a
     >
   </p>

@@ -10,12 +10,8 @@ describe('WordPageComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [WordPageComponent],
-      providers: [
-        provideRouter([]),
-        provideHttpClient()
-      ],
-    })
-      .compileComponents();
+      providers: [provideRouter([]), provideHttpClient()],
+    }).compileComponents();
 
     fixture = TestBed.createComponent(WordPageComponent);
     component = fixture.componentInstance;

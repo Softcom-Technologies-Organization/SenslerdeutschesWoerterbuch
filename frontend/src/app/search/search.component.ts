@@ -88,18 +88,11 @@ export class SearchComponent implements OnInit, OnDestroy {
 
     this.subscriptions.add(
       this.searchControl.valueChanges
-        .pipe(
-          startWith(this.searchControl.value),
-          debounceTime(300),
-          distinctUntilChanged(),
-        )
+        .pipe(startWith(this.searchControl.value), debounceTime(300), distinctUntilChanged())
         .subscribe((term) => this.searchTerm$.next(term ?? '')),
     );
 
-    const inputSearch$ = combineLatest([
-      this.searchTerm$,
-      this.selectedTagsSubject,
-    ]).pipe(
+    const inputSearch$ = combineLatest([this.searchTerm$, this.selectedTagsSubject]).pipe(
       filter(() => {
         if (this.skipNextTermEmission) {
           this.skipNextTermEmission = false;
@@ -127,14 +120,12 @@ export class SearchComponent implements OnInit, OnDestroy {
         .pipe(
           switchMap((params) => {
             this.searchService.lastSearchTerm = params.term;
-            return this.searchService
-              .search(params.term, params.tags, params.random)
-              .pipe(
-                catchError((err) => {
-                  // Return a fallback result so the outer stream stays alive
-                  return of({ hits: { total: 0, hits: [] }, error: err });
-                }),
-              );
+            return this.searchService.search(params.term, params.tags, params.random).pipe(
+              catchError((err) => {
+                // Return a fallback result so the outer stream stays alive
+                return of({ hits: { total: 0, hits: [] }, error: err });
+              }),
+            );
           }),
         )
         .subscribe({

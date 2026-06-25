@@ -22,6 +22,29 @@ OpenSearch is used for full-text search and document storage. PostgreSQL is used
 ### Parsing
 The data for the dictionary is only available as semi-structured CSV or PDFs used for printing. Python scripts are used to parse those files to make them compatible and searchable with OpenSearch. [Read more](./parsing/README.md)
 
+## Code Style
+
+To keep pull requests focused on real changes (and not formatting noise), the TypeScript code in `./frontend/` and `./e2e/` is formatted with [Prettier](https://prettier.io/) and linted with [ESLint](https://eslint.org/).
+
+Install the root tooling once (from the repository root):
+```
+npm install
+```
+This also sets up a [Husky](https://typicode.github.io/husky/) `pre-commit` hook that automatically formats your staged files via `lint-staged`, so committed code is always Prettier-clean.
+
+Useful commands:
+```
+# From the repo root — format / check all TS, HTML, SCSS, JSON in frontend & e2e
+npm run format
+npm run format:check
+
+# From ./frontend or ./e2e — lint (and auto-fix)
+npm run lint
+npm run lint:fix
+```
+
+GitHub Actions run `format:check` and `lint` on every pull request to `main` (see `.github/workflows/lint.yml`); PRs must pass these checks. Prettier formatting style lives in `.prettierrc.json`.
+
 ## Testing
 Angular unit tests can be run normally. Just make sure you have Chrome available.
 ```
