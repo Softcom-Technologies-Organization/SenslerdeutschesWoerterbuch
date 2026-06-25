@@ -1,0 +1,25 @@
+.pronunciations {
+  h2 {
+    margin-bottom: 1rem;
+  }
+
+  .pronunciation {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.25rem 0;
+
+    & + .pronunciation {
+      margin-top: 0.75rem;
+    }
+
+    .pronunciation-label {
+      min-width: 8rem;
+      font-style: italic;
+    }
+
+    audio {
+      max-width: 100%;
+    }
+  }
+}
