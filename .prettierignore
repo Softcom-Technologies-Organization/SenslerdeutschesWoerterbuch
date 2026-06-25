@@ -1,0 +1,14 @@
+# Dependencies
+**/node_modules/
+
+# Build output / caches
+**/dist/
+**/.angular/
+
+# Lockfiles (large, generated)
+**/package-lock.json
+
+# e2e generated artifacts
+e2e/container-artifacts/
+e2e/test-results/
+e2e/playwright-report/
