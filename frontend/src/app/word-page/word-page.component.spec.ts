@@ -40,7 +40,7 @@ describe('WordPageComponent', () => {
     fixture.detectChanges();
 
     const audios: HTMLAudioElement[] = fixture.nativeElement.querySelectorAll('audio');
-    expect(audios.length).toBe(2);
+    expect(audios).toHaveSize(2);
     expect(audios[0].getAttribute('src')).toBe('/media/pronunciations/a.mp3');
   });
 
@@ -50,6 +50,6 @@ describe('WordPageComponent', () => {
     component.wordEntry = { term: 'Beize', 'formatted-description': 'Wirtschaft', pronunciations: [] };
     fixture.detectChanges();
 
-    expect(fixture.nativeElement.querySelectorAll('audio').length).toBe(0);
+    expect(fixture.nativeElement.querySelectorAll('audio')).toHaveSize(0);
   });
 });
