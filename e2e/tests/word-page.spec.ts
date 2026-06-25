@@ -28,7 +28,7 @@ test.describe('word page', () => {
 
   test('display an error when the word detail request fails', async ({ page }, testInfo) => {
     await test.step('mock a failing word detail request', async () => {
-      await page.route('**/api/dictionary/word/999999/', async route => {
+      await page.route('**/api/dictionary/word/999999/', async (route) => {
         await route.fulfill({
           status: 404,
           contentType: 'application/json',
@@ -42,7 +42,9 @@ test.describe('word page', () => {
     });
 
     await test.step('verify the error state is rendered', async () => {
-      await expect(page.getByText('Error loading word details. Please try again later.')).toBeVisible();
+      await expect(
+        page.getByText('Error loading word details. Please try again later.'),
+      ).toBeVisible();
       await page.screenshot({ path: `${getScreenshotDir(testInfo)}/word-error-state.png` });
     });
   });

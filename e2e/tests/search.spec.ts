@@ -1,5 +1,11 @@
 import { test, expect } from '@playwright/test';
-import { getScreenshotDir, hasPathname, mockSearchBootstrap, mockSearchEngineDown, mockWordDetails } from './helpers';
+import {
+  getScreenshotDir,
+  hasPathname,
+  mockSearchBootstrap,
+  mockSearchEngineDown,
+  mockWordDetails,
+} from './helpers';
 
 test.describe('search page', () => {
   test('search functionality without autocomplete', async ({ page }, testInfo) => {
@@ -33,7 +39,7 @@ test.describe('search page', () => {
       await page.goto('/');
       const searchField = page.getByRole('textbox', { name: 'Suechi' });
       const searchFieldInputValue = await searchField.inputValue();
-      expect(searchFieldInputValue.length).toBe(0);
+      expect(searchFieldInputValue).toHaveLength(0);
     });
 
     await test.step('trigger a random search', async () => {
@@ -68,12 +74,14 @@ test.describe('search page', () => {
     });
   });
 
-  test('make a random search with a tag filter and check if one result is displayed', async ({ page }, testInfo) => {
+  test('make a random search with a tag filter and check if one result is displayed', async ({
+    page,
+  }, testInfo) => {
     await test.step('open search and confirm no query is prefilled', async () => {
       await page.goto('/');
       const searchField = page.getByRole('textbox', { name: 'Suechi' });
       const searchFieldInputValue = await searchField.inputValue();
-      expect(searchFieldInputValue.length).toBe(0);
+      expect(searchFieldInputValue).toHaveLength(0);
     });
 
     await test.step('apply the Schimpfwort filter', async () => {
@@ -119,7 +127,9 @@ test.describe('search page', () => {
     });
   });
 
-  test('preserve the last search term when navigating back from a word page', async ({ page }, testInfo) => {
+  test('preserve the last search term when navigating back from a word page', async ({
+    page,
+  }, testInfo) => {
     await test.step('mock search and word detail responses', async () => {
       await mockSearchBootstrap(page);
       await mockWordDetails(page, {
@@ -141,7 +151,9 @@ test.describe('search page', () => {
     });
 
     await test.step('return to search and verify the last query is restored', async () => {
-      const logoLink = page.locator('mat-toolbar').getByRole('link', { name: 'Senslerdeutsches Wörterbuch' });
+      const logoLink = page
+        .locator('mat-toolbar')
+        .getByRole('link', { name: 'Senslerdeutsches Wörterbuch' });
       await logoLink.click();
 
       const searchField = page.getByRole('textbox', { name: 'Suechi' });

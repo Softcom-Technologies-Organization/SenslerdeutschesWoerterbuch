@@ -72,7 +72,7 @@ form {
   background: col.$red-neutral-90;
 
   &:hover {
-    box-shadow: var(--mat-card-elevated-container-elevation, var(--mat-sys-level1))
+    box-shadow: var(--mat-card-elevated-container-elevation, var(--mat-sys-level1));
   }
 
   span {
@@ -83,7 +83,6 @@ form {
   mat-icon {
     width: 40px;
   }
-
 }
 
 .tag-filter-drowpdown {
@@ -117,7 +116,7 @@ form {
   .search-box {
     flex-direction: column;
 
-    >* {
+    > * {
       margin: 0 !important;
     }
   }
@@ -132,9 +131,6 @@ form {
     min-width: unset;
   }
 }
-
-
-
 
 .error-container p {
   margin: 0;

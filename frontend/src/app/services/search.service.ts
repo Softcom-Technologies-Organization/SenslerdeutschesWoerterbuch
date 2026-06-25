@@ -11,14 +11,14 @@ export class SearchService {
   readonly searchEndpoints = '/dictionary/search/';
   readonly apiUrl = this.baseUrl + this.searchEndpoints;
 
-  lastSearchTerm: string = '';
+  lastSearchTerm = '';
 
-  constructor(readonly http: HttpClient) { }
+  constructor(readonly http: HttpClient) {}
 
-  public search(term: string, tags: string[] = [], random: boolean = false): Observable<any> {
+  public search(term: string, tags: string[] = [], random = false): Observable<any> {
     let params = new HttpParams().set('term', term);
     if (tags && tags.length > 0) {
-      tags.forEach(tag => params = params.append('tags', tag));
+      tags.forEach((tag) => (params = params.append('tags', tag)));
     }
     if (random) {
       params = params.set('random', 'true');
@@ -27,17 +27,22 @@ export class SearchService {
   }
 
   public checkSearchEngineStatus(): Observable<boolean> {
-    return this.http.get<{ status: string, indexExists: boolean, docCount: number }>(this.apiUrl + 'status').pipe(
-      timeout(500),
-      map(response => response.status === 'available' && response.indexExists && response.docCount > 0),
-      catchError(() => of(false))
-    );
+    return this.http
+      .get<{ status: string; indexExists: boolean; docCount: number }>(this.apiUrl + 'status')
+      .pipe(
+        timeout(500),
+        map(
+          (response) =>
+            response.status === 'available' && response.indexExists && response.docCount > 0,
+        ),
+        catchError(() => of(false)),
+      );
   }
 
   public searchRandom(tags: string[]): Observable<any> {
     let params = new HttpParams();
     if (tags && tags.length > 0) {
-      tags.forEach(tag => params = params.append('tags', tag));
+      tags.forEach((tag) => (params = params.append('tags', tag)));
     }
     return this.http.get<any>(this.apiUrl + 'random', { params: params });
   }

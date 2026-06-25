@@ -1,12 +1,12 @@
-import { defineConfig, devices } from "@playwright/test";
+import { defineConfig, devices } from '@playwright/test';
 
 /**
  * Read environment variables from file.
  * https://github.com/motdotla/dotenv
  */
-import dotenv from "dotenv";
-import path from "path";
-dotenv.config({ path: path.resolve(__dirname, ".env") });
+import dotenv from 'dotenv';
+import path from 'path';
+dotenv.config({ path: path.resolve(__dirname, '.env') });
 
 function getHostname(value: string): string {
   try {
@@ -25,30 +25,29 @@ function requireEnv(name: string, value: string | undefined): string {
 }
 
 // Determine execution environment
-const IS_DOCKER = process.env.IS_DOCKER === "true";
-let frontendUrl = "http://localhost:4200";
+const IS_DOCKER = process.env.IS_DOCKER === 'true';
+let frontendUrl = 'http://localhost:4200';
 if (IS_DOCKER) {
   // Now process.env.FRONTEND_DOMAIN is "frontend.localhost"
-  frontendUrl = requireEnv("FRONTEND_DOMAIN", process.env.FRONTEND_DOMAIN);
+  frontendUrl = requireEnv('FRONTEND_DOMAIN', process.env.FRONTEND_DOMAIN);
 }
 const dockerResolvedHosts = Array.from(
   new Set(
     [process.env.FRONTEND_DOMAIN, process.env.BACKEND_BASE_URL]
       .filter((value): value is string => Boolean(value))
       .map(getHostname)
-      .filter(hostname => hostname !== 'traefik')
-  )
+      .filter((hostname) => hostname !== 'traefik'),
+  ),
 );
 const hostResolverRules = dockerResolvedHosts
-  .map(hostname => "MAP " + hostname + " traefik")
+  .map((hostname) => 'MAP ' + hostname + ' traefik')
   .join(',');
-const IS_CI = !!process.env.CI;
 
 /**
  * See https://playwright.dev/docs/test-configuration.
  */
 export default defineConfig({
-  testDir: "./tests",
+  testDir: './tests',
   outputDir: process.env.PLAYWRIGHT_OUTPUT_DIR ?? 'test-results',
   /* Run tests in files in parallel */
   fullyParallel: true,
@@ -61,11 +60,11 @@ export default defineConfig({
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
   reporter: [
     [
-      "html",
+      'html',
       {
-        host: "0.0.0.0",
+        host: '0.0.0.0',
         port: 9323,
-        outputFolder: process.env.PLAYWRIGHT_HTML_DIR ?? 'playwright-report'
+        outputFolder: process.env.PLAYWRIGHT_HTML_DIR ?? 'playwright-report',
       },
     ],
   ],
@@ -75,21 +74,20 @@ export default defineConfig({
     baseURL: frontendUrl,
 
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
-    trace: "on-first-retry",
+    trace: 'on-first-retry',
   },
 
   /* Configure projects for major browsers */
   projects: [
     {
-      name: "chromium",
+      name: 'chromium',
       use: {
-        ...devices["Desktop Chrome"],
+        ...devices['Desktop Chrome'],
         launchOptions: {
-          args: IS_DOCKER && hostResolverRules.length > 0
-            ? [
-                `--host-resolver-rules=${hostResolverRules}`,
-              ]
-            : [],
+          args:
+            IS_DOCKER && hostResolverRules.length > 0
+              ? [`--host-resolver-rules=${hostResolverRules}`]
+              : [],
         },
       },
     },

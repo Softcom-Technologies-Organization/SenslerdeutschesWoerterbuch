@@ -1,4 +1,4 @@
-@use "variables";
+@use 'variables';
 
 :host {
   display: grid;
@@ -50,16 +50,8 @@ footer .content {
   justify-content: space-between;
 }
 
-mat-icon.github {
-  fill: #24292f;
-}
-
-@media (prefers-color-scheme: dark) {
-  mat-icon.github {
-    fill: #fff;
-  }
-}
-
-mat-icon.toolbar-icon {
+.toolbar-icon {
+  width: 24px;
   height: 24px;
+  fill: currentColor;
 }

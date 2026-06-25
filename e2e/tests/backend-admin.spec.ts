@@ -30,9 +30,13 @@ test.describe('backend admin', () => {
 
     await test.step('verify login is rejected and the error is shown', async () => {
       await expect(page).toHaveURL(hasPathname('/admin/login/'));
-      await expect(page.getByText('Please enter the correct username and password for a staff account.')).toBeVisible();
+      await expect(
+        page.getByText('Please enter the correct username and password for a staff account.'),
+      ).toBeVisible();
       await expect(page.getByLabel('Username')).toHaveValue('not-a-real-admin');
-      await page.screenshot({ path: `${getScreenshotDir(testInfo)}/backend-admin-login-failure.png` });
+      await page.screenshot({
+        path: `${getScreenshotDir(testInfo)}/backend-admin-login-failure.png`,
+      });
     });
   });
 

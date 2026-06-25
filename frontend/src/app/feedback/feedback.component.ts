@@ -4,8 +4,6 @@ import { Component } from '@angular/core';
   selector: 'app-feedback',
   imports: [],
   templateUrl: './feedback.component.html',
-  styleUrl: './feedback.component.scss'
+  styleUrl: './feedback.component.scss',
 })
-export class FeedbackComponent {
-
-}
+export class FeedbackComponent {}

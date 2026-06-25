@@ -43,12 +43,16 @@ test.describe('app shell and navigation', () => {
 
     await test.step('verify the feedback page content', async () => {
       await expect(page).toHaveURL(hasPathname('/feedback'));
-      await expect(page.getByRole('heading', { name: 'Fragen, Hinweise oder Verbesserungsvorschläge?' })).toBeVisible();
+      await expect(
+        page.getByRole('heading', { name: 'Fragen, Hinweise oder Verbesserungsvorschläge?' }),
+      ).toBeVisible();
       await page.screenshot({ path: `${getScreenshotDir(testInfo)}/feedback-page.png` });
     });
   });
 
-  test('navigate to Info page and back to Home/Search via toolbar icon', async ({ page }, testInfo) => {
+  test('navigate to Info page and back to Home/Search via toolbar icon', async ({
+    page,
+  }, testInfo) => {
     await test.step('open the home page and move to the info page', async () => {
       await page.goto('/');
 
@@ -59,7 +63,9 @@ test.describe('app shell and navigation', () => {
     });
 
     await test.step('return to search with the toolbar logo', async () => {
-      const logoLink = page.locator('mat-toolbar').getByRole('link', { name: 'Senslerdeutsches Wörterbuch' });
+      const logoLink = page
+        .locator('mat-toolbar')
+        .getByRole('link', { name: 'Senslerdeutsches Wörterbuch' });
       await expect(logoLink).toBeVisible();
       await logoLink.click();
     });

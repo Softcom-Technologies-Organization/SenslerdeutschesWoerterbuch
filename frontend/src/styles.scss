@@ -3,9 +3,13 @@
 
 html {
   color-scheme: light dark;
-  @include mat.theme((color: mat.$red-palette,
+  @include mat.theme(
+    (
+      color: mat.$red-palette,
       typography: 'Noto Sans',
-      density: 0));
+      density: 0,
+    )
+  );
 }
 
 html,
@@ -15,7 +19,7 @@ body {
 
 body {
   margin: 0;
-  font-family: 'Noto Sans', "Helvetica Neue", sans-serif;
+  font-family: 'Noto Sans', 'Helvetica Neue', sans-serif;
 }
 
 p a,
@@ -29,7 +33,6 @@ mat-card-content a {
     text-decoration: underline;
   }
 }
-
 
 .error-container {
   margin-bottom: 1rem;
