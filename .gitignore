@@ -4,3 +4,6 @@ docker/proxy/logs/*
 .env
 .vscode/
 __pycache__/
+
+# Claude Code local settings (may contain secrets from approved commands)
+**/.claude/settings.local.json
