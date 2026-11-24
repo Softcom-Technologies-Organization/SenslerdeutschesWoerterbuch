@@ -1,9 +1,11 @@
 import io
-from django.contrib import admin
-from django.urls import path
-from django.http import HttpResponseRedirect
+from datetime import date
+from django.contrib import admin, messages
+from django.core.exceptions import PermissionDenied
 from django.core.management import call_command
-from django.contrib import messages
+from django.http import HttpResponse, HttpResponseRedirect
+from django.urls import path
+from .export_helper import export_words_json
 from .models import Word, Tag
 
 @admin.register(Word)
@@ -16,6 +18,7 @@ class WordAdmin(admin.ModelAdmin):
         urls = super().get_urls()
         custom_urls = [
             path('sync-search/', self.admin_site.admin_view(self.sync_search), name='dictionary_word_sync_search'),
+            path('export-words/', self.admin_site.admin_view(self.export_words), name='dictionary_word_export_words'),
             path('import-words/', self.admin_site.admin_view(self.import_words), name='dictionary_word_import_words'),
         ]
         return custom_urls + urls
@@ -28,8 +31,18 @@ class WordAdmin(admin.ModelAdmin):
         except Exception as e:
             self.message_user(request, f"Sync failed: {str(e)}", messages.ERROR)
         return HttpResponseRedirect("../")
-    
+
+    def export_words(self, request):
+        content = export_words_json()
+        filename = f'words-{date.today().isoformat()}.json'
+        response = HttpResponse(content, content_type='application/json; charset=utf-8')
+        response['Content-Disposition'] = f'attachment; filename="{filename}"'
+        return response
+
     def import_words(self, request):
+        if not request.user.is_superuser:
+            raise PermissionDenied
+
         try:
             out = io.StringIO()
             call_command('import_words', stdout=out)
