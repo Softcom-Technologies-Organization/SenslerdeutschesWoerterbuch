@@ -33,6 +33,8 @@ class WordAdmin(admin.ModelAdmin):
         return HttpResponseRedirect("../")
 
     def export_words(self, request):
+        if not self.has_view_or_change_permission(request):
+            raise PermissionDenied
         content = export_words_json()
         filename = f'words-{date.today().isoformat()}.json'
         response = HttpResponse(content, content_type='application/json; charset=utf-8')
