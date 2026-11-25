@@ -10,6 +10,8 @@ multi-ecosystem-groups:
   playwright:
     schedule:
       interval: "weekly"
+    commit-message:
+      prefix: "chore(deps)"
 
 updates:
   # Playwright npm package - grouped with Docker image
@@ -28,6 +30,8 @@ updates:
       - "/e2e"
     schedule:
       interval: "weekly"
+    commit-message:
+      prefix: "chore(deps)"
     groups:
       # Minor and patch version updates for Angular dependencies are grouped into a single pull request.
       angular:
@@ -66,10 +70,12 @@ updates:
   # Python packages
   - package-ecosystem: "pip"
     directories:
-      - "/backend"
+      - "/admin-app"
       - "/parsing"
     schedule:
       interval: "weekly"
+    commit-message:
+      prefix: "chore(deps)"
     groups:
       python-dependencies:
         update-types:
@@ -88,11 +94,14 @@ updates:
   # Other Docker images
   - package-ecosystem: "docker"
     directories:
-      - "/docker/backend"
-      - "/docker/elasticsearch"
-      - "/docker/proxy"
+      - "/docker/admin-app"
+      - "/docker/opensearch"
+      - "/docker/public-app"
+      - "/docker/workspace"
     schedule:
       interval: "weekly"
+    commit-message:
+      prefix: "chore(deps)"
     groups:
       docker-images:
         update-types:
@@ -105,6 +114,8 @@ updates:
     directory: "/"
     schedule:
       interval: "weekly"
+    commit-message:
+      prefix: "chore(deps)"
     groups:
       docker-compose:
         update-types:
@@ -119,8 +130,22 @@ updates:
     directory: "/"
     schedule:
       interval: "weekly"
+    commit-message:
+      prefix: "chore(deps)"
     # group all GitHub Actions updates together in a single PR since they are usually small
     groups:
       github-actions:
+        patterns:
+          - "*"
+
+  # Dev container features (devcontainer.json)
+  - package-ecosystem: "devcontainers"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    commit-message:
+      prefix: "chore(deps)"
+    groups:
+      devcontainers:
         patterns:
           - "*"
